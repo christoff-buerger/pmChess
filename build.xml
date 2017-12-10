@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This program and the accompanying materials are made available under the
+	terms of the MIT license (X11 license) which accompanies this distribution.
+	
+	Author: Christoff Bürger
+-->
+<project name="Poor Man's Chess" default="all" basedir=".">
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="bin" includes="**/*"/>
+		</delete>
+		<delete file="pmChess.jar"/>
+	</target>
+
+	<target name="all" depends="clean">
+		<mkdir dir="bin"/>
+		<javac
+			srcdir="src"
+			destdir="bin"
+			includeantruntime="false"
+		/>
+		<copy todir="bin/pmchess/gui/figures">
+			<fileset dir="src/pmchess/gui/figures"/>
+		</copy>
+		<copy todir="bin/pmchess/gui/icons">
+			<fileset dir="src/pmchess/gui/icons"/>
+		</copy>
+		<copy todir="bin/pmchess/gui/fonts">
+			<fileset dir="src/pmchess/gui/fonts"/>
+		</copy>
+		<copy file="license.txt" todir="bin/pmchess/"/>
+		<jar destfile="pmChess.jar" index="false" update="false" compress="false">
+			<manifest>
+				<attribute
+					name="Created-By"
+					value="https://github.com/christoff-buerger/pmChess"
+				/>
+				<attribute
+					name="Main-Class"
+					value="pmchess.pmChess"
+				/>
+			</manifest>
+			<fileset dir="bin">
+				<include name="**/*.class"/>
+				<include name="**/*.png"/>
+				<include name="**/*.ttf"/>
+				<include name="**/*.txt"/>
+			</fileset>
+		</jar>
+	</target>
+</project>
