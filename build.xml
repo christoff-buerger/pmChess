@@ -40,6 +40,10 @@
 					name="Main-Class"
 					value="pmchess.pmChess"
 				/>
+				<attribute
+					name="JVM-Args"
+					value="--add-opens java.desktop/com.apple.eawt=ALL-UNNAMED"
+				/>
 			</manifest>
 			<fileset dir="bin">
 				<include name="**/*.class"/>

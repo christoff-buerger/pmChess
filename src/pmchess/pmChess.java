@@ -49,7 +49,6 @@ public final class pmChess {
 		System.out.println(about[1]);
 		System.out.println();
 		System.out.println(pmChessLicense);
-		GUI.initializeFonts();
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new GUI();

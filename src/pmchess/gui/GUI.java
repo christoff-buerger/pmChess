@@ -21,6 +21,7 @@ public final class GUI extends JFrame {
 	public static final Font font_plain = loadFont("OpenSans-Regular.ttf");
 	public static final Font font_italic = loadFont("OpenSans-Italic.ttf");
 	public static final Font font_bold = loadFont("OpenSans-Bold.ttf");
+	private static final Image icon = GUI.loadImage("icons/icon.png");
 	
 	private static Font loadFont(final String fontName) {
 		try {
@@ -33,7 +34,16 @@ public final class GUI extends JFrame {
 		}
 	}
 	
-	public static void initializeFonts() {
+	protected static Image loadImage(final String path) {
+		final java.net.URL imgURL = GamePanel.class.getResource(path);
+		if (imgURL != null) {
+			return Toolkit.getDefaultToolkit().getImage(imgURL);
+		} else {
+			throw new RuntimeException("Failed to load image " + path + ".");
+		}
+	}
+		
+	static { // Initialize fonts:
 		final Enumeration keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			final Object key = keys.nextElement();
@@ -63,7 +73,21 @@ public final class GUI extends JFrame {
 		{
 			throw new RuntimeException(e);
 		}
-
+		
+		// Setup icon:
+		final String os = System.getProperty("os.name");
+		if (os.equals("Mac OS X")) try {
+			final Class<?> cls = Class.forName("com.apple.eawt.Application");
+			final Object app = cls.getMethod("getApplication").invoke(null);
+			app.getClass().getMethod("setDockIconImage", Image.class).invoke(app, icon);
+		} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+			java.lang.reflect.InvocationTargetException e)
+		{
+			throw new RuntimeException(e);
+		} else {
+			setIconImage(icon);
+		}
+		
 		// Setup the window:
 		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,7 +96,7 @@ public final class GUI extends JFrame {
 		setLocation(
 			(d.width - getSize().width) / 2,
 			(d.height - getSize().height) / 2);
-
+		
 		// Setup menu bar:
 		final JMenuBar menuBar = new JMenuBar();
 		final JMenu gameMenu = new JMenu("Game"); // Game menu:

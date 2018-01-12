@@ -15,28 +15,19 @@ import javax.swing.*;
 import pmchess.logic.*;
 
 public final class GamePanel extends JPanel {
-	private static final Image pawn_w = loadImage("figures/pawn-w.png");
-	private static final Image pawn_b = loadImage("figures/pawn-b.png");
-	private static final Image knight_w = loadImage("figures/knight-w.png");
-	private static final Image knight_b = loadImage("figures/knight-b.png");
-	private static final Image bishop_w = loadImage("figures/bishop-w.png");
-	private static final Image bishop_b = loadImage("figures/bishop-b.png");
-	private static final Image rook_w = loadImage("figures/rook-w.png");
-	private static final Image rook_b = loadImage("figures/rook-b.png");
-	private static final Image queen_w = loadImage("figures/queen-w.png");
-	private static final Image queen_b = loadImage("figures/queen-b.png");
-	private static final Image king_w = loadImage("figures/king-w.png");
-	private static final Image king_b = loadImage("figures/king-b.png");
-	private static final Image bulb = loadImage("icons/bulb.png");
-	
-	private static Image loadImage(final String path) {
-		final java.net.URL imgURL = GamePanel.class.getResource(path);
-		if (imgURL != null) {
-			return Toolkit.getDefaultToolkit().getImage(imgURL);
-		} else {
-			throw new RuntimeException("Failed to load image " + path + ".");
-		}
-	}
+	private static final Image pawn_w = GUI.loadImage("figures/pawn-w.png");
+	private static final Image pawn_b = GUI.loadImage("figures/pawn-b.png");
+	private static final Image knight_w = GUI.loadImage("figures/knight-w.png");
+	private static final Image knight_b = GUI.loadImage("figures/knight-b.png");
+	private static final Image bishop_w = GUI.loadImage("figures/bishop-w.png");
+	private static final Image bishop_b = GUI.loadImage("figures/bishop-b.png");
+	private static final Image rook_w = GUI.loadImage("figures/rook-w.png");
+	private static final Image rook_b = GUI.loadImage("figures/rook-b.png");
+	private static final Image queen_w = GUI.loadImage("figures/queen-w.png");
+	private static final Image queen_b = GUI.loadImage("figures/queen-b.png");
+	private static final Image king_w = GUI.loadImage("figures/king-w.png");
+	private static final Image king_b = GUI.loadImage("figures/king-b.png");
+	private static final Image bulb = GUI.loadImage("icons/bulb.png");
 	
 	private final Board board = new Board();
 	private final Search search = new Search();
