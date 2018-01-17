@@ -11,6 +11,10 @@
 			<fileset dir="bin" includes="**/*"/>
 		</delete>
 		<delete file="pmChess.jar"/>
+		<delete file="native-distributions/pmChess.app/Contents/Java/pmChess.jar"/>
+		<delete includeemptydirs="true">
+			<fileset dir="native-distributions/pmChess.app/Contents/PlugIns/jre" includes="**/*"/>
+		</delete>
 	</target>
 
 	<target name="all" depends="clean">
@@ -40,10 +44,6 @@
 					name="Main-Class"
 					value="pmchess.pmChess"
 				/>
-				<attribute
-					name="JVM-Args"
-					value="--add-opens java.desktop/com.apple.eawt=ALL-UNNAMED"
-				/>
 			</manifest>
 			<fileset dir="bin">
 				<include name="**/*.class"/>
@@ -52,5 +52,9 @@
 				<include name="**/*.txt"/>
 			</fileset>
 		</jar>
+		<copy file="pmChess.jar" todir="native-distributions/pmChess.app/Contents/Java/"/>
+		<copy todir="native-distributions/pmChess.app/Contents/PlugIns/jre/Contents/">
+			<fileset dir="${java.home}/../../Contents"/>
+		</copy>
 	</target>
 </project>

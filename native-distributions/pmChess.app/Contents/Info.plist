@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSHumanReadableCopyright</key>
+	<string>pmChess by Christoff Bürger (christoff.buerger@gmail.com).
+	This program and the accompanying materials are made available under the
+	terms of the MIT license (X11 license) which accompanies this distribution.</string>
+	<key>CFBundleName</key>
+	<string>pmChess</string>
+	<key>CFBundleDisplayName</key>
+	<string>pmChess</string>
+	<key>CFBundleSpokenName</key>
+	<string>pm Chess</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.github.christoff-buerger.pmChess</string>
+	<key>CFBundleVersion</key><!--Build version-->
+	<string>1.1.0</string>
+	<key>CFBundleShortVersionString</key><!--Release version-->
+	<string>1.1.0</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+<!--<key>CFBundleIconFile</key>
+<string>the-cat.jpg</string>-->
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaAppLauncher</string>
+	<key>JVMRuntime</key><!--Use embedded JRE in Contents/PlugIns-->
+        <string>jre</string>
+	<key>JVMMainClassName</key>
+        <string>pmchess.pmChess</string>
+        <key>JVMOptions</key>
+        <array>
+		<key>--add-opens</key><!--Avoid reflective access warnings of Java 9-->
+		<string>java.desktop/com.apple.eawt=ALL-UNNAMED</string>
+        </array>
+        <key>JVMArguments</key>
+        <array>
+        </array>
+</dict>
+</plist>

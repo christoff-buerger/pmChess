@@ -21,7 +21,7 @@ public final class GUI extends JFrame {
 	public static final Font font_plain = loadFont("OpenSans-Regular.ttf");
 	public static final Font font_italic = loadFont("OpenSans-Italic.ttf");
 	public static final Font font_bold = loadFont("OpenSans-Bold.ttf");
-	private static final Image icon = GUI.loadImage("icons/icon.png");
+	private static final Image icon = GUI.loadImage("icons/icon-taskbar.png");
 	
 	private static Font loadFont(final String fontName) {
 		try {

@@ -7,8 +7,11 @@
 **/*~
 # Ignore Mac Os X Desktop Services Store configuration files:
 **/.DS_Store
-# Ignore generated object & binary directories:
-**/bin
-# Ignore generated jars:
-pmChess.jar
-!stable-releases/*/pmChess.jar
+# Ignore generated binary directory:
+/bin
+# Ignore generated jars...
+**/pmChess.jar
+# ...except official releases:
+!/stable-releases/*/pmChess.jar
+# Ignore embedded JREs:
+/native-distributions/pmChess.app/Contents/PlugIns/jre
