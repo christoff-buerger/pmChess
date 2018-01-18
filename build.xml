@@ -6,15 +6,12 @@
 	Author: Christoff Bürger
 -->
 <project name="Poor Man's Chess" default="all" basedir=".">
+	<property name="script-path" location="."/>
+	
 	<target name="clean">
-		<delete includeemptydirs="true">
-			<fileset dir="bin" includes="**/*"/>
-		</delete>
+		<delete dir="bin"/>
 		<delete file="pmChess.jar"/>
-		<delete file="native-distributions/pmChess.app/Contents/Java/pmChess.jar"/>
-		<delete includeemptydirs="true">
-			<fileset dir="native-distributions/pmChess.app/Contents/PlugIns/jre" includes="**/*"/>
-		</delete>
+		<delete dir="native-distributions/Mac OS X/pmChess.app/Contents/Resources"/>
 	</target>
 
 	<target name="all" depends="clean">
@@ -52,9 +49,21 @@
 				<include name="**/*.txt"/>
 			</fileset>
 		</jar>
-		<copy file="pmChess.jar" todir="native-distributions/pmChess.app/Contents/Java/"/>
-		<copy todir="native-distributions/pmChess.app/Contents/PlugIns/jre/Contents/">
-			<fileset dir="${java.home}/../../Contents"/>
-		</copy>
+		<echo message="Building self-contained native platform distribution for ${os.name}..."/>
+		<exec os="Mac OS X" executable="${java.home}/bin/jlink">
+			<arg value="--module-path"/>
+			<arg value="${script-path}/pmChess.jar:${java.home}/jmods"/>
+			<arg value="--add-modules"/>
+			<arg value="pmchess"/>
+			<arg value="--launcher"/>
+			<arg value="pmChess=pmchess/pmchess.pmChess"/>
+			<arg value="--output"/>
+			<arg value="${script-path}/native-distributions/Mac OS X/pmChess.app/Contents/Resources"/>
+			<arg value="--strip-debug"/>
+			<arg value="--no-header-files"/>
+			<arg value="--no-man-pages"/>
+			<arg value="--compress"/>
+			<arg value="2"/>
+		</exec>
 	</target>
 </project>

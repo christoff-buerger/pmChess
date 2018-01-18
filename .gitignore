@@ -13,5 +13,5 @@
 **/pmChess.jar
 # ...except official releases:
 !/stable-releases/*/pmChess.jar
-# Ignore embedded JREs:
-/native-distributions/pmChess.app/Contents/PlugIns/jre
+# Ignore compiled code of native pmChess distribution:
+/native-distributions/*/pmChess.app/Contents/Resources

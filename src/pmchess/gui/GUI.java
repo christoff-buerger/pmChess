@@ -75,20 +75,9 @@ public final class GUI extends JFrame {
 		}
 		
 		// Setup icon:
-		final String os = System.getProperty("os.name");
-		if (os.equals("Mac OS X")) try {
-			final Class<?> cls = Class.forName("com.apple.eawt.Application");
-			final Object app = cls.getMethod("getApplication").invoke(null);
-			app.getClass().getMethod("setDockIconImage", Image.class).invoke(app, icon);
-		} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
-			java.lang.reflect.InvocationTargetException e)
-		{
-			throw new RuntimeException(e);
-		} else {
-			setIconImage(icon);
-		}
+		Taskbar.getTaskbar().setIconImage(icon);
 		
-		// Setup the window:
+		// Setup window:
 		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBackground(Color.gray);

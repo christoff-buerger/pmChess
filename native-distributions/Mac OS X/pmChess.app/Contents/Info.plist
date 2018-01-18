@@ -20,8 +20,8 @@
 	<string>1.1.0</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-<!--<key>CFBundleIconFile</key>
-<string>the-cat.jpg</string>-->
+	<!--<key>CFBundleIconFile</key>
+	<string>still-missing.jpg</string>-->
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -31,18 +31,6 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-	<string>JavaAppLauncher</string>
-	<key>JVMRuntime</key><!--Use embedded JRE in Contents/PlugIns-->
-        <string>jre</string>
-	<key>JVMMainClassName</key>
-        <string>pmchess.pmChess</string>
-        <key>JVMOptions</key>
-        <array>
-		<key>--add-opens</key><!--Avoid reflective access warnings of Java 9-->
-		<string>java.desktop/com.apple.eawt=ALL-UNNAMED</string>
-        </array>
-        <key>JVMArguments</key>
-        <array>
-        </array>
+	<string>pmChess</string>
 </dict>
 </plist>

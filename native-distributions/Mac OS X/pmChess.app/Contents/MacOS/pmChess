@@ -1,0 +1,4 @@
+#!/bin/sh
+script_directory="$(cd "$(dirname "$0")"; pwd)"
+cd "$script_directory/../Resources/bin"
+./pmChess $@
