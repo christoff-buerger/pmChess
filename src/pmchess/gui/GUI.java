@@ -13,6 +13,7 @@ import java.io.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.desktop.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -74,8 +75,10 @@ public final class GUI extends JFrame {
 			throw new RuntimeException(e);
 		}
 		
-		// Setup icon:
+		// Setup icon and "About" window:
+		final AboutAction about = new AboutAction();
 		Taskbar.getTaskbar().setIconImage(icon);
+		Desktop.getDesktop().setAboutHandler(about);
 		
 		// Setup window:
 		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -111,7 +114,7 @@ public final class GUI extends JFrame {
 		menuBar.add(gameMenu);
 		final JMenu helpMenu = new JMenu("Help"); // Help menu:
 		helpMenu.setMnemonic(KeyEvent.VK_H);
-		helpMenu.add(new AboutAction());
+		helpMenu.add(about);
 		menuBar.add(helpMenu);
 		setJMenuBar(menuBar);
 		
@@ -148,7 +151,7 @@ public final class GUI extends JFrame {
 	
 	private static final class ExitAction extends AbstractAction {
 		private ExitAction() {
-			super("Exit");
+			super("Quit pmChess");
 		}
 
 		public void actionPerformed(final ActionEvent event) {
@@ -156,7 +159,7 @@ public final class GUI extends JFrame {
 		}
 	}
 	
-	private static final class AboutAction extends AbstractAction {
+	private static final class AboutAction extends AbstractAction implements AboutHandler {
 		private static final AboutFrame info = new AboutFrame();
 		
 		private AboutAction() {
@@ -164,6 +167,10 @@ public final class GUI extends JFrame {
 		}
 
 		public void actionPerformed(final ActionEvent event) {
+			info.setVisible(true);
+		}
+		
+		public void handleAbout(final AboutEvent event) {
 			info.setVisible(true);
 		}
 	}
