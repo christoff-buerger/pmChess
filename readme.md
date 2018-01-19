@@ -27,11 +27,11 @@ The _Game status_ section summarises the current player (background color of the
 
 # Stable releases
 
-Stable binary releases of _pmChess_ are available in version-numbered subdirectories of `stable-releases`. An installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 is required (_Java SE 9_).
+Stable releases of _pmChess_ are available in version-numbered subdirectories of `stable-releases`. The `pmChess.jar` distributions are platform independent, but require an installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 (_Java SE 9_). Since version 1.1.0, also a native, self-contained distribution for _macOS_ is provided (`pmChess.dmg`).
 
 # License
 
-This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution (`./license.txt`).
+This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution (cf. `license.txt`).
 
 # Comments
 
