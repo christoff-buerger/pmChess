@@ -11,24 +11,24 @@
 	<target name="clean">
 		<delete dir="bin"/>
 		<delete file="pmChess.jar"/>
-		<delete dir="native-distributions/Mac OS X/pmChess.app/Contents/Resources/pmChess"/>
+		<delete dir="native-distributions/macOS/pmChess.app/Contents/Resources/pmChess"/>
 	</target>
 
 	<target name="all" depends="clean">
 		<mkdir dir="bin"/>
 		<javac
-			srcdir="src"
+			srcdir="sources"
 			destdir="bin"
 			includeantruntime="false"
 		/>
 		<copy todir="bin/pmchess/gui/figures">
-			<fileset dir="src/pmchess/gui/figures"/>
+			<fileset dir="sources/pmchess/gui/figures"/>
 		</copy>
 		<copy todir="bin/pmchess/gui/icons">
-			<fileset dir="src/pmchess/gui/icons"/>
+			<fileset dir="sources/pmchess/gui/icons"/>
 		</copy>
 		<copy todir="bin/pmchess/gui/fonts">
-			<fileset dir="src/pmchess/gui/fonts"/>
+			<fileset dir="sources/pmchess/gui/fonts"/>
 		</copy>
 		<copy file="license.txt" todir="bin/pmchess/"/>
 		<jar destfile="pmChess.jar" index="false" update="false" compress="false">
@@ -58,7 +58,7 @@
 			<arg value="--launcher"/>
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
-			<arg value="${script-path}/native-distributions/Mac OS X/pmChess.app/Contents/Resources/pmChess"/>
+			<arg value="${script-path}/native-distributions/macOS/pmChess.app/Contents/Resources/pmChess"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>

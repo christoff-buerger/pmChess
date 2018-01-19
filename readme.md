@@ -25,9 +25,9 @@ Figures are moved using the keyboard. A blue rectangle marks the cursor position
 
 The _Game status_ section summarises the current player (background color of the status message), turn number, game status (checkmate, check, stalemate, capitulation or normal move) and castling possibilities considering previous moves (checkboxes for left and right castling of each player). The castling summary shows only whether left or right castling are impossible due to previous king or rook movements; if checked, previous movements are not prohibiting castling. A bulb icon at the end of the status message signals that the computer is busy deciding its move.
 
-# Stable releases
+# Offical, stable releases
 
-Stable releases of _pmChess_ are available in version-numbered subdirectories of `stable-releases`. The `pmChess.jar` distributions are platform independent, but require an installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 (_Java SE 9_). Since version 1.1.0, also a native, self-contained distribution for _macOS_ is provided (`pmChess.dmg`).
+Releases of _pmChess_ are available in version-numbered subdirectories of `releases`. The `pmChess.jar` distributions are platform independent, but require an installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 (_Java SE 9_). Since version 1.1.0, also a native, self-contained distribution for _macOS_ is provided (`pmChess.dmg`).
 
 # License
 

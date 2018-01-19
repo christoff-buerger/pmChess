@@ -12,6 +12,6 @@
 # Ignore generated jars...
 **/pmChess.jar
 # ...except official releases:
-!/stable-releases/*/pmChess.jar
+!/releases/*/pmChess.jar
 # Ignore compiled code of native pmChess distribution:
-/native-distributions/*/pmChess.app/Contents/Resources/pmChess
+/native-distributions/macOS/pmChess.app/Contents/Resources/pmChess
