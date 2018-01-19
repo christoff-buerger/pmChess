@@ -11,7 +11,7 @@
 	<target name="clean">
 		<delete dir="bin"/>
 		<delete file="pmChess.jar"/>
-		<delete dir="native-distributions/Mac OS X/pmChess.app/Contents/Resources"/>
+		<delete dir="native-distributions/Mac OS X/pmChess.app/Contents/Resources/pmChess"/>
 	</target>
 
 	<target name="all" depends="clean">
@@ -58,7 +58,7 @@
 			<arg value="--launcher"/>
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
-			<arg value="${script-path}/native-distributions/Mac OS X/pmChess.app/Contents/Resources"/>
+			<arg value="${script-path}/native-distributions/Mac OS X/pmChess.app/Contents/Resources/pmChess"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>

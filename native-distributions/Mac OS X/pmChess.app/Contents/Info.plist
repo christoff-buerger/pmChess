@@ -3,9 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>pmChess by Christoff Bürger (christoff.buerger@gmail.com).
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.</string>
+	<string>© 2017-2018 Christoff Bürger, This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution.</string>
 	<key>CFBundleName</key>
 	<string>pmChess</string>
 	<key>CFBundleDisplayName</key>
@@ -20,8 +18,8 @@
 	<string>1.1.0</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<!--<key>CFBundleIconFile</key>
-	<string>still-missing.jpg</string>-->
+	<key>CFBundleIconFile</key>
+	<string>icon.icns</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleDevelopmentRegion</key>

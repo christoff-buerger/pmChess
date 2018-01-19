@@ -14,4 +14,4 @@
 # ...except official releases:
 !/stable-releases/*/pmChess.jar
 # Ignore compiled code of native pmChess distribution:
-/native-distributions/*/pmChess.app/Contents/Resources
+/native-distributions/*/pmChess.app/Contents/Resources/pmChess
