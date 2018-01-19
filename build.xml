@@ -9,28 +9,28 @@
 	<property name="script-path" location="."/>
 	
 	<target name="clean">
-		<delete dir="bin"/>
+		<delete dir="builds/binaries"/>
 		<delete file="pmChess.jar"/>
-		<delete dir="native-distributions/macOS/pmChess.app/Contents/Resources/pmChess"/>
+		<delete dir="builds/macOS/pmChess.app/Contents/Resources/pmChess"/>
 	</target>
 
 	<target name="all" depends="clean">
-		<mkdir dir="bin"/>
+		<mkdir dir="builds/binaries"/>
 		<javac
 			srcdir="sources"
-			destdir="bin"
+			destdir="builds/binaries"
 			includeantruntime="false"
 		/>
-		<copy todir="bin/pmchess/gui/figures">
+		<copy todir="builds/binaries/pmchess/gui/figures">
 			<fileset dir="sources/pmchess/gui/figures"/>
 		</copy>
-		<copy todir="bin/pmchess/gui/icons">
+		<copy todir="builds/binaries/pmchess/gui/icons">
 			<fileset dir="sources/pmchess/gui/icons"/>
 		</copy>
-		<copy todir="bin/pmchess/gui/fonts">
+		<copy todir="builds/binaries/pmchess/gui/fonts">
 			<fileset dir="sources/pmchess/gui/fonts"/>
 		</copy>
-		<copy file="license.txt" todir="bin/pmchess/"/>
+		<copy file="license.txt" todir="builds/binaries/pmchess/"/>
 		<jar destfile="pmChess.jar" index="false" update="false" compress="false">
 			<manifest>
 				<attribute
@@ -42,7 +42,7 @@
 					value="pmchess.pmChess"
 				/>
 			</manifest>
-			<fileset dir="bin">
+			<fileset dir="builds/binaries">
 				<include name="**/*.class"/>
 				<include name="**/*.png"/>
 				<include name="**/*.ttf"/>
@@ -58,7 +58,7 @@
 			<arg value="--launcher"/>
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
-			<arg value="${script-path}/native-distributions/macOS/pmChess.app/Contents/Resources/pmChess"/>
+			<arg value="${script-path}/builds/macOS/pmChess.app/Contents/Resources/pmChess"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>

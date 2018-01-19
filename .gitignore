@@ -8,10 +8,10 @@
 # Ignore Mac Os X Desktop Services Store configuration files:
 **/.DS_Store
 # Ignore generated binary directory:
-/bin
+/builds/binaries
 # Ignore generated jars...
 **/pmChess.jar
 # ...except official releases:
 !/releases/*/pmChess.jar
 # Ignore compiled code of native pmChess distribution:
-/native-distributions/macOS/pmChess.app/Contents/Resources/pmChess
+/builds/macOS/pmChess.app/Contents/Resources/pmChess
