@@ -27,7 +27,7 @@ The _Game status_ section summarises the current player (background color of the
 
 # Offical, stable releases
 
-Releases of _pmChess_ are available in version-numbered subdirectories of `releases`. Platform independent distributions are provided in respective `portable-jar` subdirectories; they require an installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 (_Java SE 9_). Native, self-contained distributions for _macOS_ are provided in `macOO` subdirectories.
+Releases of _pmChess_ are available in version-numbered subdirectories of `releases`. Platform independent distributions are provided in respective `portable-jar` subdirectories; they require an installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 (_Java SE 9_). Native, self-contained distributions for _macOS_ are provided in `macOS` subdirectories.
 
 # License
 
