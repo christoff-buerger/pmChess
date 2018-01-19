@@ -9,29 +9,29 @@
 	<property name="script-path" location="."/>
 	
 	<target name="clean">
-		<delete dir="builds/binaries"/>
-		<delete file="pmChess.jar"/>
-		<delete dir="builds/macOS/pmChess.app/Contents/Resources/pmChess"/>
+		<delete dir="binaries"/>
+		<delete file="portable-jar/pmChess.jar"/>
+		<delete dir="macOS/pmChess.app/Contents/Resources/pmChess"/>
 	</target>
 
 	<target name="all" depends="clean">
-		<mkdir dir="builds/binaries"/>
+		<mkdir dir="binaries"/>
 		<javac
-			srcdir="sources"
-			destdir="builds/binaries"
+			srcdir="../sources"
+			destdir="binaries"
 			includeantruntime="false"
 		/>
-		<copy todir="builds/binaries/pmchess/gui/figures">
-			<fileset dir="sources/pmchess/gui/figures"/>
+		<copy todir="binaries/pmchess/gui/figures">
+			<fileset dir="../sources/pmchess/gui/figures"/>
 		</copy>
-		<copy todir="builds/binaries/pmchess/gui/icons">
-			<fileset dir="sources/pmchess/gui/icons"/>
+		<copy todir="binaries/pmchess/gui/icons">
+			<fileset dir="../sources/pmchess/gui/icons"/>
 		</copy>
-		<copy todir="builds/binaries/pmchess/gui/fonts">
-			<fileset dir="sources/pmchess/gui/fonts"/>
+		<copy todir="binaries/pmchess/gui/fonts">
+			<fileset dir="../sources/pmchess/gui/fonts"/>
 		</copy>
-		<copy file="license.txt" todir="builds/binaries/pmchess/"/>
-		<jar destfile="pmChess.jar" index="false" update="false" compress="false">
+		<copy file="../license.txt" todir="binaries/pmchess/"/>
+		<jar destfile="portable-jar/pmChess.jar" index="false" update="false" compress="false">
 			<manifest>
 				<attribute
 					name="Created-By"
@@ -42,7 +42,7 @@
 					value="pmchess.pmChess"
 				/>
 			</manifest>
-			<fileset dir="builds/binaries">
+			<fileset dir="binaries">
 				<include name="**/*.class"/>
 				<include name="**/*.png"/>
 				<include name="**/*.ttf"/>
@@ -52,18 +52,18 @@
 		<echo message="Building self-contained native platform distribution for ${os.name}..."/>
 		<exec os="Mac OS X" executable="${java.home}/bin/jlink">
 			<arg value="--module-path"/>
-			<arg value="${script-path}/pmChess.jar:${java.home}/jmods"/>
+			<arg value="${script-path}/portable-jar/pmChess.jar:${java.home}/jmods"/>
 			<arg value="--add-modules"/>
 			<arg value="pmchess"/>
 			<arg value="--launcher"/>
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
-			<arg value="${script-path}/builds/macOS/pmChess.app/Contents/Resources/pmChess"/>
+			<arg value="${script-path}/macOS/pmChess.app/Contents/Resources/pmChess"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>
 			<arg value="--compress"/>
-			<arg value="2"/>
+			<arg value="0"/>
 		</exec>
 	</target>
 </project>

@@ -9,9 +9,7 @@
 **/.DS_Store
 # Ignore generated binary directory:
 /builds/binaries
-# Ignore generated jars...
-**/pmChess.jar
-# ...except official releases:
-!/releases/*/pmChess.jar
+# Ignore generated jar:
+/builds/portable-jar/pmChess.jar
 # Ignore compiled code of native pmChess distribution:
 /builds/macOS/pmChess.app/Contents/Resources/pmChess
