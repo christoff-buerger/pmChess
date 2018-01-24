@@ -22,6 +22,8 @@ public final class pmChess {
 	public static final String openSansLicense = loadText("gui/fonts/LICENSE.txt");
 	public static final String chessPiecesLicense = loadText("gui/figures/LICENSE.txt");
 	
+	public static final String releaseNotes = loadText("release-notes.txt");
+	
 	private static String loadText(final String file) {
 		try {
 			final InputStream stream = pmChess.class.getResourceAsStream(file);

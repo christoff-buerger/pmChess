@@ -63,7 +63,7 @@ public final class GamePanel extends JPanel {
 		initialize(false, false);
 	}
 	
-	public void initialize(final boolean computer_w, final boolean computer_b) {
+	protected void initialize(final boolean computer_w, final boolean computer_b) {
 		while (board.undo() != 0);
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
@@ -86,7 +86,7 @@ public final class GamePanel extends JPanel {
 		statusPanel.drawStatus();
 	}
 	
-	public void undo() {
+	protected void undo() {
 		selected_figure = null;
 		capitulation = false;
 		board.undo();

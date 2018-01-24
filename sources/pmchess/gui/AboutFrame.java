@@ -24,47 +24,70 @@ public final class AboutFrame extends JFrame {
 		final JLabel text1 = new JLabel(pmchess.pmChess.about[0], SwingConstants.CENTER);
 		final JLabel text2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
 		
+		final JTextArea releaseNotesTextArea = new JTextArea(pmchess.pmChess.releaseNotes);
+		releaseNotesTextArea.setFont(GUI.font_plain);
+		releaseNotesTextArea.setLineWrap(false);
+		releaseNotesTextArea.setEditable(false);
+		final JScrollPane releaseNotesScrollPane = new JScrollPane(releaseNotesTextArea);
+		releaseNotesScrollPane.setVerticalScrollBarPolicy(
+			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		releaseNotesScrollPane.setPreferredSize(new Dimension(570, 460));
+		
+		final JPanel releaseNotesPanel = new JPanel();
+		releaseNotesPanel.add(releaseNotesScrollPane);
+		
 		final JTextArea licenseTextArea = new JTextArea(pmchess.pmChess.pmChessLicense);
 		licenseTextArea.setFont(GUI.font_italic);
 		licenseTextArea.setLineWrap(false);
 		licenseTextArea.setEditable(false);
 		final JScrollPane licenseScrollPane = new JScrollPane(licenseTextArea);
-		licenseScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		licenseScrollPane.setVerticalScrollBarPolicy(
+			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		licenseScrollPane.setPreferredSize(new Dimension(570, 425));
 		
-		final JButton pmChessButton = new JButton("pmChess");
+		final JToggleButton pmChessButton = new JToggleButton("pmChess", true);
+		final JToggleButton openSansButton = new JToggleButton("Open Sans", false);
+		final JToggleButton chessPiecesButton = new JToggleButton("Chess pieces", false);
 		pmChessButton.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent e) {
+					pmChessButton.setSelected(true);
+					openSansButton.setSelected(false);
+					chessPiecesButton.setSelected(false);
 					licenseTextArea.setText(pmchess.pmChess.pmChessLicense);
 				}
 			});
-		final JButton openSansButton = new JButton("Open Sans");
 		openSansButton.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent e) {
+					pmChessButton.setSelected(false);
+					openSansButton.setSelected(true);
+					chessPiecesButton.setSelected(false);
 					licenseTextArea.setText(pmchess.pmChess.openSansLicense);
 				}
 			});
-		final JButton chessPiecesButton = new JButton("Chess pieces");
 		chessPiecesButton.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent e) {
+					pmChessButton.setSelected(false);
+					openSansButton.setSelected(false);
+					chessPiecesButton.setSelected(true);
 					licenseTextArea.setText(pmchess.pmChess.chessPiecesLicense);
 				}
 			});
 		
 		final JPanel licensesPanel = new JPanel();
-		licensesPanel.setPreferredSize(new Dimension(590, 500));
-		licensesPanel.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createTitledBorder("Licenses"),
-			BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 		licensesPanel.add(pmChessButton);
 		licensesPanel.add(openSansButton);
 		licensesPanel.add(chessPiecesButton);
 		licensesPanel.add(licenseScrollPane);
 		
+		final JTabbedPane tabPane = new JTabbedPane();
+		tabPane.setPreferredSize(new Dimension(590, 500));
+		tabPane.addTab("Release notes", releaseNotesPanel);
+		tabPane.addTab("Licenses", licensesPanel);
+		
 		final JPanel panel = new JPanel(new BorderLayout());
 		panel.add(text1, BorderLayout.PAGE_START);
 		panel.add(text2, BorderLayout.CENTER);
-		panel.add(licensesPanel, BorderLayout.PAGE_END);
+		panel.add(tabPane, BorderLayout.PAGE_END);
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
 		add(panel);
@@ -82,7 +105,6 @@ public final class AboutFrame extends JFrame {
 					AboutFrame.this.setVisible(false);
 				}
 			});
-		final JScrollBar bar = licenseScrollPane.getVerticalScrollBar();
 		inputMap.put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0),
 			"ScrollUp");
@@ -90,9 +112,12 @@ public final class AboutFrame extends JFrame {
 			"ScrollUp",
 			new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
+					final JScrollBar bar = tabPane.getSelectedIndex() == 0 ?
+						releaseNotesScrollPane.getVerticalScrollBar() :
+						licenseScrollPane.getVerticalScrollBar();
 					bar.setValue(bar.getValue() > 42 ? bar.getValue() - 42 : 0);
 				}
-			});		
+			});
 		inputMap.put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),
 			"ScrollDown");
@@ -100,10 +125,13 @@ public final class AboutFrame extends JFrame {
 			"ScrollDown",
 			new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
+					final JScrollBar bar = tabPane.getSelectedIndex() == 0 ?
+						releaseNotesScrollPane.getVerticalScrollBar() :
+						licenseScrollPane.getVerticalScrollBar();
 					bar.setValue(bar.getValue() + 42 > bar.getMaximum()  ?
 						bar.getMaximum() :
 						bar.getValue() + 42);
 				}
-			});		
+			});
 	}
 }

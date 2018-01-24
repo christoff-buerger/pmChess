@@ -1,0 +1,29 @@
+This program and the accompanying materials are made available under the
+terms of the MIT license (X11 license) which accompanies this distribution.
+
+Version 1.0.0 (10 December 2017):
+  - First public release on GitHub as portable jar-file.
+  - Implements the official rules of FIDE (Fédération Internationale des
+    Échecs) except for en passant moves and the following draw rules:
+      1) Threefold repetition: The same position occurs three times with the
+         same player to move.
+      2) Fifty-moves rule: The last fifty successive moves made by both players
+         contain no capture or pawn move.
+      3) Insufficient material: Neither player has a theoretical possibility
+         to checkmate the opponent.
+  - Graphical user interface with chessboard, last move highlighting, status
+    message, castling overview and keyboard input for figure selection and
+    movement.
+  - Menu-bar with support for new game configuration, movement undoing,
+    about dialog and shortcuts. Supported are human vs. human or computer
+    player games.
+  - Computer players are implemented using a common min-max search with
+    alpha-beta pruning in combination with a simple scoring-heuristic for
+    figure-constellations; the search depth are four half-moves. The following
+    implementation constraints are satisfied:
+      1) The min-max search is heap memory allocation free. There exist no
+         dynamic memory allocations throughout a computer player's turn, for
+         which reason computer players have fixed memory requirements. Each
+         game situation, including the history of previous and possible moves,
+         fits in 32kB.
+      2) The min-max implementation is recursive.
