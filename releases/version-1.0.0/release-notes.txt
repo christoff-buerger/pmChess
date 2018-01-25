@@ -2,7 +2,8 @@ This program and the accompanying materials are made available under the
 terms of the MIT license (X11 license) which accompanies this distribution.
 
 Version 1.0.0 (10 December 2017):
-  - First public release on GitHub as portable jar-file.
+  - First public release on GitHub as portable jar-file (requires a
+    locally installed 'Java SE 9.0.4').
   - Implements the official rules of FIDE (Fédération Internationale des
     Échecs) except for en passant moves and the following draw rules:
       1) Threefold repetition: The same position occurs three times with the
