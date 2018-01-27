@@ -27,6 +27,9 @@
 		<copy todir="binaries/pmchess/gui/icons">
 			<fileset dir="../sources/pmchess/gui/icons"/>
 		</copy>
+		<copy todir="binaries/pmchess/gui/logo">
+			<fileset dir="../sources/pmchess/gui/logo"/>
+		</copy>
 		<copy todir="binaries/pmchess/gui/fonts">
 			<fileset dir="../sources/pmchess/gui/fonts"/>
 		</copy>
@@ -46,6 +49,7 @@
 			<fileset dir="binaries">
 				<include name="**/*.class"/>
 				<include name="**/*.png"/>
+				<include name="**/*.gif"/>
 				<include name="**/*.ttf"/>
 				<include name="**/*.txt"/>
 			</fileset>

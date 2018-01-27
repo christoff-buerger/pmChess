@@ -13,6 +13,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public final class AboutFrame extends JFrame {
+	private static final Image logo = GUI.loadImage("logo/logo-animated.gif");
+	
 	protected AboutFrame() {
 		super("About pmChess");
 		
@@ -81,6 +83,12 @@ public final class AboutFrame extends JFrame {
 		
 		final JTabbedPane tabPane = new JTabbedPane();
 		tabPane.setPreferredSize(new Dimension(590, 500));
+		tabPane.addTab("Tea time", new JPanel() {
+				public void paint(final Graphics graphic) {
+					super.paint(graphic);
+					graphic.drawImage(logo, 0, 0, this);
+				}
+			});
 		tabPane.addTab("Release notes", releaseNotesPanel);
 		tabPane.addTab("Licenses", licensesPanel);
 		
@@ -112,9 +120,18 @@ public final class AboutFrame extends JFrame {
 			"ScrollUp",
 			new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					final JScrollBar bar = tabPane.getSelectedIndex() == 0 ?
-						releaseNotesScrollPane.getVerticalScrollBar() :
-						licenseScrollPane.getVerticalScrollBar();
+					final JScrollBar bar;
+					if (tabPane.getSelectedIndex() ==
+						tabPane.indexOfComponent(releaseNotesPanel))
+					{
+						bar = releaseNotesScrollPane.getVerticalScrollBar();
+					} else if (tabPane.getSelectedIndex() ==
+						tabPane.indexOfComponent(licensesPanel))
+					{
+						bar = licenseScrollPane.getVerticalScrollBar();
+					} else {
+						return;
+					}
 					bar.setValue(bar.getValue() > 42 ? bar.getValue() - 42 : 0);
 				}
 			});
@@ -125,10 +142,19 @@ public final class AboutFrame extends JFrame {
 			"ScrollDown",
 			new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					final JScrollBar bar = tabPane.getSelectedIndex() == 0 ?
-						releaseNotesScrollPane.getVerticalScrollBar() :
-						licenseScrollPane.getVerticalScrollBar();
-					bar.setValue(bar.getValue() + 42 > bar.getMaximum()  ?
+					final JScrollBar bar;
+					if (tabPane.getSelectedIndex() ==
+						tabPane.indexOfComponent(releaseNotesPanel))
+					{
+						bar = releaseNotesScrollPane.getVerticalScrollBar();
+					} else if (tabPane.getSelectedIndex() ==
+						tabPane.indexOfComponent(licensesPanel))
+					{
+						bar = licenseScrollPane.getVerticalScrollBar();
+					} else {
+						return;
+					}
+					bar.setValue(bar.getValue() + 42 > bar.getMaximum() ?
 						bar.getMaximum() :
 						bar.getValue() + 42);
 				}
