@@ -18,8 +18,8 @@ public final class AboutFrame extends JFrame {
 	protected AboutFrame() {
 		super("About pmChess");
 		
-		setResizable(false);
 		setSize(600, 580);
+		setResizable(false);
 		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
 		
@@ -83,12 +83,13 @@ public final class AboutFrame extends JFrame {
 		
 		final JTabbedPane tabPane = new JTabbedPane();
 		tabPane.setPreferredSize(new Dimension(590, 500));
-		tabPane.addTab("Tea time", new JPanel() {
-				public void paint(final Graphics graphic) {
-					super.paint(graphic);
+		tabPane.addTab("Tea time", new JLabel(new ImageIcon(logo)));
+		/*tabPane.addTab("Tea time", new JPanel() {
+				public void paintComponent(final Graphics graphic) {
+					super.paintComponent(graphic);
 					graphic.drawImage(logo, 0, 0, this);
 				}
-			});
+			});*/
 		tabPane.addTab("Release notes", releaseNotesPanel);
 		tabPane.addTab("Licenses", licensesPanel);
 		

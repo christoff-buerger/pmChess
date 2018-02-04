@@ -24,33 +24,44 @@ public final class GUI extends JFrame {
 	protected static final Font font_bold = loadFont("OpenSans-Bold.ttf");
 	private static final Image taskbar_icon = GUI.loadImage("icons/taskbar.png");
 	
-	private static Font loadFont(final String fontName) {
+	private static Font loadFont(final String font_name) {
 		try {
 			final Font font = Font.createFont(
 				Font.TRUETYPE_FONT,
-				GUI.class.getResourceAsStream("fonts/" + fontName));
+				GUI.class.getResourceAsStream("fonts/" + font_name));
 			return font.deriveFont(14f);
 		} catch (IOException | FontFormatException e) {
-			throw new RuntimeException("Failed to load font.");
+			throw new RuntimeException("Failed to load font " + font_name + ".");
 		}
 	}
 	
-	protected static Image loadImage(final String path) {
-		final java.net.URL imgURL = GamePanel.class.getResource(path);
-		if (imgURL != null) {
-			return Toolkit.getDefaultToolkit().getImage(imgURL);
+	protected static Image loadImage(final String image_name) {
+		final java.net.URL image_url = GamePanel.class.getResource(image_name);
+		if (image_url != null) {
+			return Toolkit.getDefaultToolkit().getImage(image_url);
 		} else {
-			throw new RuntimeException("Failed to load image " + path + ".");
+			throw new RuntimeException("Failed to load image " + image_name + ".");
 		}
 	}
-		
-	static { // Initialize fonts:
+	
+	static {
+		// Initialize fonts:
 		final Enumeration keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			final Object key = keys.nextElement();
 			final Object value = UIManager.get(key);
 			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
 				UIManager.put(key, font_plain);
+		}
+		// Setup cross-platform look:
+		try {
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+		} catch (ClassNotFoundException |
+			InstantiationException |
+			IllegalAccessException |
+			UnsupportedLookAndFeelException e)
+		{
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -64,30 +75,10 @@ public final class GUI extends JFrame {
 	public GUI() {
 		super("pmChess");
 		
-		// Setup cross-platform look:
-		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (ClassNotFoundException |
-			InstantiationException |
-			IllegalAccessException |
-			UnsupportedLookAndFeelException e)
-		{
-			throw new RuntimeException(e);
-		}
-		
 		// Setup icon and "About" window:
 		final AboutAction about = new AboutAction();
 		Taskbar.getTaskbar().setIconImage(taskbar_icon);
 		Desktop.getDesktop().setAboutHandler(about);
-		
-		// Setup window:
-		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBackground(Color.gray);
-		setSize(325, 520);
-		setLocation(
-			(d.width - getSize().width) / 2,
-			(d.height - getSize().height) / 2);
 		
 		// Setup menu bar:
 		final JMenuBar menuBar = new JMenuBar();
@@ -122,8 +113,15 @@ public final class GUI extends JFrame {
 		gamePanel = new GamePanel();
 		setContentPane(gamePanel);
 		
-		// Display window:
+		// Setup window and display it:
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBackground(Color.gray);
+		pack();
 		setResizable(false);
+		final Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation(
+			(screen_size.width - getSize().width) / 2,
+			(screen_size.height - getSize().height) / 2);
 		setVisible(true);
 	}
 	
