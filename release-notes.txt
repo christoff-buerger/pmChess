@@ -6,6 +6,7 @@ Version 1.1.0 (in development):
     does not require a locally installed 'Java SE'.
   - Added taskbar icon and application logo.
   - Added release notes overview to "About pmChess"-window.
+  - Added algebraic notation to chessboard marking its files and ranks.
 
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a

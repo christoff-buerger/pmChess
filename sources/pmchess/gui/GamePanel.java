@@ -132,7 +132,7 @@ public final class GamePanel extends JPanel {
 					selected_y = cursor_y;
 					boardPanel.drawSquare(selected_x, selected_y);
 				} else if (selected_figure != null) {
-					if (!capitulation && board.execute(
+					if (board.execute(
 						selected_x,
 						selected_y,
 						cursor_x,
