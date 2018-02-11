@@ -46,13 +46,14 @@ public final class GamePanel extends JPanel {
 	
 	private final BoardPanel boardPanel = new BoardPanel();
 	private final StatusPanel statusPanel = new StatusPanel();
+	private final HistoryPanel historyPanel = new HistoryPanel();
 	
 	protected GamePanel() {
 		// Setup panel size and layout:
 		setOpaque(true);
 		final int border_size = 5;
 		final Dimension panel_dimension = new Dimension(
-			boardPanel.panel_size + 2 * border_size,
+			boardPanel.panel_size + historyPanel.panel_x_size + 2 * border_size,
 			boardPanel.panel_size + statusPanel.panel_y_size + 2 * border_size);
 		setMaximumSize(panel_dimension);
 		setMinimumSize(panel_dimension);
@@ -62,27 +63,35 @@ public final class GamePanel extends JPanel {
 			border_size,
 			border_size,
 			border_size));
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		// Add components:
-		add(boardPanel);
-		add(statusPanel);
+		final JPanel dummyPanel = new JPanel();
+		final Dimension dummyPanel_dimension = new Dimension(
+			boardPanel.panel_size,
+			boardPanel.panel_size + statusPanel.panel_y_size);
+		dummyPanel.setMaximumSize(dummyPanel_dimension);
+		dummyPanel.setMinimumSize(dummyPanel_dimension);
+		dummyPanel.setPreferredSize(dummyPanel_dimension);
+		dummyPanel.setLayout(new BoxLayout(dummyPanel, BoxLayout.Y_AXIS));
+		dummyPanel.add(boardPanel);
+		dummyPanel.add(statusPanel);
+		add(dummyPanel);
+		add(historyPanel);
 		
 		// Add listener for cursor movement and figure selection:
 		setFocusable(true);
       		requestFocusInWindow();
-		addKeyListener(new CursorListener());
+		addKeyListener(new BoardListener());
 		
 		// Initialize and start game:
 		initialize(false, false);
 	}
 	
 	protected void initialize(final boolean computer_w, final boolean computer_b) {
-		while (board.undo() != 0);
+		while (undo());
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
-		selected_figure = null;
-		capitulation = false;
 		runGame();
 	}
 	
@@ -90,12 +99,17 @@ public final class GamePanel extends JPanel {
 		return board.player() ? computer_w : computer_b;
 	}
 	
-	protected void undo() {
-		board.undo();
-		selected_figure = null;
-		capitulation = false;
-		boardPanel.repaint();
-		statusPanel.repaint();
+	private boolean undo() {
+		if (board.undo() != 0) {
+			historyPanel.history_data.removeElementAt(
+				historyPanel.history_data.size() - 1);
+			selected_figure = null;
+			capitulation = false;
+			boardPanel.repaint();
+			statusPanel.repaint();
+			return true;
+		}
+		return false;
 	}
 	
 	private void runGame() {
@@ -110,19 +124,20 @@ public final class GamePanel extends JPanel {
 			if (capitulation)
 				break;
 			board.execute(Move.x(move), Move.y(move), Move.X(move), Move.Y(move));
+			historyPanel.history_data.addElement(move);
 			gameStatus = board.status();
 		}
 		boardPanel.repaint();
 		statusPanel.repaint();
 	}
 	
-	private final class CursorListener extends KeyAdapter {
+	private final class BoardListener extends KeyAdapter {
 		public void keyPressed(final KeyEvent event) {
+			if (computerTurn())
+				return;
 			final int old_x = cursor_x, old_y = cursor_y;
 			final int key = event.getKeyCode();
 			if (key == KeyEvent.VK_SPACE) {
-				if (computerTurn())
-					return;
 				final Figure figure = board.figure(cursor_x, cursor_y);
 				if (figure != null && figure.owner == board.player()) {
 					selected_figure = null;
@@ -138,6 +153,8 @@ public final class GamePanel extends JPanel {
 						cursor_x,
 						cursor_y))
 					{
+						historyPanel.history_data.addElement(
+							board.previousMove(board.turn() - 1));
 						selected_figure = null;
 						runGame();
 					}
@@ -156,6 +173,26 @@ public final class GamePanel extends JPanel {
 			}
 			boardPanel.drawSquare(old_x, old_y);
 			boardPanel.drawSquare(cursor_x, cursor_y);
+		}
+	}
+	
+	private final class HistoryListener extends KeyAdapter {
+		public void keyPressed(final KeyEvent event) {
+			final Board.GameStatus gameStatus = board.status();
+			if (computerTurn() && !capitulation &&
+				gameStatus != Board.GameStatus.Checkmate &&
+				gameStatus != Board.GameStatus.Stalemate)
+			{
+				return;
+			}
+			final int key = event.getKeyCode();
+			if (key == KeyEvent.VK_SPACE) {
+				final int selected = historyPanel.history_list.getSelectedIndex();
+				for (int i = board.turn() - selected - 1; i > 0; i--) {
+					undo();
+				}
+				runGame();
+			}
 		}
 	}
 	
@@ -417,6 +454,42 @@ public final class GamePanel extends JPanel {
 			castling_r_w.setSelected(board.castlingAllowed(false, true));
 			castling_l_b.setSelected(board.castlingAllowed(true, false));
 			castling_r_b.setSelected(board.castlingAllowed(false, false));
+		}
+	}
+	
+	private final class HistoryPanel extends JPanel {
+		private final int panel_x_size = 150; // configuration-variable
+		private final int panel_y_size = boardPanel.panel_size + statusPanel.panel_y_size;
+		private final int border_size = 15; // configuration-variable
+		
+		private final DefaultListModel<Integer> history_data = new DefaultListModel<>();
+		private final JList history_list = new JList(history_data);
+		
+		private HistoryPanel() {
+			// Setup panel size and layout:
+			setOpaque(true);
+			final Dimension panel_dimension =
+				new Dimension(panel_x_size, panel_y_size);
+			setMaximumSize(panel_dimension);
+			setMinimumSize(panel_dimension);
+			setPreferredSize(panel_dimension);
+			setBorder(BorderFactory.createTitledBorder("Game history"));
+			
+			// History list:
+			history_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			history_list.setLayoutOrientation(JList.VERTICAL);
+			final JScrollPane historyScrollPane = new JScrollPane(history_list);
+			historyScrollPane.setVerticalScrollBarPolicy(
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			final Dimension historyScrollPane_dimension = new Dimension(
+				panel_x_size - border_size,
+				panel_y_size - (5 * border_size) / 2);
+			historyScrollPane.setMaximumSize(historyScrollPane_dimension);
+			historyScrollPane.setMinimumSize(historyScrollPane_dimension);
+			historyScrollPane.setPreferredSize(historyScrollPane_dimension);
+			history_list.addKeyListener(new HistoryListener());
+			history_data.addElement(0);
+			add(historyScrollPane);
 		}
 	}
 }

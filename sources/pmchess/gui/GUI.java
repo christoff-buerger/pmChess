@@ -99,8 +99,6 @@ public final class GUI extends JFrame {
 		gameMenu.add(blackComp);
 		gameMenu.add(noComp);
 		gameMenu.addSeparator();
-		gameMenu.add(new UndoMoveAction());
-		gameMenu.addSeparator();
 		gameMenu.add(new ExitAction());
 		menuBar.add(gameMenu);
 		final JMenu helpMenu = new JMenu("Help"); // Help menu:
@@ -126,16 +124,6 @@ public final class GUI extends JFrame {
 	}
 	
 	/* ************************************ menu actions ************************************ */
-	
-	private final class UndoMoveAction extends AbstractAction {
-		private UndoMoveAction() {
-			super("Undo last move");
-		}
-
-		public void actionPerformed(final ActionEvent event) {
-			gamePanel.undo();
-		}
-	}
 	
 	private final class NewGameAction extends AbstractAction {
 		private NewGameAction() {

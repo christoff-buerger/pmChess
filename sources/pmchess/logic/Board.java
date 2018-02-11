@@ -93,7 +93,7 @@ public final class Board {
 	/*
 		Add a possible move to the current move frame and unset its selected move.
 	*/
-	public void moves_add(final int x, final int y, final int X, final int Y) {
+	protected void moves_add(final int x, final int y, final int X, final int Y) {
 		int successor_frame = moves[moves_frame];
 		moves[successor_frame] = Move.encodeMove(this, x, y, X, Y);
 		moves[moves_frame] = ++successor_frame;
@@ -106,14 +106,14 @@ public final class Board {
 		its possible moves is SUCCESSFULLY executed via the 'execute' function. It is unset
 		by 'moves_add' but NOT 'undo'.
 	*/
-	public int moves_selected() {
+	protected int moves_selected() {
 		return moves[moves_frame + 2];
 	}
 	
 	/*
 		Return the index of the beginning of the possible moves of the current move frame.
 	*/
-	public int moves_possible() {
+	protected int moves_possible() {
 		return moves_frame + 3;
 	}
 	
@@ -124,7 +124,7 @@ public final class Board {
 		IMPORTANT: Moves threatening a player's own king are not filtered and instead
 		detected when actually executed (cf. 'execute' function).
 	*/
-	public int moves_possible(final int index) {
+	protected int moves_possible(final int index) {
 		return index < moves[moves_frame] & index > moves_frame + 2 ? moves[index] : 0;
 	}
 	
@@ -141,7 +141,7 @@ public final class Board {
 		return false;
 	}
 	
-	public boolean execute(final int move) {
+	protected boolean execute(final int move) {
 		// Update cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
 		final int x = Move.x(move);
