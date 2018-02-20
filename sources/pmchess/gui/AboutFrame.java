@@ -13,7 +13,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public final class AboutFrame extends JFrame {
-	private static final Image logo = GUI.loadImage("logo/logo-animated.gif");
+	private static final String releaseNotes = Resources.loadText("release-notes.txt");
+	private static final Image logo = Resources.loadImage("logo/logo-animated.gif");
 	
 	protected AboutFrame() {
 		super("About pmChess");
@@ -26,8 +27,8 @@ public final class AboutFrame extends JFrame {
 		final JLabel text1 = new JLabel(pmchess.pmChess.about[0], SwingConstants.CENTER);
 		final JLabel text2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
 		
-		final JTextArea releaseNotesTextArea = new JTextArea(pmchess.pmChess.releaseNotes);
-		releaseNotesTextArea.setFont(GUI.font_plain);
+		final JTextArea releaseNotesTextArea = new JTextArea(releaseNotes);
+		releaseNotesTextArea.setFont(Resources.font_plain);
 		releaseNotesTextArea.setLineWrap(false);
 		releaseNotesTextArea.setEditable(false);
 		final JScrollPane releaseNotesScrollPane = new JScrollPane(releaseNotesTextArea);
@@ -39,7 +40,7 @@ public final class AboutFrame extends JFrame {
 		releaseNotesPanel.add(releaseNotesScrollPane);
 		
 		final JTextArea licenseTextArea = new JTextArea(pmchess.pmChess.pmChessLicense);
-		licenseTextArea.setFont(GUI.font_italic);
+		licenseTextArea.setFont(Resources.font_italic);
 		licenseTextArea.setLineWrap(false);
 		licenseTextArea.setEditable(false);
 		final JScrollPane licenseScrollPane = new JScrollPane(licenseTextArea);
@@ -49,11 +50,14 @@ public final class AboutFrame extends JFrame {
 		
 		final JToggleButton pmChessButton = new JToggleButton("pmChess", true);
 		final JToggleButton openSansButton = new JToggleButton("Open Sans", false);
+		final JToggleButton chessMeridaUnicodeButton =
+			new JToggleButton("Chess Merida Unicode", false);
 		final JToggleButton chessPiecesButton = new JToggleButton("Chess pieces", false);
 		pmChessButton.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(true);
 					openSansButton.setSelected(false);
+					chessMeridaUnicodeButton.setSelected(false);
 					chessPiecesButton.setSelected(false);
 					licenseTextArea.setText(pmchess.pmChess.pmChessLicense);
 				}
@@ -62,14 +66,26 @@ public final class AboutFrame extends JFrame {
 				public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(false);
 					openSansButton.setSelected(true);
+					chessMeridaUnicodeButton.setSelected(false);
 					chessPiecesButton.setSelected(false);
 					licenseTextArea.setText(pmchess.pmChess.openSansLicense);
+				}
+			});
+		chessMeridaUnicodeButton.addActionListener(new ActionListener() {
+				public void actionPerformed(final ActionEvent e) {
+					pmChessButton.setSelected(false);
+					openSansButton.setSelected(false);
+					chessMeridaUnicodeButton.setSelected(true);
+					chessPiecesButton.setSelected(false);
+					licenseTextArea.setText(
+						pmchess.pmChess.chessMeridaUnicodeLicense);
 				}
 			});
 		chessPiecesButton.addActionListener(new ActionListener() {
 				public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(false);
 					openSansButton.setSelected(false);
+					chessMeridaUnicodeButton.setSelected(false);
 					chessPiecesButton.setSelected(true);
 					licenseTextArea.setText(pmchess.pmChess.chessPiecesLicense);
 				}
@@ -78,6 +94,7 @@ public final class AboutFrame extends JFrame {
 		final JPanel licensesPanel = new JPanel();
 		licensesPanel.add(pmChessButton);
 		licensesPanel.add(openSansButton);
+		licensesPanel.add(chessMeridaUnicodeButton);
 		licensesPanel.add(chessPiecesButton);
 		licensesPanel.add(licenseScrollPane);
 		

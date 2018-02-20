@@ -15,19 +15,7 @@ import javax.swing.*;
 import pmchess.logic.*;
 
 public final class GamePanel extends JPanel {
-	private static final Image pawn_w = GUI.loadImage("figures/pawn-w.png");
-	private static final Image pawn_b = GUI.loadImage("figures/pawn-b.png");
-	private static final Image knight_w = GUI.loadImage("figures/knight-w.png");
-	private static final Image knight_b = GUI.loadImage("figures/knight-b.png");
-	private static final Image bishop_w = GUI.loadImage("figures/bishop-w.png");
-	private static final Image bishop_b = GUI.loadImage("figures/bishop-b.png");
-	private static final Image rook_w = GUI.loadImage("figures/rook-w.png");
-	private static final Image rook_b = GUI.loadImage("figures/rook-b.png");
-	private static final Image queen_w = GUI.loadImage("figures/queen-w.png");
-	private static final Image queen_b = GUI.loadImage("figures/queen-b.png");
-	private static final Image king_w = GUI.loadImage("figures/king-w.png");
-	private static final Image king_b = GUI.loadImage("figures/king-b.png");
-	private static final Image bulb = GUI.loadImage("icons/bulb.png");
+	private static final Image bulb = Resources.loadImage("icons/bulb.png");
 	
 	private final Board board = new Board();
 	private final Search search = new Search();
@@ -222,7 +210,7 @@ public final class GamePanel extends JPanel {
 			super.paintComponent(graphic);
 			
 			// Draw horizontal (h) and vertical (v) border-markings:
-			graphic.setFont(GUI.font_bold);
+			graphic.setFont(Resources.font_bold);
 			final FontMetrics font_metrics = graphic.getFontMetrics();
 			final int font_height = font_metrics.getAscent();
 			final int h_y_base =
@@ -298,22 +286,8 @@ public final class GamePanel extends JPanel {
 			// Draw figure:
 			final Figure figure = board.figure(x, y);
 			if (figure != null) {
-				final Image image;
-				if (figure.isPawn()) {
-					image = figure.owner ? pawn_w : pawn_b;
-				} else if (figure.isKnight()) {
-					image = figure.owner ? knight_w : knight_b;
-				} else if (figure.isBishop()) {
-					image = figure.owner ? bishop_w : bishop_b;
-				} else if (figure.isRook()) {
-					image = figure.owner ? rook_w : rook_b;
-				} else if (figure.isQueen()) {
-					image = figure.owner ? queen_w : queen_b;
-				} else {
-					image = figure.owner ? king_w : king_b;
-				}
 				graphic.drawImage(
-					image,
+					Resources.FigurePresentation.get(figure).image,
 					x * tile_size + border_size,
 					y_trans * tile_size + border_size,
 					this);
@@ -348,7 +322,7 @@ public final class GamePanel extends JPanel {
 		private final int border_x_size = 10; // configuration-variable
 		private final int status_x_size = panel_x_size - 4 * border_x_size;
 		private final int status_y_size =
-			(new FontMetrics(GUI.font_bold) {}).getHeight() +
+			(new FontMetrics(Resources.font_bold) {}).getHeight() +
 			3 * border_x_size;
 		private final int castling_x_size = panel_x_size / 2 - 2 * border_x_size;
 		private final int castling_y_size = (2 * (panel_y_size - status_y_size)) / 3;
@@ -389,7 +363,7 @@ public final class GamePanel extends JPanel {
 			final Dimension status_dimension =
 				new Dimension(status_x_size, status_y_size);
 			status.setOpaque(true);
-			status.setFont(GUI.font_bold);
+			status.setFont(Resources.font_bold);
 			status.setMaximumSize(status_dimension);
 			status.setMinimumSize(status_dimension);
 			status.setPreferredSize(status_dimension);

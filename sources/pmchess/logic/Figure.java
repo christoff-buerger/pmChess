@@ -26,27 +26,27 @@ public abstract class Figure {
 		new King()
 	};
 	
-	protected static Figure pawn(final boolean player) {
+	public static Figure pawn(final boolean player) {
 		return player ? figures[1] : figures[7];
 	}
 	
-	protected static Figure rook(final boolean player) {
+	public static Figure rook(final boolean player) {
 		return player ? figures[2] : figures[8];
 	}
 	
-	protected static Figure knight(final boolean player) {
+	public static Figure knight(final boolean player) {
 		return player ? figures[3] : figures[9];
 	}
 	
-	protected static Figure bishop(final boolean player) {
+	public static Figure bishop(final boolean player) {
 		return player ? figures[4] : figures[10];
 	}
 	
-	protected static Figure queen(final boolean player) {
+	public static Figure queen(final boolean player) {
 		return player ? figures[5] : figures[11];
 	}
 	
-	protected static Figure king(final boolean player) {
+	public static Figure king(final boolean player) {
 		return player ? figures[6] : figures[12];
 	}
 	
@@ -54,8 +54,10 @@ public abstract class Figure {
 	protected final int key;
 	
 	private Figure() {
-		if (key_count > 12)
-			throw new RuntimeException("IMPLEMENTATION ERROR");
+		if (key_count > 12) {
+			throw new RuntimeException(
+				"IMPLEMENTATION ERROR: Invalid figure instantiation.");
+		}
 		this.owner = key_count < 7;
 		this.key = key_count++;
 	}

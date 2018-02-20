@@ -7,8 +7,6 @@
 
 package pmchess;
 
-import java.io.*;
-
 import pmchess.gui.*;
 
 public final class pmChess {
@@ -18,30 +16,14 @@ public final class pmChess {
 	};
 	
 	// Static => enforce licenses exist:
-	public static final String pmChessLicense = loadText("license.txt");
-	public static final String openSansLicense = loadText("gui/fonts/LICENSE.txt");
-	public static final String chessPiecesLicense = loadText("gui/figures/LICENSE.txt");
-	
-	public static final String releaseNotes = loadText("release-notes.txt");
-	
-	private static String loadText(final String file) {
-		try {
-			final InputStream stream = pmChess.class.getResourceAsStream(file);
-			final ByteArrayOutputStream result = new ByteArrayOutputStream();
-			final byte[] buffer = new byte[1024];
-			int character;
-			try {
-				while ((character = stream.read(buffer)) != -1) {
-					result.write(buffer, 0, character);
-				}
-			} finally {
-				stream.close();
-			}
-			return result.toString("UTF-8");
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to load text file " + file + ".");
-		}
-	}
+	public static final String pmChessLicense =
+		Resources.loadText("license.txt");
+	public static final String chessPiecesLicense =
+		Resources.loadText("figures/LICENSE.txt");
+	public static final String openSansLicense =
+		Resources.loadText("fonts/Open-Sans-license.txt");
+	public static final String chessMeridaUnicodeLicense =
+		Resources.loadText("fonts/Chess-Merida-Unicode-license.txt");
 	
 	/*
 		Print license and start GUI. No command line arguments supported.

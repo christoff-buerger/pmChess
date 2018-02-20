@@ -19,30 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class GUI extends JFrame {
-	protected static final Font font_plain = loadFont("OpenSans-Regular.ttf");
-	protected static final Font font_italic = loadFont("OpenSans-Italic.ttf");
-	protected static final Font font_bold = loadFont("OpenSans-Bold.ttf");
-	private static final Image taskbar_icon = GUI.loadImage("icons/taskbar.png");
-	
-	private static Font loadFont(final String font_name) {
-		try {
-			final Font font = Font.createFont(
-				Font.TRUETYPE_FONT,
-				GUI.class.getResourceAsStream("fonts/" + font_name));
-			return font.deriveFont(14f);
-		} catch (IOException | FontFormatException e) {
-			throw new RuntimeException("Failed to load font " + font_name + ".");
-		}
-	}
-	
-	protected static Image loadImage(final String image_name) {
-		final java.net.URL image_url = GamePanel.class.getResource(image_name);
-		if (image_url != null) {
-			return Toolkit.getDefaultToolkit().getImage(image_url);
-		} else {
-			throw new RuntimeException("Failed to load image " + image_name + ".");
-		}
-	}
+	private static final Image taskbar_icon = Resources.loadImage("icons/taskbar.png");
 	
 	static {
 		// Initialize fonts:
@@ -51,7 +28,7 @@ public final class GUI extends JFrame {
 			final Object key = keys.nextElement();
 			final Object value = UIManager.get(key);
 			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
-				UIManager.put(key, font_plain);
+				UIManager.put(key, Resources.font_plain);
 		}
 		// Setup cross-platform look:
 		try {

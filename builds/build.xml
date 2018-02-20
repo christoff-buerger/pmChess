@@ -33,8 +33,8 @@
 		<copy todir="binaries/pmchess/gui/fonts">
 			<fileset dir="../sources/pmchess/gui/fonts"/>
 		</copy>
-		<copy file="../license.txt" todir="binaries/pmchess/"/>
-		<copy file="../release-notes.txt" todir="binaries/pmchess/"/>
+		<copy file="../license.txt" todir="binaries/pmchess/gui/"/>
+		<copy file="../release-notes.txt" todir="binaries/pmchess/gui/"/>
 		<jar destfile="portable-jar/pmChess.jar" index="false" update="false" compress="false">
 			<manifest>
 				<attribute
