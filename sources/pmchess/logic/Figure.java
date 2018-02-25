@@ -26,27 +26,27 @@ public abstract class Figure {
 		new King()
 	};
 	
-	public static Figure pawn(final boolean player) {
+	public static final Figure pawn(final boolean player) {
 		return player ? figures[1] : figures[7];
 	}
 	
-	public static Figure rook(final boolean player) {
+	public static final Figure rook(final boolean player) {
 		return player ? figures[2] : figures[8];
 	}
 	
-	public static Figure knight(final boolean player) {
+	public static final Figure knight(final boolean player) {
 		return player ? figures[3] : figures[9];
 	}
 	
-	public static Figure bishop(final boolean player) {
+	public static final Figure bishop(final boolean player) {
 		return player ? figures[4] : figures[10];
 	}
 	
-	public static Figure queen(final boolean player) {
+	public static final Figure queen(final boolean player) {
 		return player ? figures[5] : figures[11];
 	}
 	
-	public static Figure king(final boolean player) {
+	public static final Figure king(final boolean player) {
 		return player ? figures[6] : figures[12];
 	}
 	
@@ -89,7 +89,7 @@ public abstract class Figure {
 	protected abstract void computeMoves(final Board board, final int x, final int y);
 	
 	private static final class Pawn extends Figure {
-		protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure f;
 			final int xm1 = x - 1;
 			final int xp1 = x + 1;
@@ -132,7 +132,7 @@ public abstract class Figure {
 	}
 	
 	private static final class Rook extends Figure {
-		protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure f;
 			for (int X = x - 1; X >= 0; X--) {
 				f = board.figure(X, y);
@@ -178,7 +178,7 @@ public abstract class Figure {
 	}
 	
 	private static final class Knight extends Figure {
-		protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure f;
 			final int xm1 = x - 1;
 			final int xp1 = x + 1;
@@ -244,7 +244,7 @@ public abstract class Figure {
 	}
 		
 	private static final class Bishop extends Figure {
-		protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure f;
 			final int xm1 = x - 1;
 			final int xp1 = x + 1;
@@ -294,14 +294,14 @@ public abstract class Figure {
 	}
 	
 	private static final class Queen extends Figure {
-		protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure.rook(owner).computeMoves(board, x, y);
 			Figure.bishop(owner).computeMoves(board, x, y);
 		}
 	}
 	
 	private static final class King extends Figure {
-		protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure f;
 			final int xm1 = x - 1;
 			final int xp1 = x + 1;

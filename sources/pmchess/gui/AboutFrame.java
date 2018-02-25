@@ -54,7 +54,7 @@ public final class AboutFrame extends JFrame {
 			new JToggleButton("Chess Merida Unicode", false);
 		final JToggleButton chessPiecesButton = new JToggleButton("Chess pieces", false);
 		pmChessButton.addActionListener(new ActionListener() {
-				public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(true);
 					openSansButton.setSelected(false);
 					chessMeridaUnicodeButton.setSelected(false);
@@ -63,7 +63,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		openSansButton.addActionListener(new ActionListener() {
-				public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(false);
 					openSansButton.setSelected(true);
 					chessMeridaUnicodeButton.setSelected(false);
@@ -72,7 +72,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		chessMeridaUnicodeButton.addActionListener(new ActionListener() {
-				public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(false);
 					openSansButton.setSelected(false);
 					chessMeridaUnicodeButton.setSelected(true);
@@ -82,7 +82,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		chessPiecesButton.addActionListener(new ActionListener() {
-				public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(false);
 					openSansButton.setSelected(false);
 					chessMeridaUnicodeButton.setSelected(false);
@@ -101,12 +101,6 @@ public final class AboutFrame extends JFrame {
 		final JTabbedPane tabPane = new JTabbedPane();
 		tabPane.setPreferredSize(new Dimension(590, 500));
 		tabPane.addTab("Tea time", new JLabel(new ImageIcon(logo)));
-		/*tabPane.addTab("Tea time", new JPanel() {
-				public void paintComponent(final Graphics graphic) {
-					super.paintComponent(graphic);
-					graphic.drawImage(logo, 0, 0, this);
-				}
-			});*/
 		tabPane.addTab("Release notes", releaseNotesPanel);
 		tabPane.addTab("Licenses", licensesPanel);
 		
@@ -127,7 +121,7 @@ public final class AboutFrame extends JFrame {
 		actionMap.put(
 			"Close",
 			new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
+				@Override public void actionPerformed(ActionEvent e) {
 					AboutFrame.this.setVisible(false);
 				}
 			});
@@ -137,7 +131,7 @@ public final class AboutFrame extends JFrame {
 		actionMap.put(
 			"ScrollUp",
 			new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
+				@Override public void actionPerformed(ActionEvent e) {
 					final JScrollBar bar;
 					if (tabPane.getSelectedIndex() ==
 						tabPane.indexOfComponent(releaseNotesPanel))
@@ -159,7 +153,7 @@ public final class AboutFrame extends JFrame {
 		actionMap.put(
 			"ScrollDown",
 			new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
+				@Override public void actionPerformed(ActionEvent e) {
 					final JScrollBar bar;
 					if (tabPane.getSelectedIndex() ==
 						tabPane.indexOfComponent(releaseNotesPanel))

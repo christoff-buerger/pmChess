@@ -107,7 +107,7 @@ public final class GUI extends JFrame {
 			super("New game with:");
 		}
 
-		public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event) {
 			gamePanel.initialize(whiteComp.isSelected(), blackComp.isSelected());
 		}
 	}
@@ -117,7 +117,7 @@ public final class GUI extends JFrame {
 			super("Quit pmChess");
 		}
 
-		public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event) {
 			System.exit(0);
 		}
 	}
@@ -129,11 +129,11 @@ public final class GUI extends JFrame {
 			super("About pmChess");
 		}
 
-		public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event) {
 			info.setVisible(true);
 		}
 		
-		public void handleAbout(final AboutEvent event) {
+		@Override public void handleAbout(final AboutEvent event) {
 			info.setVisible(true);
 		}
 	}
@@ -142,7 +142,7 @@ public final class GUI extends JFrame {
 		private static MenuElement[] path;
 		{ // Instance initialization:
 			getModel().addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
+				@Override public void stateChanged(ChangeEvent e) {
 					if (getModel().isArmed() && isShowing()) {
 						path =  MenuSelectionManager.
 							defaultManager().
@@ -155,7 +155,7 @@ public final class GUI extends JFrame {
 			super(text);
 		}
 		
-		public void doClick(int pressTime) {
+		@Override public void doClick(int pressTime) {
 			super.doClick(pressTime);
 			MenuSelectionManager.defaultManager().setSelectedPath(path);
 		}

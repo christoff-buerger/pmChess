@@ -13,6 +13,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import pmchess.logic.*;
+import pmchess.gui.Resources.*;
 
 public final class GamePanel extends JPanel {
 	private static final Image bulb = Resources.loadImage("icons/bulb.png");
@@ -83,10 +84,6 @@ public final class GamePanel extends JPanel {
 		runGame();
 	}
 	
-	private boolean computerTurn() {
-		return board.player() ? computer_w : computer_b;
-	}
-	
 	private boolean undo() {
 		if (board.undo() != 0) {
 			historyPanel.history_data.removeElementAt(
@@ -101,10 +98,10 @@ public final class GamePanel extends JPanel {
 	}
 	
 	private void runGame() {
-		Board.GameStatus gameStatus = board.status();
+		Board.GameStatus game_status = board.status();
 		while (computerTurn() &&
-			(gameStatus == Board.GameStatus.Normal ||
-			 gameStatus == Board.GameStatus.Check))
+			(game_status == Board.GameStatus.Normal ||
+			 game_status == Board.GameStatus.Check))
 		{
 			paintImmediately(0, 0, getWidth(), getHeight());
 			final int move = search.selectMove(board, evaluator);
@@ -112,15 +109,22 @@ public final class GamePanel extends JPanel {
 			if (capitulation)
 				break;
 			board.execute(Move.x(move), Move.y(move), Move.X(move), Move.Y(move));
-			historyPanel.history_data.addElement(move);
-			gameStatus = board.status();
+			game_status = board.status();
+			historyPanel.history_data.addElement(new PastMove(
+				board.turn() - 1,
+				move,
+				game_status));
 		}
 		boardPanel.repaint();
 		statusPanel.repaint();
 	}
 	
+	private boolean computerTurn() {
+		return board.player() ? computer_w : computer_b;
+	}
+	
 	private final class BoardListener extends KeyAdapter {
-		public void keyPressed(final KeyEvent event) {
+		@Override public void keyPressed(final KeyEvent event) {
 			if (computerTurn())
 				return;
 			final int old_x = cursor_x, old_y = cursor_y;
@@ -141,8 +145,10 @@ public final class GamePanel extends JPanel {
 						cursor_x,
 						cursor_y))
 					{
-						historyPanel.history_data.addElement(
-							board.previousMove(board.turn() - 1));
+						historyPanel.history_data.addElement(new PastMove(
+							board.turn() - 1,
+							board.previousMove(board.turn() - 1),
+							board.status()));
 						selected_figure = null;
 						runGame();
 					}
@@ -165,7 +171,7 @@ public final class GamePanel extends JPanel {
 	}
 	
 	private final class HistoryListener extends KeyAdapter {
-		public void keyPressed(final KeyEvent event) {
+		@Override public void keyPressed(final KeyEvent event) {
 			final Board.GameStatus gameStatus = board.status();
 			if (computerTurn() && !capitulation &&
 				gameStatus != Board.GameStatus.Checkmate &&
@@ -206,7 +212,7 @@ public final class GamePanel extends JPanel {
 					border_size)));
 		}
 		
-		public void paintComponent(final Graphics graphic) {
+		@Override public void paintComponent(final Graphics graphic) {
 			super.paintComponent(graphic);
 			
 			// Draw horizontal (h) and vertical (v) border-markings:
@@ -287,7 +293,7 @@ public final class GamePanel extends JPanel {
 			final Figure figure = board.figure(x, y);
 			if (figure != null) {
 				graphic.drawImage(
-					Resources.FigurePresentation.get(figure).image,
+					FigurePresentation.get(figure).image,
 					x * tile_size + border_size,
 					y_trans * tile_size + border_size,
 					this);
@@ -328,7 +334,7 @@ public final class GamePanel extends JPanel {
 		private final int castling_y_size = (2 * (panel_y_size - status_y_size)) / 3;
 		
 		private final JLabel status = new JLabel() {
-			public void paintComponent(final Graphics graphic) {
+			@Override public void paintComponent(final Graphics graphic) {
 				super.paintComponent(graphic);
 				final Board.GameStatus gameStatus = board.status();
 				final int bulb_x =
@@ -394,7 +400,7 @@ public final class GamePanel extends JPanel {
 			add(panel);
 		}
 		
-		public void paintComponent(final Graphics graphic) {
+		@Override public void paintComponent(final Graphics graphic) {
 			super.paintComponent(graphic);
 			
 			// Update status message:
@@ -410,18 +416,18 @@ public final class GamePanel extends JPanel {
 					message = pNow + " checkmate. " + pNext + " wins.";
 					break;
 				case Check:
-					message = pNow + " in check. " + pNow + "'s move.";
+					message = pNow + " in check. " + pNow + "'s turn.";
 					break;
 				case Stalemate:
 					message = "Stalemate. " + pNow + " cannot move.";
 					break;
 				default:
-					message = pNow + "'s move.";
+					message = pNow + "'s turn.";
 				}
 			}
 			status.setBackground(board.player() ? Color.white : Color.black);
 			status.setForeground(board.player() ? Color.black : Color.white);
-			status.setText("  " + Integer.toString(board.turn()) + ": " + message);
+			status.setText("  " + Integer.toString(board.move()) + ": " + message);
 			
 			// Update allowed castlings:
 			castling_l_w.setSelected(board.castlingAllowed(true, true));
@@ -436,8 +442,8 @@ public final class GamePanel extends JPanel {
 		private final int panel_y_size = boardPanel.panel_size + statusPanel.panel_y_size;
 		private final int border_size = 15; // configuration-variable
 		
-		private final DefaultListModel<Integer> history_data = new DefaultListModel<>();
-		private final JList history_list = new JList(history_data);
+		private final DefaultListModel<PastMove> history_data = new DefaultListModel<>();
+		private final JList<PastMove> history_list = new JList<>(history_data);
 		
 		private HistoryPanel() {
 			// Setup panel size and layout:
@@ -462,8 +468,103 @@ public final class GamePanel extends JPanel {
 			historyScrollPane.setMinimumSize(historyScrollPane_dimension);
 			historyScrollPane.setPreferredSize(historyScrollPane_dimension);
 			history_list.addKeyListener(new HistoryListener());
-			history_data.addElement(0);
+			history_list.setCellRenderer(new HistoryRenderer());
+			history_data.addElement(new PastMove(0, 0, Board.GameStatus.Normal));
 			add(historyScrollPane);
+		}
+		
+	}
+	
+	private static final class PastMove {
+		private final int turn;
+		private final int move;
+		private final Board.GameStatus status;
+		
+		private PastMove(final int turn, final int move, final Board.GameStatus status) {
+			this.turn = turn;
+			this.move = move;
+			this.status = status;
+		}
+	}
+	
+	private static final class HistoryRenderer extends DefaultListCellRenderer {
+		@Override public Component getListCellRendererComponent(
+			final JList<?> list,
+			final Object value,
+			final int index,
+			final boolean isSelected,
+			final boolean cellHasFocus)
+		{
+			super.getListCellRendererComponent(
+				list,
+				"",
+				index,
+				isSelected,
+				cellHasFocus);
+			
+			final PastMove move = (PastMove)value;
+			if (move.move == 0) {
+				setText(html(Resources.font_italic, "initial position"));
+				return this;
+			}
+			
+			final FigurePresentation figure_moved =
+				FigurePresentation.get(Move.figure_moved(move.move));
+			final Figure figure_captured = Move.figure_destination(move.move);
+			final int x = Move.x(move.move);
+			final int X = Move.X(move.move);
+			final int Y = Move.Y(move.move);
+			
+			final String notation; // algebraic notation according to FIDE
+			if (figure_moved.figure.isPawn()) {
+				final FigurePresentation figure_placed =
+					FigurePresentation.get(Move.figure_placed(move.move));
+				notation = (figure_captured == null ? "" : file(x) + "x") +
+					file(X) +
+					rank(Y) +
+					(figure_placed.figure.isPawn() ?
+						"" :
+						html(figure_placed.font, figure_placed.unicode));
+			} else if (figure_moved.figure.isKing() && X - x == 2) {
+				notation = "0-0"; // kingside castlings
+			} else if (figure_moved.figure.isKing() && x - X == 2) {
+				notation = "0-0-0"; // queenside castlings
+			} else {
+				notation = html(figure_moved.font, figure_moved.unicode) +
+					(figure_captured == null ? "" : "x") +
+					file(X) +
+					rank(Y);
+			}
+			setText(html(Resources.font_plain,
+				Board.move(move.turn) +
+				(move.turn % 2 == 0 ? "\u2026 " : ". ") +
+				notation +
+				(move.status == Board.GameStatus.Check ? "+" : "") +
+				(move.status == Board.GameStatus.Checkmate ? "++" : "")));
+			
+			return this;
+		}
+		
+		@Override public void setText(final String text) {
+			super.setText("<html>" + text + "</html>");
+		}
+		
+		private static String html(final Font font, final String text) {
+			return "<span style=\"font-family:" +
+				font.getName() +
+				";font-size:" +
+				Math.round(1.1f * font.getSize2D()) +
+				"pt;\">" +
+				text +
+				"</span>";
+		}
+		
+		private static String file(final int x) {
+			return String.valueOf((char)('a' + x));
+		}
+		
+		private static String rank(final int y) {
+			return String.valueOf((char)('1' + y));
 		}
 	}
 }

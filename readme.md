@@ -25,6 +25,8 @@ Figures are moved using the keyboard. A blue rectangle marks the cursor position
 
 The _Game status_ section summarises the current player (background color of the status message), turn number, game status (checkmate, check, stalemate, capitulation or normal move) and castling possibilities considering previous moves (checkboxes for left and right castling of each player). The castling summary shows only whether left or right castling are impossible due to previous king or rook movements; if checked, previous movements are not prohibiting castling. A bulb icon at the end of the status message signals that the computer is busy deciding its move.
 
+The game history to the right can be used to undo moves. It is written according to the algebraic notation specified by FIDE (cf. the [_FIDE Handbook_](https://www.fide.com/component/handbook), Part _E.01. Laws of Chess_, Section _Appendix C. Algebraic notation_). To reset the game to a previous position, select a move using the up- and down-keys and press space. The game will be reset to the state resulting after executing the selected move. The tab-key is used to switch between chessboard and game history navigation.
+
 # Offical, stable releases
 
 Releases of _pmChess_ are available in version-numbered subdirectories of `releases`. Platform independent distributions are provided in respective `portable-jar` subdirectories; they require an installed runtime environment of the _Java Platform, Standard Edition_ of at least version 9 (_Java SE 9_). Native, self-contained distributions for _macOS_ are provided in `macOS` subdirectories.

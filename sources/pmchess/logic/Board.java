@@ -260,8 +260,16 @@ public final class Board {
 		return player;
 	}
 	
-	public int turn() {
+	public int turn() { // Current ply number (number of performed half-moves plus one).
 		return turn;
+	}
+	
+	public int move() { // Current move number (each move has two turns).
+		return player ? (turn / 2) + 1 : turn / 2;
+	}
+	
+	public static int move(final int turn) { // Move number the given ply is part of.
+		return turn % 2 == 0 ? turn / 2 : (turn / 2) + 1;
 	}
 	
 	public GameStatus status() {

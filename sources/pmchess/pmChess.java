@@ -34,7 +34,7 @@ public final class pmChess {
 		System.out.println();
 		System.out.println(pmChessLicense);
 		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+			@Override public void run() {
 				new GUI();
 			}
 		});

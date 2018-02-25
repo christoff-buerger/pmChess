@@ -45,6 +45,8 @@ public final class Resources {
 			final Font font = Font.createFont(
 				Font.TRUETYPE_FONT,
 				GUI.class.getResourceAsStream("fonts/" + font_name));
+			if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font))
+				throw new IOException(); // Maybe better not enforce registration?
 			return font.deriveFont(scale * 14f);
 		} catch (IOException | FontFormatException e) {
 			throw new RuntimeException("Failed to load font " + font_name + ".");
@@ -96,7 +98,7 @@ public final class Resources {
 		protected final Image image;
 		protected final String unicode;
 		protected final String ascii;
-		protected static final Font font = loadFont("Chess-Merida-Unicode.ttf", 2);
+		protected static final Font font = loadFont("Chess-Merida-Unicode.ttf", 1.2f);
 		
 		private FigurePresentation(
 			final Figure figure,
