@@ -508,32 +508,34 @@ public final class GamePanel extends JPanel {
 				return this;
 			}
 			
-			final FigurePresentation figure_moved =
-				FigurePresentation.get(Move.figure_moved(move.move));
-			final Figure figure_captured = Move.figure_destination(move.move);
 			final int x = Move.x(move.move);
+			final int y = Move.y(move.move);
 			final int X = Move.X(move.move);
 			final int Y = Move.Y(move.move);
+			final FigurePresentation figure_moved =
+				FigurePresentation.get(Move.figure_moved(move.move));
+			final FigurePresentation figure_placed =
+				FigurePresentation.get(Move.figure_placed(move.move));
+			final Figure figure_captured = Move.figure_destination(move.move);
 			
 			final String notation; // algebraic notation according to FIDE
-			if (figure_moved.figure.isPawn()) {
-				final FigurePresentation figure_placed =
-					FigurePresentation.get(Move.figure_placed(move.move));
-				notation = (figure_captured == null ? "" : file(x) + "x") +
-					file(X) +
-					rank(Y) +
-					(figure_placed.figure.isPawn() ?
-						"" :
-						html(figure_placed.font, figure_placed.unicode));
-			} else if (figure_moved.figure.isKing() && X - x == 2) {
-				notation = "0-0"; // kingside castlings
+			if (figure_moved.figure.isKing() && X - x == 2) {
+				notation = "0-0";
 			} else if (figure_moved.figure.isKing() && x - X == 2) {
-				notation = "0-0-0"; // queenside castlings
+				notation = "0-0-0";
 			} else {
-				notation = html(figure_moved.font, figure_moved.unicode) +
+				notation =
+					(figure_moved.figure.isPawn() ?
+						"" :
+						html(figure_moved.font, figure_moved.unicode)) +
+					file(x) +
+					rank(y) +
 					(figure_captured == null ? "" : "x") +
 					file(X) +
-					rank(Y);
+					rank(Y) +
+					(figure_moved.figure != figure_placed.figure ?
+						html(figure_placed.font, figure_placed.unicode) :
+						"");
 			}
 			setText(html(Resources.font_plain,
 				Board.move(move.turn) +
