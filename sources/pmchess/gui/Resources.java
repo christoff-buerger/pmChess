@@ -65,6 +65,7 @@ public final class Resources {
 	protected static final Font font_plain = loadFont("Open-Sans-Regular.ttf");
 	protected static final Font font_italic = loadFont("Open-Sans-Italic.ttf");
 	protected static final Font font_bold = loadFont("Open-Sans-Bold.ttf");
+	protected static final Font font_bold_italic = loadFont("Open-Sans-BoldItalic.ttf");
 	
 	private static final FigurePresentation[] figures = {
 		new FigurePresentation(

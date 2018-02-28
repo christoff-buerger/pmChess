@@ -504,7 +504,7 @@ public final class GamePanel extends JPanel {
 			
 			final PastMove move = (PastMove)value;
 			if (move.move == 0) {
-				setText(html(Resources.font_italic, "initial position"));
+				setText("initial position");
 				return this;
 			}
 			
@@ -520,35 +520,54 @@ public final class GamePanel extends JPanel {
 			
 			final String notation; // algebraic notation according to FIDE
 			if (figure_moved.figure.isKing() && X - x == 2) {
-				notation = "0-0";
+				notation = move("0-0");
 			} else if (figure_moved.figure.isKing() && x - X == 2) {
-				notation = "0-0-0";
+				notation = move("0-0-0");
 			} else {
 				notation =
 					(figure_moved.figure.isPawn() ?
 						"" :
-						html(figure_moved.font, figure_moved.unicode)) +
-					file(x) +
-					rank(y) +
-					(figure_captured == null ? "" : "x") +
-					file(X) +
-					rank(Y) +
-					(figure_moved.figure != figure_placed.figure ?
-						html(figure_placed.font, figure_placed.unicode) :
-						"");
+						figure(figure_moved)) +
+					move(file(x) + rank(y)) +
+					(figure_captured == null ?
+						"" :
+						info("x")) +
+					move(file(X) + rank(Y)) +
+					(figure_moved.figure == figure_placed.figure ?
+						"" :
+						figure(figure_placed));
 			}
-			setText(html(Resources.font_plain,
-				Board.move(move.turn) +
+			setText(Board.move(move.turn) +
 				(move.turn % 2 == 0 ? "\u2026 " : ". ") +
 				notation +
-				(move.status == Board.GameStatus.Check ? "+" : "") +
-				(move.status == Board.GameStatus.Checkmate ? "++" : "")));
+				(move.status == Board.GameStatus.Check ? info("+") : "") +
+				(move.status == Board.GameStatus.Checkmate ? info("++") : ""));
 			
 			return this;
 		}
 		
+		private static String file(final int x) {
+			return String.valueOf((char)('a' + x));
+		}
+		
+		private static String rank(final int y) {
+			return String.valueOf((char)('1' + y));
+		}
+		
 		@Override public void setText(final String text) {
-			super.setText("<html>" + text + "</html>");
+			super.setText("<html>" + html(Resources.font_italic, text) + "</html>");
+		}
+		
+		private static String figure(final FigurePresentation figure) {
+			return html(figure.font, figure.unicode);
+		}
+		
+		private static String move(final String text) {
+			return html(Resources.font_plain, text);
+		}
+		
+		private static String info(final String text) {
+			return html(Resources.font_bold_italic, text);
 		}
 		
 		private static String html(final Font font, final String text) {
@@ -559,14 +578,6 @@ public final class GamePanel extends JPanel {
 				"pt;\">" +
 				text +
 				"</span>";
-		}
-		
-		private static String file(final int x) {
-			return String.valueOf((char)('a' + x));
-		}
-		
-		private static String rank(final int y) {
-			return String.valueOf((char)('1' + y));
 		}
 	}
 }
