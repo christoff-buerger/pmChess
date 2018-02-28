@@ -28,7 +28,7 @@ public final class GUI extends JFrame {
 			final Object key = keys.nextElement();
 			final Object value = UIManager.get(key);
 			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
-				UIManager.put(key, Resources.font_plain);
+				UIManager.put(key, Resources.font_regular);
 		}
 		// Setup cross-platform look:
 		try {

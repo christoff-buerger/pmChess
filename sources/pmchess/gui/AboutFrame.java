@@ -28,7 +28,7 @@ public final class AboutFrame extends JFrame {
 		final JLabel text2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
 		
 		final JTextArea releaseNotesTextArea = new JTextArea(releaseNotes);
-		releaseNotesTextArea.setFont(Resources.font_plain);
+		releaseNotesTextArea.setFont(Resources.font_regular);
 		releaseNotesTextArea.setLineWrap(false);
 		releaseNotesTextArea.setEditable(false);
 		final JScrollPane releaseNotesScrollPane = new JScrollPane(releaseNotesTextArea);

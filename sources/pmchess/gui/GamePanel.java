@@ -546,6 +546,10 @@ public final class GamePanel extends JPanel {
 			return this;
 		}
 		
+		@Override public void setText(final String text) {
+			super.setText("<html>" + html(Resources.font_italic, text) + "</html>");
+		}
+		
 		private static String file(final int x) {
 			return String.valueOf((char)('a' + x));
 		}
@@ -554,16 +558,12 @@ public final class GamePanel extends JPanel {
 			return String.valueOf((char)('1' + y));
 		}
 		
-		@Override public void setText(final String text) {
-			super.setText("<html>" + html(Resources.font_italic, text) + "</html>");
-		}
-		
 		private static String figure(final FigurePresentation figure) {
 			return html(figure.font, figure.unicode);
 		}
 		
 		private static String move(final String text) {
-			return html(Resources.font_plain, text);
+			return html(Resources.font_regular, text);
 		}
 		
 		private static String info(final String text) {
@@ -572,7 +572,7 @@ public final class GamePanel extends JPanel {
 		
 		private static String html(final Font font, final String text) {
 			return "<span style=\"font-family:" +
-				font.getName() +
+				font.getFontName() +
 				";font-size:" +
 				Math.round(1.1f * font.getSize2D()) +
 				"pt;\">" +

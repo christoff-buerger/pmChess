@@ -42,12 +42,18 @@ public final class Resources {
 	
 	private static Font loadFont(final String font_name, final float scale) {
 		try {
-			final Font font = Font.createFont(
+			final Font loaded_font = Font.createFont(
 				Font.TRUETYPE_FONT,
 				GUI.class.getResourceAsStream("fonts/" + font_name));
-			if (!GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font))
-				throw new IOException(); // Maybe better not enforce registration?
-			return font.deriveFont(scale * 14f);
+			final GraphicsEnvironment environment =
+				GraphicsEnvironment.getLocalGraphicsEnvironment();
+			for (final Font existing_font : environment.getAllFonts()) {
+				if (existing_font.getFontName().equals(loaded_font.getFontName()))
+					return existing_font.deriveFont(scale * 14f);
+			}
+			if (!environment.registerFont(loaded_font))
+				throw new IOException();
+			return loaded_font.deriveFont(scale * 14f);
 		} catch (IOException | FontFormatException e) {
 			throw new RuntimeException("Failed to load font " + font_name + ".");
 		}
@@ -62,7 +68,7 @@ public final class Resources {
 		}
 	}
 	
-	protected static final Font font_plain = loadFont("Open-Sans-Regular.ttf");
+	protected static final Font font_regular = loadFont("Open-Sans-Regular.ttf");
 	protected static final Font font_italic = loadFont("Open-Sans-Italic.ttf");
 	protected static final Font font_bold = loadFont("Open-Sans-Bold.ttf");
 	protected static final Font font_bold_italic = loadFont("Open-Sans-BoldItalic.ttf");
