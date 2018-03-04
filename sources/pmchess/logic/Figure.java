@@ -89,21 +89,42 @@ public abstract class Figure {
 	protected abstract void computeMoves(final Board board, final int x, final int y);
 	
 	private static final class Pawn extends Figure {
+		private static int possibleEnPassant(final Board board) {
+			final int move = board.previousMove(board.turn() - 1);
+			if (move == 0)
+				return -1;
+			if (Move.figure_moved(move).isPawn()) {
+				final int distance = Move.y(move) - Move.Y(move);
+				if (distance == 2 | distance == -2);
+					return Move.x(move);
+			}
+			return -1;
+		}
+				
 		@Override protected void computeMoves(final Board board, final int x, final int y) {
 			Figure f;
 			final int xm1 = x - 1;
 			final int xp1 = x + 1;
 			if (owner) {
+				final int en_passant = y == 4 ? possibleEnPassant(board) : -1;
 				int Y = y + 1;
 				if (xm1 >= 0) {
 					f = board.figure(xm1, Y);
-					if (f != null && f.owner != owner)
+					if (f == null) {
+						if (xm1 == en_passant)
+							board.moves_add(x, 4, xm1, Y);
+					} else if (f.owner != owner) {
 						board.moves_add(x, y, xm1, Y);
+					}
 				}
 				if (xp1 <= 7) {
 					f = board.figure(xp1, Y);
-					if (f != null && f.owner != owner)
+					if (f == null) {
+						if (xp1 == en_passant)
+							board.moves_add(x, 4, xp1, Y);
+					} else if (f.owner != owner) {
 						board.moves_add(x, y, xp1, Y);
+					}
 				}
 				if (board.figure(x, Y) == null) {
 					board.moves_add(x, y, x, Y);
@@ -111,16 +132,25 @@ public abstract class Figure {
 						board.moves_add(x, y, x, Y);
 				}
 			} else {
+				final int en_passant = y == 3 ? possibleEnPassant(board) : -1;
 				int Y = y - 1;
 				if (xm1 >= 0) {
 					f = board.figure(xm1, Y);
-					if (f != null && f.owner != owner)
+					if (f == null) {
+						if (xm1 == en_passant)
+							board.moves_add(x, 3, xm1, Y);
+					} else if (f.owner != owner) {
 						board.moves_add(x, y, xm1, Y);
+					}
 				}
 				if (xp1 <= 7) {
 					f = board.figure(xp1, Y);
-					if (f != null && f.owner != owner)
+					if (f == null) {
+						if (xp1 == en_passant)
+							board.moves_add(x, 3, xp1, Y);
+					} else if (f.owner != owner) {
 						board.moves_add(x, y, xp1, Y);
+					}
 				}
 				if (board.figure(x, Y) == null) {
 					board.moves_add(x, y, x, Y);

@@ -36,17 +36,17 @@ public final class Board {
 			null, null, null, null,
 		 Figure.pawn(false),	Figure.rook(false)}};
 	
+	private int king_x_w = 4;
+	private int king_y_w = 0;
+	private int king_x_b = 4;
+	private int king_y_b = 7;
+	
 	private int castlings_allowed = 0xF;
 	private boolean castling_done_w = false; // History useful for scoring.
 	private boolean castling_done_b = false; // History useful for scoring.
 	
 	private boolean player = true;
 	private int turn = 1;
-	
-	private int king_x_w = 4;
-	private int king_y_w = 0;
-	private int king_x_b = 4;
-	private int king_y_b = 7;
 	
 	/*
 		History of game situations, starting from the beginning to the current
@@ -145,10 +145,11 @@ public final class Board {
 		// Update cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
 		final int x = Move.x(move);
+		final int y = Move.y(move);
 		final int X = Move.X(move);
 		final int Y = Move.Y(move);
 		final Figure figure_placed = Move.figure_placed(move);
-		board[x][Move.y(move)] = null;
+		board[x][y] = null;
 		board[X][Y] = figure_placed;
 		if (figure_placed.isKing()) {
 			if (player) {
@@ -175,6 +176,11 @@ public final class Board {
 					castling_done_b = true;
 				}
 			}
+		} else if (figure_placed.isPawn() &&
+			X != x &&
+			Move.figure_destination(move) == null)
+		{
+			board[X][y] = null; // perform en passant capture
 		}
 		castlings_allowed ^= Move.castlingChanges(move);
 		player = !player;
@@ -198,10 +204,9 @@ public final class Board {
 	
 	public int undo() {
 		// Restore game history (pop current moves frame):
-		final int predecessor_frame = moves[moves_frame + 1];
-		if (predecessor_frame == -1)
+		if (turn == 1)
 			return 0;
-		moves_frame = predecessor_frame;
+		moves_frame = moves[moves_frame + 1];
 		// Restore cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
 		final int move = moves[moves_frame + 2];// TODO: fix when moves_selected contains index not move
@@ -210,8 +215,9 @@ public final class Board {
 		final int X = Move.X(move);
 		final int Y = Move.Y(move);
 		final Figure figure_moved = Move.figure_moved(move);
+		final Figure figure_destination = Move.figure_destination(move);
 		board[x][y] = figure_moved;
-		board[X][Y] = Move.figure_destination(move);
+		board[X][Y] = figure_destination;
 		if (figure_moved.isKing()) {
 			if (player) {
 				king_x_b = x;
@@ -237,6 +243,8 @@ public final class Board {
 					castling_done_b = false;
 				}
 			}
+		} else if (figure_moved.isPawn() && X != x && figure_destination == null) {
+			board[X][y] = Figure.pawn(player); // undo en passant capture
 		}
 		castlings_allowed ^= Move.castlingChanges(move);
 		player = !player;

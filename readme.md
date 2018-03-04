@@ -12,7 +12,7 @@ Of course, _pmChess_ cannot compete with professional chess programs; after all,
 
 # Rule limitations
 
-_pmChess_ implements the official rules of _FIDE_ (_Fédération Internationale des Échecs_) except for en passant moves and the following draw rules:
+_pmChess_ implements the official rules of _FIDE_ (_Fédération Internationale des Échecs_) except for the following draw rules:
  1. **Threefold repetition** The same position occurs three times with the same player to move.
  2. **Fifty-moves rule** The last fifty successive moves made by both players contain no capture or pawn move.
  3. **Insufficient material** Neither player has a theoretical possibility to checkmate the opponent.

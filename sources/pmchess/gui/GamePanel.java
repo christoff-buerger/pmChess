@@ -524,18 +524,23 @@ public final class GamePanel extends JPanel {
 			} else if (figure_moved.figure.isKing() && x - X == 2) {
 				notation = move("0-0-0");
 			} else {
+				final boolean en_passant =
+					figure_moved.figure.isPawn() &&
+					figure_captured == null &&
+					x != X;
 				notation =
 					(figure_moved.figure.isPawn() ?
 						"" :
 						figure(figure_moved)) +
 					move(file(x) + rank(y)) +
-					(figure_captured == null ?
+					(figure_captured == null && !en_passant ?
 						"" :
 						info("x")) +
 					move(file(X) + rank(Y)) +
 					(figure_moved.figure == figure_placed.figure ?
 						"" :
-						figure(figure_placed));
+						figure(figure_placed)) +
+					(en_passant ? info("e.p.") : "");
 			}
 			setText(Board.move(move.turn) +
 				(move.turn % 2 == 0 ? "\u2026 " : ". ") +

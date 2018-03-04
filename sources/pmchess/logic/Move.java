@@ -29,6 +29,10 @@ public final class Move {
 		|           RIGHT if X - x = 2          |
 		|           LEFT  if x - X = 2          |
 		+---------------------------------------+
+		| En passant: Pawn capture (X != x)     |
+		|           without a figure at the     |
+		|           destination                 |
+		+---------------------------------------+
 	*/
 	public static int encodeMove(
 		final Board board,
