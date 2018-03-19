@@ -9,12 +9,16 @@ package pmchess.gui;
 
 import java.io.*;
 
+import java.nio.charset.*;
+
 import java.awt.*;
 
 import pmchess.logic.*;
 
 public final class Resources {
 	private Resources() {} // No instances.
+	
+	public static final String text_encoding = StandardCharsets.UTF_8.name();
 	
 	public static String loadText(final String file) {
 		try {
@@ -30,7 +34,7 @@ public final class Resources {
 			} finally {
 				stream.close();
 			}
-			return result.toString("UTF-8");
+			return result.toString(text_encoding);
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to load text file " + file + ".");
 		}

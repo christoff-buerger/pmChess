@@ -10,8 +10,9 @@ package pmchess;
 import pmchess.gui.*;
 
 public final class pmChess {
+	public static final String version = "1.1.0";
 	public static final String[] about = {
-		"pmChess version 1.1.0 by Christoff Bürger (christoff.buerger@gmail.com).",
+		"pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com).",
 		"Source code available at https://github.com/christoff-buerger/pmChess."
 	};
 	

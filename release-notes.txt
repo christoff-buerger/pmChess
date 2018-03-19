@@ -13,8 +13,11 @@ Version 1.1.0 (in development):
   - Removed "Undo move"-entry of the "Game"-menu; the new game history can
     be used instead.
   - Added algebraic notation to the chessboard, marking its files and ranks.
-  - Added taskbar icon and application logo.
   - Added release notes tab to "About pmChess"-window.
+  - Added contact form to "About pmChess"-window which can be used to report
+    bugs and give feedback. The form is also directly reachable via a new
+    "Contact and feedback"-entry of the "Help"-menu.
+  - Added taskbar icon and application logo.
 
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a

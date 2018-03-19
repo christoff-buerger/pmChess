@@ -81,6 +81,7 @@ public final class GUI extends JFrame {
 		final JMenu helpMenu = new JMenu("Help"); // Help menu:
 		helpMenu.setMnemonic(KeyEvent.VK_H);
 		helpMenu.add(about);
+		helpMenu.add(new ContactAction());
 		menuBar.add(helpMenu);
 		setJMenuBar(menuBar);
 		
@@ -123,18 +124,28 @@ public final class GUI extends JFrame {
 	}
 	
 	private static final class AboutAction extends AbstractAction implements AboutHandler {
-		private static final AboutFrame info = new AboutFrame();
+		private static final AboutFrame about_frame = new AboutFrame();
 		
 		private AboutAction() {
 			super("About pmChess");
 		}
 
 		@Override public void actionPerformed(final ActionEvent event) {
-			info.setVisible(true);
+			about_frame.setVisible(true);
 		}
 		
 		@Override public void handleAbout(final AboutEvent event) {
-			info.setVisible(true);
+			about_frame.setVisible(true);
+		}
+	}
+	
+	private static final class ContactAction extends AbstractAction {
+		private ContactAction() {
+			super("Contact and feedback");
+		}
+		
+		@Override public void actionPerformed(final ActionEvent event) {
+			AboutAction.about_frame.showContactTab();
 		}
 	}
 	
