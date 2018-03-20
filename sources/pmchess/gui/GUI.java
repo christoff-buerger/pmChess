@@ -54,8 +54,10 @@ public final class GUI extends JFrame {
 		
 		// Setup icon and "About" window:
 		final AboutAction about = new AboutAction();
-		Taskbar.getTaskbar().setIconImage(taskbar_icon);
-		Desktop.getDesktop().setAboutHandler(about);
+		try {
+			Taskbar.getTaskbar().setIconImage(taskbar_icon);
+			Desktop.getDesktop().setAboutHandler(about);
+		} catch (SecurityException | UnsupportedOperationException exception) {}
 		
 		// Setup menu bar:
 		final JMenuBar menuBar = new JMenuBar();
