@@ -12,11 +12,13 @@
 		<delete dir="binaries"/>
 		<delete file="portable-jar/pmChess.jar"/>
 		<delete dir="macOS/pmChess.app/Contents/Resources/pmChess"/>
+		<delete dir="Windows/pmChess/binaries"/>
 	</target>
 
 	<target name="all" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
+			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"
 			includeantruntime="false"
@@ -64,6 +66,21 @@
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
 			<arg value="${script-path}/macOS/pmChess.app/Contents/Resources/pmChess"/>
+			<arg value="--strip-debug"/>
+			<arg value="--no-header-files"/>
+			<arg value="--no-man-pages"/>
+			<arg value="--compress"/>
+			<arg value="0"/>
+		</exec>
+		<exec osfamily="Windows" executable="${java.home}/bin/jlink">
+			<arg value="--module-path"/>
+			<arg value="${script-path}/portable-jar/pmChess.jar;${java.home}/jmods"/>
+			<arg value="--add-modules"/>
+			<arg value="pmchess"/>
+			<arg value="--launcher"/>
+			<arg value="pmChess=pmchess/pmchess.pmChess"/>
+			<arg value="--output"/>
+			<arg value="${script-path}/Windows/pmChess/binaries"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>

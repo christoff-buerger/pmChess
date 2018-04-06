@@ -5,11 +5,12 @@
 
 # Ignore backup files of common text editors:
 **/*~
-# Ignore Mac Os X Desktop Services Store configuration files:
+# Ignore macOS "Desktop Services Store" configuration files:
 **/.DS_Store
 # Ignore generated binary directory:
 /builds/binaries
 # Ignore generated jar:
 /builds/portable-jar/pmChess.jar
-# Ignore compiled code of native pmChess distribution:
+# Ignore compiled code of native pmChess distributions:
 /builds/macOS/pmChess.app/Contents/Resources/pmChess
+/builds/Windows/pmChess
