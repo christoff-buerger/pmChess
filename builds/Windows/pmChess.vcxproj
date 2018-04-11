@@ -10,7 +10,7 @@
 	ToolsVersion="14.0"
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	
-	<!-- ============================== Default MSBuild elements ============================== -->
+	<!-- ================================ Default  elements ================================ -->
 	
 	<!--
 		List of project configurations known to the project (such as 'Debug|Win32' or
@@ -24,9 +24,9 @@
 	</ItemGroup>
 	
 	<!--
-		Project level settings such as 'ProjectGuid' or 'RootNamespace'. These properties are
-		usually not overridden elsewhere and are configuration independent; thus, only one
-		'Globals' group generally exists.
+		Project level settings such as 'ProjectGuid' or 'RootNamespace'. These properties
+		are usually not overridden elsewhere and are configuration independent; thus, only
+		one 'Globals' group generally exists.
 	-->
 	<PropertyGroup Label="Globals">
 		<!-- Visual Studio configuration -->
@@ -68,7 +68,7 @@
 		<OptionCompare>binary</OptionCompare>
 		<!-- Compiler back-end configuration (code generation features) -->
 		<SubsystemVersion>6.01</SubsystemVersion><!-- Windows 7 -->
-		<Deterministic>true</Deterministic><!-- always produce same binaries for same input -->
+		<Deterministic>true</Deterministic><!-- produce same binaries for same sources -->
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<Optimize>true</Optimize>
 		<RemoveIntegerChecks>true</RemoveIntegerChecks>
@@ -78,52 +78,52 @@
 		<DefineDebug>false</DefineDebug>
 		<DefineTrace>false</DefineTrace>
 		<DebugType>none</DebugType>
-		<ErrorReport>none</ErrorReport><!-- don't report compiler errors to Microsoft -->
+		<ErrorReport>none</ErrorReport><!-- don't report Microsoft errors -->
 		<GenerateDocumentation>false</GenerateDocumentation>
 	</PropertyGroup>
 	
 	<!--
-		Property sheet providing default settings for VC++ projects. It contains definitions for
-		all common project settings such as 'Platform', 'PlatformToolset', 'OutputPath',
+		Property sheet providing default settings for VC++ projects. It contains definitions
+		for all common project settings such as 'Platform', 'PlatformToolset', 'OutputPath',
 		'TargetName', 'UseOfAtl' etc. It further provides group defaults for each known item
 		definition group. In general, properties in this file are not tool-specific.
 	-->
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props"/>
 	
 	<!--
-		Property group with configuration-wide properties. Multiple instances with configuration
-		conditions like
+		Property group with configuration-wide properties. Multiple instances with
+		configuration conditions like
 			Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"
 		can be used to define default properties for different configurations. The defined
 		properties in turn can control the inclusion of system properties provided by
 		'Microsoft.Cpp.props' which is imported below. For example, if
 			<CharacterSet>Unicode</CharacterSet>
-		is set, the system property sheet 'microsoft.Cpp.unicodesupport.props' will be included due
-		to an conditional import on '$(CharacterSet)' by 'Microsoft.Cpp.props'.
+		is set, the system property sheet 'microsoft.Cpp.unicodesupport.props' will be
+		included due to an conditional import on '$(CharacterSet)' by 'Microsoft.Cpp.props'.
 	-->
 	<PropertyGroup Label="Configuration"/>
 	
 	<!--
-		Property sheet defining (directly or via imports) the default values for many tool-specific
-		build options such as the compiler’s 'Optimization' or 'WarningLevel' settings. In
-		addition, various system property sheets are imported based on configuration properties
-		defined in the property group immediately above.
+		Property sheet defining (directly or via imports) the default values for many
+		tool-specific build options such as the compiler’s 'Optimization' or 'WarningLevel'
+		settings. In addition, various system property sheets are imported based on
+		configuration properties defined in the property group immediately above.
 	-->
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
 	
 	<!--
-		Group containing imports for the property sheets that are part of build customizations
-		(custom build rules). A build customization is defined by up to three files: a '.targets'
-		file, a '.props' file and an '.xml' file. This import group contains the imports for the
-		'.props' file.
+		Group containing imports for the property sheets that are part of build
+		customizations (custom build rules). A build customization is defined by up to
+		three files: a '.targets' file, a '.props' file and an '.xml' file. This import
+		group contains the imports for the '.props' file.
 	-->
 	<ImportGroup Label="ExtensionSettings"/>
 	
 	<!--
 		Group containing the imports for user property sheets as added through the "Property
-		Manager" view in Visual Studio. The order in which these imports are listed is relevant.
-		There are typically multiple instances of this kind of import group, one for each project
-		configuration.
+		Manager" view in Visual Studio. The order in which these imports are listed is
+		relevant. There are typically multiple instances of this kind of import group, one
+		for each project configuration.
 	-->
 	<ImportGroup Label="PropertySheets"/>
 	
@@ -133,44 +133,48 @@
 	<PropertyGroup Label="UserMacros"/>
 	
 	<!--
-		Property group containing project configuration level settings. These settings apply to all
-		files that are part of the specified item group. The item-definition metadata of build
-		customizations are also initialized here. The group is typically defined for each
-		configuration using configuration conditions. 
+		Property group containing project configuration level settings. These settings
+		apply to all files that are part of the specified item group. The item-definition
+		metadata of build customizations are also initialized here. The group is typically
+		defined for each configuration using configuration conditions. 
 	-->
 	<PropertyGroup/>
 	
 	<!--
-		Similar to the property group immediately above but for item definitions and their metadata
-		instead of properties.
+		Similar to the property group immediately above but for item definitions and their
+		metadata instead of properties.
 	-->
 	<ItemDefinitionGroup Condition=" '$(Configuration)' == 'Release' ">
 		<ClCompile>
+			<!-- Build environment configuration -->
 			<BuildingInIDE>false</BuildingInIDE>
-			<TreatWarningAsError>true</TreatWarningAsError>
-			<CompileAs>CompileAsCpp</CompileAs>
-			<ErrorReporting>None</ErrorReporting><!-- don't report compiler errors to Microsoft -->
-			<ExceptionHandling>Sync</ExceptionHandling>
-			<FloatingPointExceptions>false</FloatingPointExceptions>
-			<!--<DisableLanguageExtensions>true</DisableLanguageExtensions>-->
-			<!--<UndefineAllPreprocessorDefinitions>true</UndefineAllPreprocessorDefinitions>-->
-			<ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
 			<MinimalRebuild>false</MinimalRebuild>
-			<InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+			<UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+			<AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
+			<!-- Warning level configuration -->
+			<WarningLevel>Level4</WarningLevel><!-- 'windows.h' fails for all -->
+			<TreatWarningAsError>true</TreatWarningAsError>
+			<ErrorReporting>None</ErrorReporting><!-- don't report Microsoft errors -->
+			<!-- Compiler standard conformance configuration (language features) -->
+			<CompileAs>CompileAsCpp</CompileAs>
+			<DisableLanguageExtensions>false</DisableLanguageExtensions>
+			<UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+			<CompileAsManaged>false</CompileAsManaged>
+			<ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+			<ExceptionHandling>Sync</ExceptionHandling>
+			<FloatingPointModel>Strict</FloatingPointModel>
+			<FloatingPointExceptions>false</FloatingPointExceptions>
 			<OpenMPSupport>false</OpenMPSupport>
 			<PreprocessKeepComments>false</PreprocessKeepComments>
-			<RuntimeTypeInfo>false</RuntimeTypeInfo>
-			<StringPooling>true</StringPooling>
-			<UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-			<WholeProgramOptimization>true</WholeProgramOptimization>
-			<CompileAsManaged>false</CompileAsManaged>
-			<AdditionalIncludeDirectories>.</AdditionalIncludeDirectories>
-			<WarningLevel>Level4</WarningLevel><!-- 'windows.h' fails if 'EnableAllWarnings' -->
-			<FloatingPointModel>Strict</FloatingPointModel>
+			<!-- Optimization configuration -->
 			<Optimization>MaxSpeed</Optimization>
 			<FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+			<WholeProgramOptimization>true</WholeProgramOptimization>
 			<FunctionLevelLinking>true</FunctionLevelLinking>
+			<InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
 			<IntrinsicFunctions>true</IntrinsicFunctions>
+			<StringPooling>true</StringPooling>
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
 			<SmallerTypeCheck>false</SmallerTypeCheck>
 			<BufferSecurityCheck>false</BufferSecurityCheck>
 		</ClCompile>
@@ -180,14 +184,14 @@
 			<EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
 			<EnableUAC>false</EnableUAC>
 			<GenerateDebugInformation>false</GenerateDebugInformation>
-			<EnableCOMDATFolding>true</EnableCOMDATFolding>
 			<OptimizeReferences>true</OptimizeReferences>
+			<EnableCOMDATFolding>true</EnableCOMDATFolding>
 		</Link>
 	</ItemDefinitionGroup>
 	
 	<!--
-		Groups listing the items of the project (source files, etc). Usually there are multiple
-		item groups defined here, one per item type.
+		Groups listing the items of the project (source files, etc). Usually there are
+		multiple item groups defined here, one per item type.
 	-->
 	<ItemGroup>
 		<ClCompile Include="pmChess.cpp"/>
@@ -204,7 +208,7 @@
 	-->
 	<ImportGroup Label="ExtensionTargets"/>
 	
-	<!-- ==================================== User targets ==================================== -->
+	<!-- ================================== User  targets ================================== -->
 	
 	<Target Name="PrepareBuild" BeforeTargets="Build">
 		<MakeDir Directories = "pmChess\temp" Condition = "!Exists('pmChess\temp')"/>

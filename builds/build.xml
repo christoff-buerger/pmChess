@@ -14,12 +14,12 @@
 	
 	<property name="script-path" location="."/>
 	<condition
-		property="native_build_output_directory"
+		property="native-build-directory"
 		value="${script-path}/macOS/pmChess.app/Contents/Resources/pmChess">
 		<os name="Mac OS X"/>
 	</condition>
 	<condition
-		property="native_build_output_directory"
+		property="native-build-directory"
 		value="${script-path}\Windows\pmChess\binaries">
 		<os family="winnt"/>
 	</condition>
@@ -56,7 +56,11 @@
 	</target>
 	
 	<target name="distributions" depends="binaries">
-		<jar destfile="portable-jar/pmChess.jar" index="false" update="false" compress="false">
+		<jar
+			destfile="portable-jar/pmChess.jar"
+			index="false"
+			update="false"
+			compress="false">
 			<manifest>
 				<attribute
 					name="Created-By"
@@ -76,11 +80,11 @@
 			</fileset>
 		</jar>
 		<echo
-			if:set="native_build_output_directory"
+			if:set="native-build-directory"
 			level="info"
-			message="Building distribution for ${os.name}: ${native_build_output_directory}"/>
+			message="Building distribution for ${os.name}: ${native-build-directory}"/>
 		<exec
-			if:set="native_build_output_directory"
+			if:set="native-build-directory"
 			failifexecutionfails="true"
 			failonerror="true"
 			executable="${java.home}/bin/jlink">
@@ -91,7 +95,7 @@
 			<arg value="--launcher"/>
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
-			<arg value="${native_build_output_directory}"/>
+			<arg value="${native-build-directory}"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>
@@ -105,7 +109,9 @@
 			message="Bundling failed: Windows distribution must be built first."
 			status="2">
 			<condition>
-				<not><available file="${script-path}\Windows\pmChess\pmChess.exe"/></not>
+				<not>
+					<available file="${script-path}\Windows\pmChess\pmChess.exe"/>
+				</not>
 			</condition>
 		</fail>
 		<delete file="${script-path}\Windows\pmChess.zip"/>

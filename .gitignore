@@ -9,7 +9,7 @@
 **/.DS_Store
 # Ignore generated artefacts of pmChess distributions:
 /builds/binaries
-/builds/portable-jar/pmChess.jar
+/builds/portable-jar
 /builds/macOS/pmChess.app/Contents/Resources/pmChess
 /builds/Windows/pmChess
 /builds/Windows/pmChess.zip

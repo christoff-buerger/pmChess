@@ -11,8 +11,8 @@
 int WINAPI wWinMain(
 	_In_ HINSTANCE		/* not used */,
 	_In_opt_ HINSTANCE	/* not used */,
-	_In_ LPWSTR			/* not used */,
-	_In_ int			/* not used */)
+	_In_ LPWSTR		/* not used */,
+	_In_ int		/* not used */)
 {
 __try {
 	STARTUPINFO startup_information;
@@ -30,8 +30,8 @@ __try {
 	auto current_directory_length = 0ul;
 	if (!application_name_length || application_name_length > MAX_PATH - 70) {
 		std::cout	<< std::endl
-					<< L"Failed to start pmChess (to long executable path)."
-					<< std::endl;
+				<< L"Failed to start pmChess (to long executable path)."
+				<< std::endl;
 		return 2;
 	}
 	for (auto i = 0ul; i < application_name_length; i++) {
@@ -53,7 +53,7 @@ __try {
 	
 	if (!CreateProcessW(
 		application_name,
-		command_line, // Must be writeable and not read-only like const wchar_t* or literal string.
+		command_line, // Must be writeable and not read-only like const wchar_t* or literal.
 		NULL, // Process handle of created process is not inheritable.
 		NULL, // Thread handle of created process is not inheritable.
 		FALSE, // Do not inherite handles of current process.
@@ -64,9 +64,9 @@ __try {
 		&process_information))
 	{
 		std::cout	<< std::endl
-					<< L"Failed to start pmChess (process creation error code: %d)."
-					<< GetLastError()
-					<< std::endl;
+				<< L"Failed to start pmChess (process creation error code: %d)."
+				<< GetLastError()
+				<< std::endl;
 		return 2;
 	}
 	
@@ -76,9 +76,9 @@ __try {
 	CloseHandle(process_information.hThread);
 } __except(EXCEPTION_EXECUTE_HANDLER) {
 	std::cout	<< std::endl
-				<< L"Internal pmChess error (runtime exception error code: %i)."
-				<< GetExceptionCode()
-				<< std::endl;
+			<< L"Internal pmChess error (runtime exception error code: %i)."
+			<< GetExceptionCode()
+			<< std::endl;
 	return 2;
 }
 	return 0;
