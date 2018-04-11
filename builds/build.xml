@@ -5,17 +5,33 @@
 	
 	Author: Christoff Bürger
 -->
-<project name="Poor Man's Chess" default="all" basedir=".">
+<project
+	name="pmChess (poor man's chess)"
+	default="distributions"
+	basedir="."
+	xmlns:if="ant:if"
+	xmlns:unless="ant:unless">
+	
 	<property name="script-path" location="."/>
+	<condition
+		property="native_build_output_directory"
+		value="${script-path}/macOS/pmChess.app/Contents/Resources/pmChess">
+		<os name="Mac OS X"/>
+	</condition>
+	<condition
+		property="native_build_output_directory"
+		value="${script-path}\Windows\pmChess\binaries">
+		<os family="winnt"/>
+	</condition>
 	
 	<target name="clean">
 		<delete dir="binaries"/>
-		<delete file="portable-jar/pmChess.jar"/>
+		<delete dir="portable-jar"/>
 		<delete dir="macOS/pmChess.app/Contents/Resources/pmChess"/>
-		<delete dir="Windows/pmChess/binaries"/>
+		<delete dir="Windows/pmChess"/>
 	</target>
-
-	<target name="all" depends="clean">
+	
+	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
 			encoding="UTF-8"
@@ -37,6 +53,9 @@
 		</copy>
 		<copy file="../license.txt" todir="binaries/pmchess/gui/"/>
 		<copy file="../release-notes.txt" todir="binaries/pmchess/gui/"/>
+	</target>
+	
+	<target name="distributions" depends="binaries">
 		<jar destfile="portable-jar/pmChess.jar" index="false" update="false" compress="false">
 			<manifest>
 				<attribute
@@ -56,36 +75,50 @@
 				<include name="**/*.txt"/>
 			</fileset>
 		</jar>
-		<echo message="Building self-contained native platform distribution for ${os.name}..."/>
-		<exec os="Mac OS X" executable="${java.home}/bin/jlink">
+		<echo
+			if:set="native_build_output_directory"
+			level="info"
+			message="Building distribution for ${os.name}: ${native_build_output_directory}"/>
+		<exec
+			if:set="native_build_output_directory"
+			failifexecutionfails="true"
+			failonerror="true"
+			executable="${java.home}/bin/jlink">
 			<arg value="--module-path"/>
-			<arg value="${script-path}/portable-jar/pmChess.jar:${java.home}/jmods"/>
+			<arg value="${script-path}${file.separator}portable-jar${file.separator}pmChess.jar${path.separator}${java.home}${file.separator}jmods"/>
 			<arg value="--add-modules"/>
 			<arg value="pmchess"/>
 			<arg value="--launcher"/>
 			<arg value="pmChess=pmchess/pmchess.pmChess"/>
 			<arg value="--output"/>
-			<arg value="${script-path}/macOS/pmChess.app/Contents/Resources/pmChess"/>
+			<arg value="${native_build_output_directory}"/>
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>
 			<arg value="--compress"/>
 			<arg value="0"/>
 		</exec>
-		<exec osfamily="Windows" executable="${java.home}/bin/jlink">
-			<arg value="--module-path"/>
-			<arg value="${script-path}/portable-jar/pmChess.jar;${java.home}/jmods"/>
-			<arg value="--add-modules"/>
-			<arg value="pmchess"/>
-			<arg value="--launcher"/>
-			<arg value="pmChess=pmchess/pmchess.pmChess"/>
-			<arg value="--output"/>
-			<arg value="${script-path}/Windows/pmChess/binaries"/>
-			<arg value="--strip-debug"/>
-			<arg value="--no-header-files"/>
-			<arg value="--no-man-pages"/>
-			<arg value="--compress"/>
-			<arg value="0"/>
-		</exec>
+	</target>
+	
+	<target name="windows-bundle">
+		<fail
+			message="Bundling failed: Windows distribution must be built first."
+			status="2">
+			<condition>
+				<not><available file="${script-path}\Windows\pmChess\pmChess.exe"/></not>
+			</condition>
+		</fail>
+		<delete file="${script-path}\Windows\pmChess.zip"/>
+		<zip
+			whenempty="skip"
+			destfile="${script-path}\Windows\pmChess.zip"
+			basedir="${script-path}\Windows"
+			includes="pmChess/**"
+			update="false"
+			compress="true"
+			level="9"
+			createUnicodeExtraFields="never"
+			fallbacktoUTF8="false"
+		/>
 	</target>
 </project>

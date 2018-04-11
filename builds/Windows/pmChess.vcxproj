@@ -88,7 +88,7 @@
 		'TargetName', 'UseOfAtl' etc. It further provides group defaults for each known item
 		definition group. In general, properties in this file are not tool-specific.
 	-->
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props" />
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props"/>
 	
 	<!--
 		Property group with configuration-wide properties. Multiple instances with configuration
@@ -101,7 +101,7 @@
 		is set, the system property sheet 'microsoft.Cpp.unicodesupport.props' will be included due
 		to an conditional import on '$(CharacterSet)' by 'Microsoft.Cpp.props'.
 	-->
-	<PropertyGroup Label="Configuration" />
+	<PropertyGroup Label="Configuration"/>
 	
 	<!--
 		Property sheet defining (directly or via imports) the default values for many tool-specific
@@ -109,7 +109,7 @@
 		addition, various system property sheets are imported based on configuration properties
 		defined in the property group immediately above.
 	-->
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
 	
 	<!--
 		Group containing imports for the property sheets that are part of build customizations
@@ -117,7 +117,7 @@
 		file, a '.props' file and an '.xml' file. This import group contains the imports for the
 		'.props' file.
 	-->
-	<ImportGroup Label="ExtensionSettings" />
+	<ImportGroup Label="ExtensionSettings"/>
 	
 	<!--
 		Group containing the imports for user property sheets as added through the "Property
@@ -125,12 +125,12 @@
 		There are typically multiple instances of this kind of import group, one for each project
 		configuration.
 	-->
-	<ImportGroup Label="PropertySheets" />
+	<ImportGroup Label="PropertySheets"/>
 	
 	<!--
 		List of user macros, defining common variables to ease further customizations.
 	-->
-	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup Label="UserMacros"/>
 	
 	<!--
 		Property group containing project configuration level settings. These settings apply to all
@@ -138,7 +138,7 @@
 		customizations are also initialized here. The group is typically defined for each
 		configuration using configuration conditions. 
 	-->
-	<PropertyGroup />
+	<PropertyGroup/>
 	
 	<!--
 		Similar to the property group immediately above but for item definitions and their metadata
@@ -190,24 +190,24 @@
 		item groups defined here, one per item type.
 	-->
 	<ItemGroup>
-		<ClCompile Include="pmChess.cpp" />
-		<Link Include="pmChess\temp\pmChess.ico.res" />
+		<ClCompile Include="pmChess.cpp"/>
+		<Link Include="pmChess\temp\pmChess.ico.res"/>
 	</ItemGroup>
 	
 	<!--
 		Definitions (directly or via imports) of VC++ targets such as build, clean, etc.
 	-->
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
 	
 	<!--
 		Group containing imports for build customization target files.
 	-->
-	<ImportGroup Label="ExtensionTargets" />
+	<ImportGroup Label="ExtensionTargets"/>
 	
 	<!-- ==================================== User targets ==================================== -->
 	
 	<Target Name="PrepareBuild" BeforeTargets="Build">
-		<MakeDir Directories = "pmChess\temp" Condition = "!Exists('pmChess\temp')" />
+		<MakeDir Directories = "pmChess\temp" Condition = "!Exists('pmChess\temp')"/>
 		<Exec Command="rc /nologo /fo pmChess\temp\pmChess.ico.res pmChess.ico.rc"/>
 		<Exec Command="cvtres /nologo /machine:ix86 /out:pmChess\temp\pmChess.ico.obj pmChess\temp\pmChess.ico.res"/>
 	</Target>
@@ -216,5 +216,6 @@
 		<Exec Command="mt.exe /nologo /manifest &quot;pmChess.exe.manifest&quot; /outputresource:&quot;pmChess\temp\pmChess.exe;#1&quot;"/>
 		<Copy SourceFiles="pmChess\temp\pmChess.exe" DestinationFolder="pmChess"/>
 		<RemoveDir Directories="pmChess\temp\"/>
+		<Exec Command="cd .. &amp; ant -silent windows-bundle"/>
 	</Target>
 </Project>

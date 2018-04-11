@@ -2,8 +2,8 @@ This program and the accompanying materials are made available under the
 terms of the MIT license (X11 license) which accompanies this distribution.
 
 Version 1.1.0 (in development):
-  - Added native distribution for macOS. The distribution is self-contained and
-    does not require a locally installed 'Java SE'.
+  - Added native distributions for macOS and Windows. The distributions are
+    self-contained and do not require a locally installed 'Java SE'.
   - Added support for en passant captures.
   - Added game history with algebraic notation as specified by FIDE. The history
     can be used to undo moves. To reset the game to a previous position, select
