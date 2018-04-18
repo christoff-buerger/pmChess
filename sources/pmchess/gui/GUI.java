@@ -52,12 +52,14 @@ public final class GUI extends JFrame {
 	public GUI() {
 		super("pmChess");
 		
-		// Setup icon and "About" window:
+		// Setup "About"-window and icon:
 		final AboutAction about = new AboutAction();
 		try {
-			Taskbar.getTaskbar().setIconImage(taskbar_icon);
 			Desktop.getDesktop().setAboutHandler(about);
-		} catch (SecurityException | UnsupportedOperationException exception) {}
+			Taskbar.getTaskbar().setIconImage(taskbar_icon);
+		} catch (SecurityException | UnsupportedOperationException exception) {
+			setIconImage(taskbar_icon); // Fallback for older operating systems.
+		}
 		
 		// Setup menu bar:
 		final JMenuBar menuBar = new JMenuBar();
