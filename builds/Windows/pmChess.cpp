@@ -14,12 +14,12 @@ int WINAPI wWinMain(
 	_In_ LPWSTR		/* not used */,
 	_In_ int		/* not used */)
 {
-__try {
+	auto return_code = 0;
 	STARTUPINFO startup_information;
 	PROCESS_INFORMATION process_information;
 	SecureZeroMemory(&startup_information, sizeof(startup_information));
 	SecureZeroMemory(&process_information, sizeof(process_information));
-	
+__try {
 	startup_information.cb = sizeof(startup_information);
 	
 	wchar_t application_name[MAX_PATH];
@@ -71,15 +71,17 @@ __try {
 	}
 	
 	WaitForSingleObject(process_information.hProcess, INFINITE);
-	
-	CloseHandle(process_information.hProcess);
-	CloseHandle(process_information.hThread);
 } __except(EXCEPTION_EXECUTE_HANDLER) {
 	std::cout	<< std::endl
 			<< L"Internal pmChess error (runtime exception error code: %i)."
 			<< GetExceptionCode()
 			<< std::endl;
-	return 2;
+	return_code = 2;
 }
-	return 0;
+	CloseHandle(process_information.hProcess);
+	CloseHandle(process_information.hThread);
+	SecureZeroMemory(&startup_information, sizeof(startup_information));
+	SecureZeroMemory(&process_information, sizeof(process_information));
+	
+	return return_code;
 }
