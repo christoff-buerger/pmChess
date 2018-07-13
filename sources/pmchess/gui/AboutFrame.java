@@ -140,8 +140,8 @@ public final class AboutFrame extends JFrame {
 		final JLabel permissionLabel = new JLabel("Quote permission:", SwingConstants.LEFT);
 		final JComboBox<String> permissionComboBox = new JComboBox<>(new String[]{
 			"Please decide whether you give us quote permission\u2026",
-			"REJECTED: no permission to quote e-mail",
-			"GRANTED: e-mail can be publicly quoted"});
+			"REJECTED (no permission to quote mail)",
+			"GRANTED (mail can be publicly quoted)"});
 		permissionComboBox.setSelectedIndex(0);
 		
 		final JLabel nameLabel = new JLabel("Your name:", SwingConstants.LEFT);
@@ -195,16 +195,13 @@ public final class AboutFrame extends JFrame {
 					"\n\n" +
 					"Best regards,\n" + name +
 					"\n\n" +
-					"+---------------------------------------------------+\n" +
-					"|      PLEASE DO NOT MODIFY THE FOLLOWING TEXT      |\n" +
-					"+---------------------S-T-A-R-T---------------------+\n" +
-					"Quote permission:\n  " +
+					"PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n" +
+					"  Quote permission: " +
 					permissionComboBox.getItemAt(permission_index) + "\n" +
-					"pmChess version:\n  " +
+					"  pmChess version: " +
 					pmchess.pmChess.version + "\n" +
-					"Platform:\n  " +
-					System.getProperty("os.name") + "\n" +
-					"------------------------E-N-D------------------------\n";
+					"  Platform: " +
+					System.getProperty("os.name");
 				try {
 					Desktop.getDesktop().mail(new URI(
 						"mailto:Christoff.Buerger@gmail.com?" +
