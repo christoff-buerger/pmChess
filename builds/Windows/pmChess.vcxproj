@@ -74,6 +74,7 @@
 		<RemoveIntegerChecks>true</RemoveIntegerChecks>
 		<SGenUseProxyTypes>false</SGenUseProxyTypes>
 		<!-- Debug information configuration -->
+		<UseDebugLibraries>false</UseDebugLibraries>
 		<DebugSymbols>false</DebugSymbols>
 		<DefineDebug>false</DefineDebug>
 		<DefineTrace>false</DefineTrace>
@@ -165,7 +166,6 @@
 			<FloatingPointModel>Strict</FloatingPointModel>
 			<FloatingPointExceptions>false</FloatingPointExceptions>
 			<OpenMPSupport>false</OpenMPSupport>
-			<PreprocessKeepComments>false</PreprocessKeepComments>
 			<!-- Optimization configuration -->
 			<Optimization>MaxSpeed</Optimization>
 			<FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
