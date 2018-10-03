@@ -4,8 +4,8 @@
 @rem Author: Christoff Bürger
 
 @rem Initialize tools needed for the native Windows build.
-@rem IMPORTANT: The 'ANT_HOME' path of Apache Ant must be set, and '%ANT_HOME%\bin' added to the
-@rem 	'PATH' environment variable, separately.
+@rem IMPORTANT: The 'ANT_HOME' path of Apache Ant must be set and '%ANT_HOME%\bin' added to the
+@rem 	'PATH' environment variable.
 
 @echo off
 
@@ -36,7 +36,7 @@ if not "%SelfWrapped%"=="%~0" (
 rem Initialize Java:
 call where javac >nul 2>nul
 if ERRORLEVEL 1 (
-	for /d %%j in ( "C:\Program Files\Java\jdk-10.*" "C:\Program Files\Java\jdk-9.*" ) do (
+	for /d %%j in ( "C:\Program Files\Java\jdk-11.*" "C:\Program Files\Java\jdk-10.*" "C:\Program Files\Java\jdk-9.*" ) do (
 		set "JAVA_HOME=%%~fj"
 		set "PATH=!JAVA_HOME!\bin;!PATH!"
 		goto :JAVA_INITIALIZED
@@ -52,7 +52,7 @@ if ERRORLEVEL 1 (
 	for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
 		if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
 			call "C:\Program Files (x86)\Microsoft Visual Studio\2017\%%v\VC\Auxiliary\Build\vcvarsall.bat" x86
-			if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' bug => never returns error code > 0.
+			if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
 				set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio v15.0)"
 				call :ERROR
 			)
