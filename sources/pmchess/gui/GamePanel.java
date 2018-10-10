@@ -40,8 +40,8 @@ public final class GamePanel extends JPanel {
 	protected GamePanel() {
 		// Setup panel size and layout:
 		setOpaque(true);
-		final int border_size = 5;
-		final Dimension panel_dimension = new Dimension(
+		final var border_size = 5;
+		final var panel_dimension = new Dimension(
 			boardPanel.panel_size + historyPanel.panel_x_size + 2 * border_size,
 			boardPanel.panel_size + statusPanel.panel_y_size + 2 * border_size);
 		setMaximumSize(panel_dimension);
@@ -55,8 +55,8 @@ public final class GamePanel extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		// Add components:
-		final JPanel dummyPanel = new JPanel();
-		final Dimension dummyPanel_dimension = new Dimension(
+		final var dummyPanel = new JPanel();
+		final var dummyPanel_dimension = new Dimension(
 			boardPanel.panel_size,
 			boardPanel.panel_size + statusPanel.panel_y_size);
 		dummyPanel.setMaximumSize(dummyPanel_dimension);
@@ -98,13 +98,13 @@ public final class GamePanel extends JPanel {
 	}
 	
 	private void runGame() {
-		Board.GameStatus game_status = board.status();
+		var game_status = board.status();
 		while (computerTurn() &&
 			(game_status == Board.GameStatus.Normal ||
 			 game_status == Board.GameStatus.Check))
 		{
 			paintImmediately(0, 0, getWidth(), getHeight());
-			final int move = search.selectMove(board, evaluator);
+			final var move = search.selectMove(board, evaluator);
 			capitulation = move == 0;
 			if (capitulation)
 				break;
@@ -127,10 +127,11 @@ public final class GamePanel extends JPanel {
 		@Override public void keyPressed(final KeyEvent event) {
 			if (computerTurn())
 				return;
-			final int old_x = cursor_x, old_y = cursor_y;
-			final int key = event.getKeyCode();
+			final var old_x = cursor_x;
+			final var old_y = cursor_y;
+			final var key = event.getKeyCode();
 			if (key == KeyEvent.VK_SPACE) {
-				final Figure figure = board.figure(cursor_x, cursor_y);
+				final var figure = board.figure(cursor_x, cursor_y);
 				if (figure != null && figure.owner == board.player()) {
 					selected_figure = null;
 					boardPanel.drawSquare(selected_x, selected_y);
@@ -172,17 +173,17 @@ public final class GamePanel extends JPanel {
 	
 	private final class HistoryListener extends KeyAdapter {
 		@Override public void keyPressed(final KeyEvent event) {
-			final Board.GameStatus gameStatus = board.status();
+			final var gameStatus = board.status();
 			if (computerTurn() && !capitulation &&
 				gameStatus != Board.GameStatus.Checkmate &&
 				gameStatus != Board.GameStatus.Stalemate)
 			{
 				return;
 			}
-			final int key = event.getKeyCode();
+			final var key = event.getKeyCode();
 			if (key == KeyEvent.VK_SPACE) {
-				final int selected = historyPanel.history_list.getSelectedIndex();
-				for (int i = board.turn() - selected - 1; i > 0; i--) {
+				final var selected = historyPanel.history_list.getSelectedIndex();
+				for (var i = board.turn() - selected - 1; i > 0; i--) {
 					undo();
 				}
 				runGame();
@@ -199,7 +200,7 @@ public final class GamePanel extends JPanel {
 		private BoardPanel() {
 			// Setup panel size and layout:
 			setOpaque(true);
-			final Dimension panel_dimension = new Dimension(panel_size, panel_size);
+			final var panel_dimension = new Dimension(panel_size, panel_size);
 			setMaximumSize(panel_dimension);
 			setMinimumSize(panel_dimension);
 			setPreferredSize(panel_dimension);
@@ -217,29 +218,29 @@ public final class GamePanel extends JPanel {
 			
 			// Draw horizontal (h) and vertical (v) border-markings:
 			graphic.setFont(Resources.font_bold);
-			final FontMetrics font_metrics = graphic.getFontMetrics();
-			final int font_height = font_metrics.getAscent();
-			final int h_y_base =
+			final var font_metrics = graphic.getFontMetrics();
+			final var font_height = font_metrics.getAscent();
+			final var h_y_base =
 				border_size +
 				(tile_size - font_height) / 2 +
 				font_height;
-			final int v_y_base =
+			final var v_y_base =
 				(border_size - font_height) / 2 +
 				font_height +
 				/* Adjust for lowercase and titled border: */ font_height / 3;
-			for (int i = 0; i < 8; i++) {
-				final String h_marking = String.valueOf((char)('8' - i));
-				final int h_width = font_metrics.stringWidth(h_marking);
-				final int h_x_base = (border_size - h_width) / 2;
-				final int h_y = h_y_base + i * tile_size;
+			for (var i = 0; i < 8; i++) {
+				final var h_marking = String.valueOf((char)('8' - i));
+				final var h_width = font_metrics.stringWidth(h_marking);
+				final var h_x_base = (border_size - h_width) / 2;
+				final var h_y = h_y_base + i * tile_size;
 				graphic.drawString(h_marking, h_x_base, h_y);
 				graphic.drawString(
 					h_marking,
 					panel_size - h_x_base - h_width,
 					h_y);
-				final String v_marking = String.valueOf((char)('a' + i));
-				final int v_width = font_metrics.stringWidth(v_marking);
-				final int v_x =
+				final var v_marking = String.valueOf((char)('a' + i));
+				final var v_width = font_metrics.stringWidth(v_marking);
+				final var v_x =
 					border_size +
 					i * tile_size +
 					(tile_size - v_width) / 2;
@@ -251,8 +252,8 @@ public final class GamePanel extends JPanel {
 			}
 			
 			// Draw tiles:
-			for (int x = 7; x >= 0; x--) {
-				for (int y = 7; y >= 0; y--) {
+			for (var x = 7; x >= 0; x--) {
+				for (var y = 7; y >= 0; y--) {
 					drawSquare(graphic, x, y);
 				}
 			}
@@ -263,14 +264,14 @@ public final class GamePanel extends JPanel {
 		}
 		
 		private void drawSquare(final Graphics graphic, final int x, final int y) {
-			final int y_trans = 7 - y;
+			final var y_trans = 7 - y;
 			
 			// Draw background tile:
-			Color color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
-			final int lastMove = board.previousMove(board.turn() - 1);
+			var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
+			final var lastMove = board.previousMove(board.turn() - 1);
 			if (lastMove != 0) {
-				final int _x_ = Move.x(lastMove);
-				final int _X_ = Move.X(lastMove);
+				final var _x_ = Move.x(lastMove);
+				final var _X_ = Move.X(lastMove);
 				if ((x == _x_ && y == Move.y(lastMove)) ||
 					(y == Move.Y(lastMove) &&
 					(x == _X_ ||
@@ -290,7 +291,7 @@ public final class GamePanel extends JPanel {
 				tile_size);
 			
 			// Draw figure:
-			final Figure figure = board.figure(x, y);
+			final var figure = board.figure(x, y);
 			if (figure != null) {
 				graphic.drawImage(
 					FigurePresentation.get(figure).image,
@@ -300,7 +301,7 @@ public final class GamePanel extends JPanel {
 			}
 			
 			// Draw cursor and figure selection:
-			final Stroke oldStroke = ((Graphics2D)graphic).getStroke();
+			final var oldStroke = ((Graphics2D)graphic).getStroke();
 			((Graphics2D)graphic).setStroke(new BasicStroke(cursor_width));
 			if (x == cursor_x && y == cursor_y) {
 				graphic.setColor(Color.blue);
@@ -336,10 +337,10 @@ public final class GamePanel extends JPanel {
 		private final JLabel status = new JLabel() {
 			@Override public void paintComponent(final Graphics graphic) {
 				super.paintComponent(graphic);
-				final Board.GameStatus gameStatus = board.status();
-				final int bulb_x =
+				final var gameStatus = board.status();
+				final var bulb_x =
 					status_x_size - bulb.getWidth(StatusPanel.this);
-				final int bulb_y =
+				final var bulb_y =
 					(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
 				if (computerTurn() &&
 					!capitulation &&
@@ -358,7 +359,7 @@ public final class GamePanel extends JPanel {
 		private StatusPanel() {
 			// Setup panel size and layout:
 			setOpaque(true);
-			final Dimension panel_dimension =
+			final var panel_dimension =
 				new Dimension(panel_x_size, panel_y_size);
 			setMaximumSize(panel_dimension);
 			setMinimumSize(panel_dimension);
@@ -366,7 +367,7 @@ public final class GamePanel extends JPanel {
 			setBorder(BorderFactory.createTitledBorder("Game status"));
 			
 			// Status message box:
-			final Dimension status_dimension =
+			final var status_dimension =
 				new Dimension(status_x_size, status_y_size);
 			status.setOpaque(true);
 			status.setFont(Resources.font_bold);
@@ -376,37 +377,37 @@ public final class GamePanel extends JPanel {
 			add(status);
 			
 			// Allowed castlings information boxes:
-			final Dimension castling_dimension =
+			final var castling_dimension =
 				new Dimension(castling_x_size, castling_y_size);
 			castling_l_w.setEnabled(false);
 			castling_r_w.setEnabled(false);
 			castling_l_b.setEnabled(false);
 			castling_r_b.setEnabled(false);
-			JPanel panel = new JPanel();
-			panel.setBorder(BorderFactory.createTitledBorder("White castling"));
-			panel.setMaximumSize(castling_dimension);
-			panel.setMinimumSize(castling_dimension);
-			panel.setPreferredSize(castling_dimension);
-			panel.add(castling_l_w);
-			panel.add(castling_r_w);
-			add(panel);
-			panel = new JPanel();
-			panel.setBorder(BorderFactory.createTitledBorder("Black castling"));
-			panel.setMaximumSize(castling_dimension);
-			panel.setMinimumSize(castling_dimension);
-			panel.setPreferredSize(castling_dimension);
-			panel.add(castling_l_b);
-			panel.add(castling_r_b);
-			add(panel);
+			final var castling_w = new JPanel();
+			castling_w.setBorder(BorderFactory.createTitledBorder("White castling"));
+			castling_w.setMaximumSize(castling_dimension);
+			castling_w.setMinimumSize(castling_dimension);
+			castling_w.setPreferredSize(castling_dimension);
+			castling_w.add(castling_l_w);
+			castling_w.add(castling_r_w);
+			add(castling_w);
+			final var castling_b = new JPanel();
+			castling_b.setBorder(BorderFactory.createTitledBorder("Black castling"));
+			castling_b.setMaximumSize(castling_dimension);
+			castling_b.setMinimumSize(castling_dimension);
+			castling_b.setPreferredSize(castling_dimension);
+			castling_b.add(castling_l_b);
+			castling_b.add(castling_r_b);
+			add(castling_b);
 		}
 		
 		@Override public void paintComponent(final Graphics graphic) {
 			super.paintComponent(graphic);
 			
 			// Update status message:
-			final String pNow = board.player() ? "White" : "Black";
-			final String pNext = board.player() ? "Black" : "White";
-			final Board.GameStatus gameStatus = board.status();
+			final var pNow = board.player() ? "White" : "Black";
+			final var pNext = board.player() ? "Black" : "White";
+			final var gameStatus = board.status();
 			final String message;
 			if (capitulation) {
 				message = pNow + " capitulates. " + pNext + " wins.";
@@ -448,7 +449,7 @@ public final class GamePanel extends JPanel {
 		private HistoryPanel() {
 			// Setup panel size and layout:
 			setOpaque(true);
-			final Dimension panel_dimension =
+			final var panel_dimension =
 				new Dimension(panel_x_size, panel_y_size);
 			setMaximumSize(panel_dimension);
 			setMinimumSize(panel_dimension);
@@ -458,10 +459,10 @@ public final class GamePanel extends JPanel {
 			// History list:
 			history_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			history_list.setLayoutOrientation(JList.VERTICAL);
-			final JScrollPane historyScrollPane = new JScrollPane(history_list);
+			final var historyScrollPane = new JScrollPane(history_list);
 			historyScrollPane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			final Dimension historyScrollPane_dimension = new Dimension(
+			final var historyScrollPane_dimension = new Dimension(
 				panel_x_size - border_size,
 				panel_y_size - (5 * border_size) / 2);
 			historyScrollPane.setMaximumSize(historyScrollPane_dimension);
@@ -502,21 +503,21 @@ public final class GamePanel extends JPanel {
 				isSelected,
 				cellHasFocus);
 			
-			final PastMove move = (PastMove)value;
+			final var move = (PastMove)value;
 			if (move.move == 0) {
 				setText("initial position");
 				return this;
 			}
 			
-			final int x = Move.x(move.move);
-			final int y = Move.y(move.move);
-			final int X = Move.X(move.move);
-			final int Y = Move.Y(move.move);
-			final FigurePresentation figure_moved =
+			final var x = Move.x(move.move);
+			final var y = Move.y(move.move);
+			final var X = Move.X(move.move);
+			final var Y = Move.Y(move.move);
+			final var figure_moved =
 				FigurePresentation.get(Move.figure_moved(move.move));
-			final FigurePresentation figure_placed =
+			final var figure_placed =
 				FigurePresentation.get(Move.figure_placed(move.move));
-			final Figure figure_captured = Move.figure_destination(move.move);
+			final var figure_captured = Move.figure_destination(move.move);
 			
 			final String notation; // algebraic notation according to FIDE
 			if (figure_moved.figure.isKing() && X - x == 2) {
@@ -524,7 +525,7 @@ public final class GamePanel extends JPanel {
 			} else if (figure_moved.figure.isKing() && x - X == 2) {
 				notation = move("0-0-0");
 			} else {
-				final boolean en_passant =
+				final var en_passant =
 					figure_moved.figure.isPawn() &&
 					figure_captured == null &&
 					x != X;

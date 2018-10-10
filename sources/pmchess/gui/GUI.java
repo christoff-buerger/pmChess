@@ -23,10 +23,10 @@ public final class GUI extends JFrame {
 	
 	static {
 		// Initialize fonts:
-		final Enumeration keys = UIManager.getDefaults().keys();
+		final var keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
-			final Object key = keys.nextElement();
-			final Object value = UIManager.get(key);
+			final var key = keys.nextElement();
+			final var value = UIManager.get(key);
 			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
 				UIManager.put(key, Resources.font_regular);
 		}
@@ -53,7 +53,7 @@ public final class GUI extends JFrame {
 		super("pmChess");
 		
 		// Setup "About"-window and icon:
-		final AboutAction about = new AboutAction();
+		final var about = new AboutAction();
 		try {
 			Desktop.getDesktop().setAboutHandler(about);
 			Taskbar.getTaskbar().setIconImage(taskbar_icon);
@@ -62,16 +62,16 @@ public final class GUI extends JFrame {
 		}
 		
 		// Setup menu bar:
-		final JMenuBar menuBar = new JMenuBar();
-		final JMenu gameMenu = new JMenu("Game"); // Game menu:
+		final var menuBar = new JMenuBar();
+		final var gameMenu = new JMenu("Game"); // Game menu:
 		gameMenu.setMnemonic(KeyEvent.VK_G);
 		gameMenu.add(new NewGameAction());
-		final ButtonGroup compPlayer = new ButtonGroup();
+		final var compPlayer = new ButtonGroup();
 		whiteComp = new NonclosingRadioButtonMenuItem("White computer");
 		whiteComp.setSelected(false);
 		blackComp = new NonclosingRadioButtonMenuItem("Black computer");
 		blackComp.setSelected(false);
-		final JMenuItem noComp = new NonclosingRadioButtonMenuItem("No computer");
+		final var noComp = new NonclosingRadioButtonMenuItem("No computer");
 		noComp.setSelected(true);
 		compPlayer.add(whiteComp);
 		compPlayer.add(blackComp);
@@ -82,7 +82,7 @@ public final class GUI extends JFrame {
 		gameMenu.addSeparator();
 		gameMenu.add(new ExitAction());
 		menuBar.add(gameMenu);
-		final JMenu helpMenu = new JMenu("Help"); // Help menu:
+		final var helpMenu = new JMenu("Help"); // Help menu:
 		helpMenu.setMnemonic(KeyEvent.VK_H);
 		helpMenu.add(about);
 		helpMenu.add(new ContactAction());
@@ -98,7 +98,7 @@ public final class GUI extends JFrame {
 		setBackground(Color.gray);
 		pack();
 		setResizable(false);
-		final Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
+		final var screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(
 			(screen_size.width - getSize().width) / 2,
 			(screen_size.height - getSize().height) / 2);

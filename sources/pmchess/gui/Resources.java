@@ -22,10 +22,10 @@ public final class Resources {
 	
 	public static String loadText(final String file) {
 		try {
-			final InputStream stream = Resources.class.getResourceAsStream(file);
+			final var stream = Resources.class.getResourceAsStream(file);
 			if (stream == null) throw new IOException();
-			final ByteArrayOutputStream result = new ByteArrayOutputStream();
-			final byte[] buffer = new byte[1024];
+			final var result = new ByteArrayOutputStream();
+			final var buffer = new byte[1024];
 			int character;
 			try {
 				while ((character = stream.read(buffer)) != -1) {
@@ -46,12 +46,12 @@ public final class Resources {
 	
 	private static Font loadFont(final String font_name, final float scale) {
 		try {
-			final Font loaded_font = Font.createFont(
+			final var loaded_font = Font.createFont(
 				Font.TRUETYPE_FONT,
 				GUI.class.getResourceAsStream("fonts/" + font_name));
-			final GraphicsEnvironment environment =
+			final var environment =
 				GraphicsEnvironment.getLocalGraphicsEnvironment();
-			for (final Font existing_font : environment.getAllFonts()) {
+			for (final var existing_font : environment.getAllFonts()) {
 				if (existing_font.getFontName().equals(loaded_font.getFontName()))
 					return existing_font.deriveFont(scale * 14f);
 			}
@@ -64,7 +64,7 @@ public final class Resources {
 	}
 	
 	protected static Image loadImage(final String image_name) {
-		final java.net.URL image_url = GamePanel.class.getResource(image_name);
+		final var image_url = GamePanel.class.getResource(image_name);
 		if (image_url != null) {
 			return Toolkit.getDefaultToolkit().getImage(image_url);
 		} else {
@@ -124,7 +124,7 @@ public final class Resources {
 		}
 		
 		protected static FigurePresentation get(final Figure figure) {
-			for (final FigurePresentation f : Resources.figures) {
+			for (final var f : Resources.figures) {
 				if (f.figure == figure)
 					return f;
 			}

@@ -34,10 +34,16 @@
 	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
+			source="11"
 			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"
-			includeantruntime="false"
+			debug="off"
+			deprecation="on"
+			includeAntRuntime="no"
+			includeJavaRuntime="no"
+			verbose="no"
+			failonerror="true"
 		/>
 		<copy todir="binaries/pmchess/gui/figures">
 			<fileset dir="../sources/pmchess/gui/figures"/>
@@ -60,7 +66,13 @@
 			destfile="portable-jar/pmChess.jar"
 			index="false"
 			update="false"
-			compress="false">
+			compress="false"
+			keepcompression="false"
+			level="0"
+			createUnicodeExtraFields="never"
+			fallbacktoUTF8="false"
+			zip64Mode="never"
+			strict="warn">
 			<manifest>
 				<attribute
 					name="Created-By"
@@ -116,15 +128,17 @@
 		</fail>
 		<delete file="${script-path}\Windows\pmChess.zip"/>
 		<zip
-			whenempty="skip"
+			whenempty="fail"
 			destfile="${script-path}\Windows\pmChess.zip"
 			basedir="${script-path}\Windows"
 			includes="pmChess/**"
 			update="false"
 			compress="true"
+			keepcompression="false"
 			level="9"
 			createUnicodeExtraFields="never"
 			fallbacktoUTF8="false"
+			zip64Mode="never"
 		/>
 	</target>
 </project>

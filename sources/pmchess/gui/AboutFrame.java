@@ -32,37 +32,37 @@ public final class AboutFrame extends JFrame {
 		
 		setSize(600, 580);
 		setResizable(false);
-		final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		final var d = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
 		
 		// Release notes:
-		final JTextArea releaseNotesTextArea = new JTextArea(releaseNotes);
+		final var releaseNotesTextArea = new JTextArea(releaseNotes);
 		releaseNotesTextArea.setFont(Resources.font_regular);
 		releaseNotesTextArea.setLineWrap(false);
 		releaseNotesTextArea.setEditable(false);
-		final JScrollPane releaseNotesScrollPane = new JScrollPane(releaseNotesTextArea);
+		final var releaseNotesScrollPane = new JScrollPane(releaseNotesTextArea);
 		releaseNotesScrollPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		releaseNotesScrollPane.setPreferredSize(new Dimension(570, 460));
 		
-		final JPanel releaseNotesPanel = new JPanel();
+		final var releaseNotesPanel = new JPanel();
 		releaseNotesPanel.add(releaseNotesScrollPane);
 		
 		// Licenses:
-		final JTextArea licenseTextArea = new JTextArea(pmchess.pmChess.pmChessLicense);
+		final var licenseTextArea = new JTextArea(pmchess.pmChess.pmChessLicense);
 		licenseTextArea.setFont(Resources.font_italic);
 		licenseTextArea.setLineWrap(false);
 		licenseTextArea.setEditable(false);
-		final JScrollPane licenseScrollPane = new JScrollPane(licenseTextArea);
+		final var licenseScrollPane = new JScrollPane(licenseTextArea);
 		licenseScrollPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		licenseScrollPane.setPreferredSize(new Dimension(570, 425));
 		
-		final JToggleButton pmChessButton = new JToggleButton("pmChess", true);
-		final JToggleButton openSansButton = new JToggleButton("Open Sans", false);
-		final JToggleButton chessMeridaUnicodeButton =
+		final var pmChessButton = new JToggleButton("pmChess", true);
+		final var openSansButton = new JToggleButton("Open Sans", false);
+		final var chessMeridaUnicodeButton =
 			new JToggleButton("Chess Merida Unicode", false);
-		final JToggleButton chessPiecesButton = new JToggleButton("Chess pieces", false);
+		final var chessPiecesButton = new JToggleButton("Chess pieces", false);
 		pmChessButton.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(final ActionEvent e) {
 					pmChessButton.setSelected(true);
@@ -101,7 +101,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		
-		final JPanel licensesPanel = new JPanel();
+		final var licensesPanel = new JPanel();
 		licensesPanel.add(pmChessButton);
 		licensesPanel.add(openSansButton);
 		licensesPanel.add(chessMeridaUnicodeButton);
@@ -109,7 +109,7 @@ public final class AboutFrame extends JFrame {
 		licensesPanel.add(licenseScrollPane);
 		
 		// Contact:
-		final JTextArea descriptionTextArea = new JTextArea(
+		final var descriptionTextArea = new JTextArea(
 			"Feedback is always welcome; sharing your issues and opinion regarding " +
 			"pmChess is very kind! Please select a subject from the proposed set " +
 			"and decide if it is OK to quote your message for example on the " +
@@ -121,13 +121,13 @@ public final class AboutFrame extends JFrame {
 		descriptionTextArea.setLineWrap(true);
 		descriptionTextArea.setWrapStyleWord(true);
 		descriptionTextArea.setEditable(false);
-		final JScrollPane descriptionScrollPane = new JScrollPane(descriptionTextArea);
+		final var descriptionScrollPane = new JScrollPane(descriptionTextArea);
 		descriptionScrollPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		descriptionScrollPane.setPreferredSize(new Dimension(570, 125));
 		
-		final JLabel subjectLabel = new JLabel("Subject:", SwingConstants.LEFT);
-		final JComboBox<String> subjectComboBox = new JComboBox<>(new String[]{
+		final var subjectLabel = new JLabel("Subject:", SwingConstants.LEFT);
+		final var subjectComboBox = new JComboBox<>(new String[]{
 			"Please select subject\u2026",
 			"chess logic error (rule violation)",
 			"bug report",
@@ -137,19 +137,19 @@ public final class AboutFrame extends JFrame {
 			"general feedback"});
 		subjectComboBox.setSelectedIndex(0);
 		
-		final JLabel permissionLabel = new JLabel("Quote permission:", SwingConstants.LEFT);
-		final JComboBox<String> permissionComboBox = new JComboBox<>(new String[]{
+		final var permissionLabel = new JLabel("Quote permission:", SwingConstants.LEFT);
+		final var permissionComboBox = new JComboBox<>(new String[]{
 			"Please decide whether you give us quote permission\u2026",
 			"REJECTED (no permission to quote mail)",
 			"GRANTED (mail can be publicly quoted)"});
 		permissionComboBox.setSelectedIndex(0);
 		
-		final JLabel nameLabel = new JLabel("Your name:", SwingConstants.LEFT);
-		final JTextField nameField = new JTextField();
+		final var nameLabel = new JLabel("Your name:", SwingConstants.LEFT);
+		final var nameField = new JTextField();
 		
-		final Dimension description_dimension =
+		final var description_dimension =
 			new Dimension(130, subjectLabel.getPreferredSize().height);
-		final Dimension selection_dimension =
+		final var selection_dimension =
 			new Dimension(430, subjectComboBox.getPreferredSize().height);
 		
 		subjectLabel.setPreferredSize(description_dimension);
@@ -159,23 +159,23 @@ public final class AboutFrame extends JFrame {
 		nameLabel.setPreferredSize(description_dimension);
 		nameField.setPreferredSize(selection_dimension);
 		
-		final JTextArea messageTextArea = new JTextArea();
+		final var messageTextArea = new JTextArea();
 		messageTextArea.setFont(Resources.font_italic);
 		messageTextArea.setLineWrap(true);
 		messageTextArea.setWrapStyleWord(true);
 		messageTextArea.setEditable(true);
-		final JScrollPane messageScrollPane = new JScrollPane(messageTextArea);
+		final var messageScrollPane = new JScrollPane(messageTextArea);
 		messageScrollPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		messageScrollPane.setPreferredSize(new Dimension(570, 195));
 		
-		final JButton sendButton = new JButton("send e-mail");
+		final var sendButton = new JButton("send e-mail");
 		sendButton.setPreferredSize(new Dimension(570, selection_dimension.height));
 		sendButton.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(final ActionEvent e) {
-				final int subject_index = subjectComboBox.getSelectedIndex();
-				final int permission_index = permissionComboBox.getSelectedIndex();
-				final String name = nameField.getText().trim();
+				final var subject_index = subjectComboBox.getSelectedIndex();
+				final var permission_index = permissionComboBox.getSelectedIndex();
+				final var name = nameField.getText().trim();
 				if (subject_index == 0 || permission_index == 0 ||
 					name.length() < 2)
 				{
@@ -186,9 +186,9 @@ public final class AboutFrame extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				final String subject =
+				final var subject =
 					"pmChess: " + subjectComboBox.getItemAt(subject_index);
-				final String body =
+				final var body =
 					"Dear Christoff," +
 					"\n\n" +
 					messageTextArea.getText().trim() +
@@ -227,7 +227,7 @@ public final class AboutFrame extends JFrame {
 			}
 		});
 		
-		final JPanel contactPanel = new JPanel();
+		final var contactPanel = new JPanel();
 		contactPanel.add(descriptionScrollPane);
 		contactPanel.add(subjectLabel);
 		contactPanel.add(subjectComboBox);
@@ -245,10 +245,10 @@ public final class AboutFrame extends JFrame {
 		tabs.addTab("Contact", contactPanel);
 		tabs.addTab("Licenses", licensesPanel);
 		
-		final JLabel header_1 = new JLabel(pmchess.pmChess.about[0], SwingConstants.CENTER);
-		final JLabel header_2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
+		final var header_1 = new JLabel(pmchess.pmChess.about[0], SwingConstants.CENTER);
+		final var header_2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
 		
-		final JPanel panel = new JPanel(new BorderLayout());
+		final var panel = new JPanel(new BorderLayout());
 		panel.add(header_1, BorderLayout.PAGE_START);
 		panel.add(header_2, BorderLayout.CENTER);
 		panel.add(tabs, BorderLayout.PAGE_END);
@@ -257,9 +257,9 @@ public final class AboutFrame extends JFrame {
 		add(panel);
 		
 		// Setup user-input processing:
-		final JRootPane rootPane = getRootPane();
-		final InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		final ActionMap actionMap = rootPane.getActionMap();
+		final var rootPane = getRootPane();
+		final var inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		final var actionMap = rootPane.getActionMap();
 		inputMap.put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 			"Close");

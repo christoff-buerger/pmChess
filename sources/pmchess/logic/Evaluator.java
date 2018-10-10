@@ -91,9 +91,9 @@ public final class Evaluator {
 		                       /* opponent */ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 		
 		// Material evaluation (also counts pawns for later pawn formation evaluation):
-		int material = 0;
-		for (int x = 7; x >= 0; x--) for (int y = 7; y >= 0; y--) {
-			final Figure f = board.figure(x, y);
+		var material = 0;
+		for (var x = 7; x >= 0; x--) for (var y = 7; y >= 0; y--) {
+			final var f = board.figure(x, y);
 			if (f == null) continue;
 			if (f.owner == player) {
 				material += value_table[f.key];
@@ -105,7 +105,7 @@ public final class Evaluator {
 		}
 		
 		// Pawn formation evaluation:
-		int pawn_formation = 0;
+		var pawn_formation = 0;
 		for (int x = 7,
 			lp = pawns[0][7], mp = pawns[0][8], rp = pawns[0][9],
 			lo = pawns[1][7], mo = pawns[1][8], ro = pawns[1][9];
@@ -120,19 +120,19 @@ public final class Evaluator {
 		}
 		
 		// Castling bonus and penalties:
-		int development = 0;
+		var development = 0;
 		if (board.castlingDone(player)) {
 			development = 10;
 		} else {
-			final boolean right = board.castlingAllowed(false, player);
+			final var right = board.castlingAllowed(false, player);
 			development = board.castlingAllowed(true, player) ?
 				(right ? 0 : -5) :
 				(right ? -5 : -12);
 		}
 		
 		// Unmoved pawn penalties:
-		final int base_row = player ? 1 : 6;
-		Figure f = board.figure(3, base_row);
+		final var base_row = player ? 1 : 6;
+		var f = board.figure(3, base_row);
 		if (f != null && f.isPawn() && f.owner == player) development -= 4;
 		f = board.figure(4, base_row);
 		if (f != null && f.isPawn() && f.owner == player) development -= 4;
@@ -142,16 +142,17 @@ public final class Evaluator {
 		if (f != null && f.isPawn() && f.owner == player) development -= 3;
 		
 		// Mobility evaluation:
-		int mobility = 0;
-		int index = board.moves_possible(), move = board.moves_possible(index);
-		Figure f_current = Move.figure_moved(move);
-		int n_current = 0;
+		var mobility = 0;
+		var index = board.moves_possible();
+		var move = board.moves_possible(index);
+		var f_current = Move.figure_moved(move);
+		var n_current = 0;
 		for (int x_current = Move.x(move), y_current = Move.y(move);
 			move != 0;
 			move = board.moves_possible(++index), n_current++)
 		{
-			final int x = Move.x(move);
-			final int y = Move.y(move);
+			final var x = Move.x(move);
+			final var y = Move.y(move);
 			if (x_current == x & y_current == y) continue;
 			mobility += mobility_table[f_current.key][n_current];
 			x_current = x;

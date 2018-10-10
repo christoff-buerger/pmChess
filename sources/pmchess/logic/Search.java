@@ -13,15 +13,15 @@ public final class Search {
 	static final int minScore = -999999;
 	
 	public int selectMove(final Board board, final Evaluator evaluator) {
-		int best_move = 0;
-		int alpha = Search.minScore;
-		int beta = 2 * Search.maxScore;
+		var best_move = 0;
+		var alpha = Search.minScore;
+		var beta = 2 * Search.maxScore;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
 		{
 			if (board.execute(move)) {
-				final int score = -alphaBetaNegaMax(
+				final var score = -alphaBetaNegaMax(
 					board,
 					-beta,
 					-alpha,
@@ -47,8 +47,8 @@ public final class Search {
 	{
 		if (depth == 0)
 			return evaluator.score(board, board.player());
-		boolean anyMoveDone = false;
-		int result = Search.minScore;
+		var anyMoveDone = false;
+		var result = Search.minScore;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
@@ -83,12 +83,12 @@ public final class Search {
 	}
 	
 	private int selectMove_2(final Board board) {
-		int depth = 0;
-		int move_index = board.moves_possible();
-		int move = board.moves_possible(move_index);
-		int last_score = Integer.MIN_VALUE;
-		int best_score = last_score;
-		int best_move = 0;
+		var depth = 0;
+		var move_index = board.moves_possible();
+		var move = board.moves_possible(move_index);
+		var last_score = Integer.MIN_VALUE;
+		var best_score = last_score;
+		var best_move = 0;
 		while (true) {
 			if (depth == 0) {
 				if (last_score > best_score) {

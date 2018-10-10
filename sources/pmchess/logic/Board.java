@@ -83,8 +83,8 @@ public final class Board {
 	}
 	
 	private void moves_computePossible() {
-		for (int x = 0; x <= 7; x++) for (int y = 0; y <= 7; y++) {
-			final Figure f = board[x][y];
+		for (var x = 0; x <= 7; x++) for (var y = 0; y <= 7; y++) {
+			final var f = board[x][y];
 			if (f != null && f.owner == player)
 				f.computeMoves(this, x, y);
 		}
@@ -94,9 +94,9 @@ public final class Board {
 		Add a possible move to the current move frame and unset its selected move.
 	*/
 	protected void moves_add(final int x, final int y, final int X, final int Y) {
-		int successor_frame = moves[moves_frame];
+		final var successor_frame = moves[moves_frame];
 		moves[successor_frame] = Move.encodeMove(this, x, y, X, Y);
-		moves[moves_frame] = ++successor_frame;
+		moves[moves_frame] = successor_frame + 1;
 		moves[moves_frame + 2] = 0;
 	}
 	
@@ -129,9 +129,9 @@ public final class Board {
 	}
 	
 	public boolean execute(final int x, final int y, final int X, final int Y) {
-		final int moves_end = moves[moves_frame];
-		for (int i = moves_frame + 3; i < moves_end; i++) {
-			final int move = moves[i];
+		final var moves_end = moves[moves_frame];
+		for (var i = moves_frame + 3; i < moves_end; i++) {
+			final var move = moves[i];
 			if (Move.x(move) == x && Move.y(move) == y &&
 				Move.X(move) == X && Move.Y(move) == Y)
 			{
@@ -144,11 +144,11 @@ public final class Board {
 	protected boolean execute(final int move) {
 		// Update cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
-		final int x = Move.x(move);
-		final int y = Move.y(move);
-		final int X = Move.X(move);
-		final int Y = Move.Y(move);
-		final Figure figure_placed = Move.figure_placed(move);
+		final var x = Move.x(move);
+		final var y = Move.y(move);
+		final var X = Move.X(move);
+		final var Y = Move.Y(move);
+		final var figure_placed = Move.figure_placed(move);
 		board[x][y] = null;
 		board[X][Y] = figure_placed;
 		if (figure_placed.isKing()) {
@@ -186,9 +186,9 @@ public final class Board {
 		player = !player;
 		turn++;
 		// Update game history (push new current moves frame and compute possible moves):
-		final int old_move_selected = moves[moves_frame + 2];
+		final var old_move_selected = moves[moves_frame + 2];
 		moves[moves_frame + 2] = move; // TODO: push move INDEX, not the move, as selected.
-		final int successor_frame = moves[moves_frame];
+		final var successor_frame = moves[moves_frame];
 		moves[successor_frame] = successor_frame + 3;
 		moves[successor_frame + 1] = moves_frame;
 		moves[successor_frame + 2] = 0;
@@ -209,13 +209,13 @@ public final class Board {
 		moves_frame = moves[moves_frame + 1];
 		// Restore cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
-		final int move = moves[moves_frame + 2];// TODO: fix when moves_selected contains index not move
-		final int x = Move.x(move);
-		final int y = Move.y(move);
-		final int X = Move.X(move);
-		final int Y = Move.Y(move);
-		final Figure figure_moved = Move.figure_moved(move);
-		final Figure figure_destination = Move.figure_destination(move);
+		final var move = moves[moves_frame + 2];// TODO: fix when moves_selected contains index not move
+		final var x = Move.x(move);
+		final var y = Move.y(move);
+		final var X = Move.X(move);
+		final var Y = Move.Y(move);
+		final var figure_moved = Move.figure_moved(move);
+		final var figure_destination = Move.figure_destination(move);
 		board[x][y] = figure_moved;
 		board[X][Y] = figure_destination;
 		if (figure_moved.isKing()) {
@@ -281,9 +281,9 @@ public final class Board {
 	}
 	
 	public GameStatus status() {
-		final int old_move_selected = moves[moves_frame + 2];
-		final int moves_end = moves[moves_frame];
-		for (int i = moves_frame + 3; i < moves_end; i++) {
+		final var old_move_selected = moves[moves_frame + 2];
+		final var moves_end = moves[moves_frame];
+		for (var i = moves_frame + 3; i < moves_end; i++) {
 			if (execute(/*TODO: just i when move index*/moves[i])) {
 				undo();
 				moves[moves_frame + 2] = old_move_selected;
@@ -302,8 +302,8 @@ public final class Board {
 	public int previousMove(final int turn) {
 		if (turn < 1 | turn >= this.turn)
 			return 0;
-		int previous_frame = moves_frame;
-		for (int i = this.turn - turn; i-- > 0; previous_frame = moves[previous_frame + 1]);
+		var previous_frame = moves_frame;
+		for (var i = this.turn - turn; i-- > 0; previous_frame = moves[previous_frame + 1]);
 		return moves[previous_frame + 2];
 	}
 	
@@ -311,13 +311,13 @@ public final class Board {
 		Figure f;
 		
 		// Check for pawns:
-		final int ym1 = Y - 1;
-		final int yp1 = Y + 1;
-		final int xm1 = X - 1;
-		final boolean xm1_valid = xm1 >= 0;
-		final int xp1 = X + 1;
-		final boolean xp1_valid = xp1 <= 7;
-		final int y_pawn = player ? ym1 : yp1;
+		final var ym1 = Y - 1;
+		final var yp1 = Y + 1;
+		final var xm1 = X - 1;
+		final var xm1_valid = xm1 >= 0;
+		final var xp1 = X + 1;
+		final var xp1_valid = xp1 <= 7;
+		final var y_pawn = player ? ym1 : yp1;
 		if (y_pawn > 0 & y_pawn < 7) {
 			if (xm1_valid) {
 				f = board[xm1][y_pawn];
@@ -332,28 +332,28 @@ public final class Board {
 		}
 		
 		// Check for rooks and straight-line queens:
-		for (int x = xm1; x >= 0; x--) {
+		for (var x = xm1; x >= 0; x--) {
 			f = board[x][Y];
 			if (f == null) continue;
 			if (f.owner != player) break;
 			if (f.isRook() || f.isQueen()) return true;
 			break;
 		}
-		for (int x = xp1; x <= 7; x++) {
+		for (var x = xp1; x <= 7; x++) {
 			f = board[x][Y];
 			if (f == null) continue;
 			if (f.owner != player) break;
 			if (f.isRook() || f.isQueen()) return true;
 			break;
 		}
-		for (int y = ym1; y >= 0; y--) {
+		for (var y = ym1; y >= 0; y--) {
 			f = board[X][y];
 			if (f == null) continue;
 			if (f.owner != player) break;
 			if (f.isRook() || f.isQueen()) return true;
 			break;
 		}
-		for (int y = yp1; y <= 7; y++) {
+		for (var y = yp1; y <= 7; y++) {
 			f = board[X][y];
 			if (f == null) continue;
 			if (f.owner != player) break;
@@ -392,16 +392,16 @@ public final class Board {
 		}
 		
 		// Check for knights:
-		final int ym2 = Y - 2;
-		final boolean ym2_valid = ym2 >= 0;
+		final var ym2 = Y - 2;
+		final var ym2_valid = ym2 >= 0;
 		if (xm1_valid & ym2_valid) {
 			f = board[xm1][ym2];
 			if (f != null && f.owner == player && f.isKnight())
 				return true;
 		}
-		final boolean ym1_valid = ym1 >= 0;
-		final int xm2 = X - 2;
-		final boolean xm2_valid = xm2 >= 0;
+		final var ym1_valid = ym1 >= 0;
+		final var xm2 = X - 2;
+		final var xm2_valid = xm2 >= 0;
 		if (xm2_valid & ym1_valid) {
 			f = board[xm2][ym1];
 			if (f != null && f.owner == player && f.isKnight())
@@ -412,21 +412,21 @@ public final class Board {
 			if (f != null && f.owner == player && f.isKnight())
 				return true;
 		}
-		final int xp2 = X + 2;
-		final boolean xp2_valid = xp2 <= 7;
+		final var xp2 = X + 2;
+		final var xp2_valid = xp2 <= 7;
 		if (xp2_valid & ym1_valid) {
 			f = board[xp2][ym1];
 			if (f != null && f.owner == player && f.isKnight())
 				return true;
 		}
-		final int yp2 = Y + 2;
-		final boolean yp2_valid = yp2 <= 7;
+		final var yp2 = Y + 2;
+		final var yp2_valid = yp2 <= 7;
 		if (xm1_valid & yp2_valid) {
 			f = board[xm1][yp2];
 			if (f != null && f.owner == player && f.isKnight())
 				return true;
 		}
-		final boolean yp1_valid = yp1 <= 7;
+		final var yp1_valid = yp1 <= 7;
 		if (xm2_valid & yp1_valid) {
 			f = board[xm2][yp1];
 			if (f != null && f.owner == player && f.isKnight())
