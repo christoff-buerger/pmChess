@@ -34,7 +34,7 @@ public final class Move {
 		|           destination                 |
 		+---------------------------------------+
 	*/
-	public static int encodeMove(
+	public static int encode_move(
 		final Board board,
 		final int x,
 		final int y,
@@ -49,18 +49,18 @@ public final class Move {
 			(figure_destination == null ? 0 : figure_destination.key << 16);
 		
 		// Update castling information:
-		if (figure_moved.isKing()) { // Moving king disables castlings.
+		if (figure_moved.is_king()) { // Moving king disables castlings.
 			final var player_offset = player ? 0 : 2;
-			if (board.castlingAllowed(true, player))
+			if (board.castling_allowed(true, player))
 				encoded_move |= 0x100000 << player_offset;
-			if (board.castlingAllowed(false, player))
+			if (board.castling_allowed(false, player))
 				encoded_move |= 0x200000 << player_offset;
-		} else if (figure_moved.isRook()) { // Moving rook from start disables castlings.
+		} else if (figure_moved.is_rook()) { // Moving rook from start disables castlings.
 			final var player_offset = player ? 0 : 2;
 			if (y == (player ? 0 : 7)) {
-				if (x == 0 && board.castlingAllowed(true, player)) {
+				if (x == 0 && board.castling_allowed(true, player)) {
 					encoded_move |= 0x100000 << player_offset;
-				} else if (x == 7 && board.castlingAllowed(false, player)) {
+				} else if (x == 7 && board.castling_allowed(false, player)) {
 					encoded_move |= 0x200000 << player_offset;
 				}
 			}
@@ -72,12 +72,12 @@ public final class Move {
 			 - and uses it for castling
 			Thus, killing a rook on a start position disables its castling:
 		*/
-		if (figure_destination != null && figure_destination.isRook()) {
+		if (figure_destination != null && figure_destination.is_rook()) {
 			final var player_offset = player ? 2 : 0;
 			if (Y == (player ? 7 : 0)) {
-				if (X == 0 && board.castlingAllowed(true, !player)) {
+				if (X == 0 && board.castling_allowed(true, !player)) {
 					encoded_move |= 0x100000 << player_offset;
-				} else if (X == 7 && board.castlingAllowed(false, !player)) {
+				} else if (X == 7 && board.castling_allowed(false, !player)) {
 					encoded_move |= 0x200000 << player_offset;
 				}
 			}
@@ -116,14 +116,14 @@ public final class Move {
 	public static Figure figure_placed(final int move) {
 		final var figure_moved = Move.figure_moved(move);
 		final var Y = Move.Y(move);
-		return figure_moved.isPawn() && (Y == 0 | Y == 7) ?
+		return figure_moved.is_pawn() && (Y == 0 | Y == 7) ?
 			Figure.queen(figure_moved.owner) : figure_moved;
 	}
 	
 	/*
 		Return 4 bits representing castling changes (cf. encodeMove).
 	*/
-	public static int castlingChanges(final int move) {
+	public static int castling_changes(final int move) {
 		return move >> 20; // Castling bits are highest of encoding => just shift.
 	}
 }

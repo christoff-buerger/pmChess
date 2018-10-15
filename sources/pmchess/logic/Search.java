@@ -8,24 +8,24 @@
 package pmchess.logic;
 
 public final class Search {
-	static final int searchDepth = 4;
-	static final int maxScore =  999999;
-	static final int minScore = -999999;
+	static final int search_depth = 4;
+	static final int max_score =  999999;
+	static final int min_score = -999999;
 	
-	public int selectMove(final Board board, final Evaluator evaluator) {
+	public int select_move(final Board board, final Evaluator evaluator) {
 		var best_move = 0;
-		var alpha = Search.minScore;
-		var beta = 2 * Search.maxScore;
+		var alpha = Search.min_score;
+		var beta = 2 * Search.max_score;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
 		{
 			if (board.execute(move)) {
-				final var score = -alphaBetaNegaMax(
+				final var score = -alpha_beta_nega_max(
 					board,
 					-beta,
 					-alpha,
-					Search.searchDepth,
+					Search.search_depth,
 					evaluator);
 				if (score > alpha) {
 					alpha = score;
@@ -38,7 +38,7 @@ public final class Search {
 		return best_move;
 	}
 	
-	private int alphaBetaNegaMax(
+	private int alpha_beta_nega_max(
 		final Board board,
 		int alpha,
 		final int beta,
@@ -47,42 +47,36 @@ public final class Search {
 	{
 		if (depth == 0)
 			return evaluator.score(board, board.player());
-		var anyMoveDone = false;
-		var result = Search.minScore;
+		var any_move_done = false;
+		var result = Search.min_score;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
 		{
 			if (board.execute(move)) {
-				result = -alphaBetaNegaMax(
+				result = -alpha_beta_nega_max(
 					board,
 					-beta,
 					-alpha,
 					depth - 1,
 					evaluator);
 				board.undo();
-				anyMoveDone = true;
+				any_move_done = true;
 			}
 			if (result >= beta)
 				return beta;
 			if (result > alpha)
 				alpha = result;
 		}
-		if (!anyMoveDone) {
-			if (board.status() == Board.GameStatus.Stalemate) {
-				return evaluator.score(board, board.player()) <
-					evaluator.score(board, !board.player()) ?
-					// Never cause remi if better:
-					Search.maxScore :
-					// Remi if worse maybe useful:
-					evaluator.score(board, board.player());
-			}
-			return Search.minScore; // Current player lost.
+		if (!any_move_done) {
+			return board.check(board.player()) ?
+				Search.min_score : // current player lost
+				evaluator.score(board, board.player()); // stalemate
 		}
 		return alpha;
 	}
 	
-	private int selectMove_2(final Board board) {
+	private int select_move_2(final Board board) {
 		var depth = 0;
 		var move_index = board.moves_possible();
 		var move = board.moves_possible(move_index);

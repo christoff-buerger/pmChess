@@ -97,11 +97,11 @@ public final class Evaluator {
 			if (f == null) continue;
 			if (f.owner == player) {
 				material += value_table[f.key];
-				if (f.isPawn()) pawns[0][x + 1]++;
+				if (f.is_pawn()) pawns[0][x + 1]++;
 				continue;
 			}
 			material -= value_table[f.key];
-			if (f.isPawn()) pawns[1][x + 1]++;
+			if (f.is_pawn()) pawns[1][x + 1]++;
 		}
 		
 		// Pawn formation evaluation:
@@ -121,11 +121,11 @@ public final class Evaluator {
 		
 		// Castling bonus and penalties:
 		var development = 0;
-		if (board.castlingDone(player)) {
+		if (board.castling_done(player)) {
 			development = 10;
 		} else {
-			final var right = board.castlingAllowed(false, player);
-			development = board.castlingAllowed(true, player) ?
+			final var right = board.castling_allowed(false, player);
+			development = board.castling_allowed(true, player) ?
 				(right ? 0 : -5) :
 				(right ? -5 : -12);
 		}
@@ -133,13 +133,13 @@ public final class Evaluator {
 		// Unmoved pawn penalties:
 		final var base_row = player ? 1 : 6;
 		var f = board.figure(3, base_row);
-		if (f != null && f.isPawn() && f.owner == player) development -= 4;
+		if (f != null && f.is_pawn() && f.owner == player) development -= 4;
 		f = board.figure(4, base_row);
-		if (f != null && f.isPawn() && f.owner == player) development -= 4;
+		if (f != null && f.is_pawn() && f.owner == player) development -= 4;
 		f = board.figure(2, base_row);
-		if (f != null && f.isPawn() && f.owner == player) development -= 3;
+		if (f != null && f.is_pawn() && f.owner == player) development -= 3;
 		f = board.figure(5, base_row);
-		if (f != null && f.isPawn() && f.owner == player) development -= 3;
+		if (f != null && f.is_pawn() && f.owner == player) development -= 3;
 		
 		// Mobility evaluation:
 		var mobility = 0;

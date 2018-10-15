@@ -17,14 +17,14 @@ public final class pmChess {
 	};
 	
 	// Static => enforce licenses exist:
-	public static final String pmChessLicense =
-		Resources.loadText("license.txt");
-	public static final String chessPiecesLicense =
-		Resources.loadText("figures/LICENSE.txt");
-	public static final String openSansLicense =
-		Resources.loadText("fonts/Open-Sans-license.txt");
-	public static final String chessMeridaUnicodeLicense =
-		Resources.loadText("fonts/Chess-Merida-Unicode-license.txt");
+	public static final String pmChess_license =
+		Resources.load_text("license.txt");
+	public static final String chess_pieces_license =
+		Resources.load_text("figures/LICENSE.txt");
+	public static final String open_sans_license =
+		Resources.load_text("fonts/Open-Sans-license.txt");
+	public static final String chess_merida_unicode_license =
+		Resources.load_text("fonts/Chess-Merida-Unicode-license.txt");
 	
 	/*
 		Print license and start GUI. No command line arguments supported.
@@ -33,7 +33,7 @@ public final class pmChess {
 		System.out.println(about[0]);
 		System.out.println(about[1]);
 		System.out.println();
-		System.out.println(pmChessLicense);
+		System.out.println(pmChess_license);
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override public void run() {
 				new GUI();

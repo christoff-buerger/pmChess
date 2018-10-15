@@ -20,7 +20,7 @@ public final class Resources {
 	
 	public static final String text_encoding = StandardCharsets.UTF_8.name();
 	
-	public static String loadText(final String file) {
+	public static String load_text(final String file) {
 		try {
 			final var stream = Resources.class.getResourceAsStream(file);
 			if (stream == null) throw new IOException();
@@ -40,11 +40,11 @@ public final class Resources {
 		}
 	}
 	
-	private static Font loadFont(final String font_name) {
-		return loadFont(font_name, 1);
+	private static Font load_font(final String font_name) {
+		return load_font(font_name, 1);
 	}
 	
-	private static Font loadFont(final String font_name, final float scale) {
+	private static Font load_font(final String font_name, final float scale) {
 		try {
 			final var loaded_font = Font.createFont(
 				Font.TRUETYPE_FONT,
@@ -63,7 +63,7 @@ public final class Resources {
 		}
 	}
 	
-	protected static Image loadImage(final String image_name) {
+	protected static Image load_image(final String image_name) {
 		final var image_url = GamePanel.class.getResource(image_name);
 		if (image_url != null) {
 			return Toolkit.getDefaultToolkit().getImage(image_url);
@@ -72,36 +72,36 @@ public final class Resources {
 		}
 	}
 	
-	protected static final Font font_regular = loadFont("Open-Sans-Regular.ttf");
-	protected static final Font font_italic = loadFont("Open-Sans-Italic.ttf");
-	protected static final Font font_bold = loadFont("Open-Sans-Bold.ttf");
-	protected static final Font font_bold_italic = loadFont("Open-Sans-BoldItalic.ttf");
+	protected static final Font font_regular = load_font("Open-Sans-Regular.ttf");
+	protected static final Font font_italic = load_font("Open-Sans-Italic.ttf");
+	protected static final Font font_bold = load_font("Open-Sans-Bold.ttf");
+	protected static final Font font_bold_italic = load_font("Open-Sans-BoldItalic.ttf");
 	
 	private static final FigurePresentation[] figures = {
 		new FigurePresentation(
-			Figure.pawn(true), loadImage("figures/pawn-w.png"), "\u2659", ""),
+			Figure.pawn(true), load_image("figures/pawn-w.png"), "\u2659", ""),
 		new FigurePresentation(
-			Figure.rook(true), loadImage("figures/rook-w.png"), "\u2656", "R"),
+			Figure.rook(true), load_image("figures/rook-w.png"), "\u2656", "R"),
 		new FigurePresentation(
-			Figure.knight(true), loadImage("figures/knight-w.png"), "\u2658", "N"),
+			Figure.knight(true), load_image("figures/knight-w.png"), "\u2658", "N"),
 		new FigurePresentation(
-			Figure.bishop(true), loadImage("figures/bishop-w.png"), "\u2657", "B"),
+			Figure.bishop(true), load_image("figures/bishop-w.png"), "\u2657", "B"),
 		new FigurePresentation(
-			Figure.queen(true), loadImage("figures/queen-w.png"), "\u2655", "Q"),
+			Figure.queen(true), load_image("figures/queen-w.png"), "\u2655", "Q"),
 		new FigurePresentation(
-			Figure.king(true), loadImage("figures/king-w.png"), "\u2654", "K"),
+			Figure.king(true), load_image("figures/king-w.png"), "\u2654", "K"),
 		new FigurePresentation(
-			Figure.pawn(false), loadImage("figures/pawn-b.png"), "\u265F", ""),
+			Figure.pawn(false), load_image("figures/pawn-b.png"), "\u265F", ""),
 		new FigurePresentation(
-			Figure.rook(false), loadImage("figures/rook-b.png"), "\u265C", "R"),
+			Figure.rook(false), load_image("figures/rook-b.png"), "\u265C", "R"),
 		new FigurePresentation(
-			Figure.knight(false), loadImage("figures/knight-b.png"), "\u265E", "N"),
+			Figure.knight(false), load_image("figures/knight-b.png"), "\u265E", "N"),
 		new FigurePresentation(
-			Figure.bishop(false), loadImage("figures/bishop-b.png"), "\u265D", "B"),
+			Figure.bishop(false), load_image("figures/bishop-b.png"), "\u265D", "B"),
 		new FigurePresentation(
-			Figure.queen(false), loadImage("figures/queen-b.png"), "\u265B", "Q"),
+			Figure.queen(false), load_image("figures/queen-b.png"), "\u265B", "Q"),
 		new FigurePresentation(
-			Figure.king(false), loadImage("figures/king-b.png"), "\u265A", "K")
+			Figure.king(false), load_image("figures/king-b.png"), "\u265A", "K")
 	};
 	
 	protected static final class FigurePresentation {
@@ -109,7 +109,7 @@ public final class Resources {
 		protected final Image image;
 		protected final String unicode;
 		protected final String ascii;
-		protected static final Font font = loadFont("Chess-Merida-Unicode.ttf", 1.2f);
+		protected static final Font font = load_font("Chess-Merida-Unicode.ttf", 1.2f);
 		
 		private FigurePresentation(
 			final Figure figure,
@@ -128,8 +128,7 @@ public final class Resources {
 				if (f.figure == figure)
 					return f;
 			}
-			throw new RuntimeException(
-				"IMPLEMENTATION ERROR: Missing figure presentation.");
+			throw new RuntimeException("ERROR: missing figure presentation.");
 		}
 	}
 }

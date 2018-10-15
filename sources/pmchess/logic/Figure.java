@@ -54,46 +54,44 @@ public abstract class Figure {
 	protected final int key;
 	
 	private Figure() {
-		if (key_count > 12) {
-			throw new RuntimeException(
-				"IMPLEMENTATION ERROR: Invalid figure instantiation.");
-		}
-		this.owner = key_count < 7;
-		this.key = key_count++;
+		if (key_count > 12)
+			throw new RuntimeException("ERROR: invalid figure instantiation.");
+		owner = key_count < 7;
+		key = key_count++;
 	}
 	
-	public final boolean isPawn() {
+	public final boolean is_pawn() {
 		return key == 1 | key == 7;
 	}
 	
-	public final boolean isRook() {
+	public final boolean is_rook() {
 		return key == 2 | key == 8;
 	}
 	
-	public final boolean isKnight() {
+	public final boolean is_knight() {
 		return key == 3 | key == 9;
 	}
 	
-	public final boolean isBishop() {
+	public final boolean is_bishop() {
 		return key == 4 | key == 10;
 	}
 	
-	public final boolean isQueen() {
+	public final boolean is_queen() {
 		return key == 5 | key == 11;
 	}
 	
-	public final boolean isKing() {
+	public final boolean is_king() {
 		return key == 6 | key == 12;
 	}
 	
-	protected abstract void computeMoves(final Board board, final int x, final int y);
+	protected abstract void compute_moves(final Board board, final int x, final int y);
 	
 	private static final class Pawn extends Figure {
-		private static int possibleEnPassant(final Board board) {
-			final var move = board.previousMove(board.turn() - 1);
+		private static int possible_enpassant(final Board board) {
+			final var move = board.previous_move(board.turn() - 1);
 			if (move == 0)
 				return -1;
-			if (Move.figure_moved(move).isPawn()) {
+			if (Move.figure_moved(move).is_pawn()) {
 				final var distance = Move.y(move) - Move.Y(move);
 				if (distance == 2 | distance == -2);
 					return Move.x(move);
@@ -101,30 +99,26 @@ public abstract class Figure {
 			return -1;
 		}
 				
-		@Override protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void compute_moves(
+			final Board board,
+			final int x,
+			final int y)
+		{
 			Figure f;
 			final var xm1 = x - 1;
 			final var xp1 = x + 1;
 			if (owner) {
-				final var en_passant = y == 4 ? possibleEnPassant(board) : -1;
+				final var en_passant = y == 4 ? possible_enpassant(board) : -1;
 				var Y = y + 1;
 				if (xm1 >= 0) {
 					f = board.figure(xm1, Y);
-					if (f == null) {
-						if (xm1 == en_passant)
-							board.moves_add(x, 4, xm1, Y);
-					} else if (f.owner != owner) {
+					if (f == null ? xm1 == en_passant : f.owner != owner)
 						board.moves_add(x, y, xm1, Y);
-					}
 				}
 				if (xp1 <= 7) {
 					f = board.figure(xp1, Y);
-					if (f == null) {
-						if (xp1 == en_passant)
-							board.moves_add(x, 4, xp1, Y);
-					} else if (f.owner != owner) {
+					if (f == null ? xp1 == en_passant : f.owner != owner)
 						board.moves_add(x, y, xp1, Y);
-					}
 				}
 				if (board.figure(x, Y) == null) {
 					board.moves_add(x, y, x, Y);
@@ -132,25 +126,17 @@ public abstract class Figure {
 						board.moves_add(x, y, x, Y);
 				}
 			} else {
-				final var en_passant = y == 3 ? possibleEnPassant(board) : -1;
+				final var en_passant = y == 3 ? possible_enpassant(board) : -1;
 				var Y = y - 1;
 				if (xm1 >= 0) {
 					f = board.figure(xm1, Y);
-					if (f == null) {
-						if (xm1 == en_passant)
-							board.moves_add(x, 3, xm1, Y);
-					} else if (f.owner != owner) {
+					if (f == null ? xm1 == en_passant : f.owner != owner)
 						board.moves_add(x, y, xm1, Y);
-					}
 				}
 				if (xp1 <= 7) {
 					f = board.figure(xp1, Y);
-					if (f == null) {
-						if (xp1 == en_passant)
-							board.moves_add(x, 3, xp1, Y);
-					} else if (f.owner != owner) {
+					if (f == null? xp1 == en_passant : f.owner != owner)
 						board.moves_add(x, y, xp1, Y);
-					}
 				}
 				if (board.figure(x, Y) == null) {
 					board.moves_add(x, y, x, Y);
@@ -162,7 +148,11 @@ public abstract class Figure {
 	}
 	
 	private static final class Rook extends Figure {
-		@Override protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void compute_moves(
+			final Board board,
+			final int x,
+			final int y)
+		{
 			Figure f;
 			for (var X = x - 1; X >= 0; X--) {
 				f = board.figure(X, y);
@@ -208,7 +198,11 @@ public abstract class Figure {
 	}
 	
 	private static final class Knight extends Figure {
-		@Override protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void compute_moves(
+			final Board board,
+			final int x,
+			final int y)
+		{
 			Figure f;
 			final var xm1 = x - 1;
 			final var xp1 = x + 1;
@@ -274,7 +268,11 @@ public abstract class Figure {
 	}
 		
 	private static final class Bishop extends Figure {
-		@Override protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void compute_moves(
+			final Board board,
+			final int x,
+			final int y)
+		{
 			Figure f;
 			final var xm1 = x - 1;
 			final var xp1 = x + 1;
@@ -324,14 +322,22 @@ public abstract class Figure {
 	}
 	
 	private static final class Queen extends Figure {
-		@Override protected void computeMoves(final Board board, final int x, final int y) {
-			Figure.rook(owner).computeMoves(board, x, y);
-			Figure.bishop(owner).computeMoves(board, x, y);
+		@Override protected void compute_moves(
+			final Board board,
+			final int x,
+			final int y)
+		{
+			Figure.rook(owner).compute_moves(board, x, y);
+			Figure.bishop(owner).compute_moves(board, x, y);
 		}
 	}
 	
 	private static final class King extends Figure {
-		@Override protected void computeMoves(final Board board, final int x, final int y) {
+		@Override protected void compute_moves(
+			final Board board,
+			final int x,
+			final int y)
+		{
 			Figure f;
 			final var xm1 = x - 1;
 			final var xp1 = x + 1;
@@ -380,7 +386,7 @@ public abstract class Figure {
 					board.moves_add(x, y, x, yp1);
 			}
 			final var opponent = !owner;
-			if ((board.castlingAllowed(true, owner) &
+			if ((board.castling_allowed(true, owner) &
 				board.figure(1, y) == null &
 				board.figure(2, y) == null &
 				board.figure(3, y) == null) && !(
@@ -390,7 +396,7 @@ public abstract class Figure {
 			{
 				board.moves_add(x, y, 2, y);
 			}
-			if ((board.castlingAllowed(false, owner) &
+			if ((board.castling_allowed(false, owner) &
 				board.figure(5, y) == null &
 				board.figure(6, y) == null) && !(
 				board.threatens(opponent, x, y) ||

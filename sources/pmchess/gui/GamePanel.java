@@ -16,7 +16,7 @@ import pmchess.logic.*;
 import pmchess.gui.Resources.*;
 
 public final class GamePanel extends JPanel {
-	private static final Image bulb = Resources.loadImage("icons/bulb.png");
+	private static final Image bulb = Resources.load_image("icons/bulb.png");
 	
 	private final Board board = new Board();
 	private final Search search = new Search();
@@ -33,17 +33,17 @@ public final class GamePanel extends JPanel {
 	private int selected_y = 0;
 	private Figure selected_figure = null;
 	
-	private final BoardPanel boardPanel = new BoardPanel();
-	private final StatusPanel statusPanel = new StatusPanel();
-	private final HistoryPanel historyPanel = new HistoryPanel();
+	private final BoardPanel board_panel = new BoardPanel();
+	private final StatusPanel status_panel = new StatusPanel();
+	private final HistoryPanel history_panel = new HistoryPanel();
 	
 	protected GamePanel() {
 		// Setup panel size and layout:
 		setOpaque(true);
 		final var border_size = 5;
 		final var panel_dimension = new Dimension(
-			boardPanel.panel_size + historyPanel.panel_x_size + 2 * border_size,
-			boardPanel.panel_size + statusPanel.panel_y_size + 2 * border_size);
+			board_panel.panel_size + history_panel.panel_x_size + 2 * border_size,
+			board_panel.panel_size + status_panel.panel_y_size + 2 * border_size);
 		setMaximumSize(panel_dimension);
 		setMinimumSize(panel_dimension);
 		setPreferredSize(panel_dimension);
@@ -55,18 +55,18 @@ public final class GamePanel extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		// Add components:
-		final var dummyPanel = new JPanel();
-		final var dummyPanel_dimension = new Dimension(
-			boardPanel.panel_size,
-			boardPanel.panel_size + statusPanel.panel_y_size);
-		dummyPanel.setMaximumSize(dummyPanel_dimension);
-		dummyPanel.setMinimumSize(dummyPanel_dimension);
-		dummyPanel.setPreferredSize(dummyPanel_dimension);
-		dummyPanel.setLayout(new BoxLayout(dummyPanel, BoxLayout.Y_AXIS));
-		dummyPanel.add(boardPanel);
-		dummyPanel.add(statusPanel);
-		add(dummyPanel);
-		add(historyPanel);
+		final var dummy_panel = new JPanel();
+		final var dummy_panel_dimension = new Dimension(
+			board_panel.panel_size,
+			board_panel.panel_size + status_panel.panel_y_size);
+		dummy_panel.setMaximumSize(dummy_panel_dimension);
+		dummy_panel.setMinimumSize(dummy_panel_dimension);
+		dummy_panel.setPreferredSize(dummy_panel_dimension);
+		dummy_panel.setLayout(new BoxLayout(dummy_panel, BoxLayout.Y_AXIS));
+		dummy_panel.add(board_panel);
+		dummy_panel.add(status_panel);
+		add(dummy_panel);
+		add(history_panel);
 		
 		// Add listener for cursor movement and figure selection:
 		setFocusable(true);
@@ -81,51 +81,51 @@ public final class GamePanel extends JPanel {
 		while (undo());
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
-		runGame();
+		run_game();
 	}
 	
 	private boolean undo() {
 		if (board.undo() != 0) {
-			historyPanel.history_data.removeElementAt(
-				historyPanel.history_data.size() - 1);
+			history_panel.history_data.removeElementAt(
+				history_panel.history_data.size() - 1);
 			selected_figure = null;
 			capitulation = false;
-			boardPanel.repaint();
-			statusPanel.repaint();
+			board_panel.repaint();
+			status_panel.repaint();
 			return true;
 		}
 		return false;
 	}
 	
-	private void runGame() {
+	private void run_game() {
 		var game_status = board.status();
-		while (computerTurn() &&
+		while (computer_turn() &&
 			(game_status == Board.GameStatus.Normal ||
 			 game_status == Board.GameStatus.Check))
 		{
 			paintImmediately(0, 0, getWidth(), getHeight());
-			final var move = search.selectMove(board, evaluator);
+			final var move = search.select_move(board, evaluator);
 			capitulation = move == 0;
 			if (capitulation)
 				break;
 			board.execute(Move.x(move), Move.y(move), Move.X(move), Move.Y(move));
 			game_status = board.status();
-			historyPanel.history_data.addElement(new PastMove(
+			history_panel.history_data.addElement(new PastMove(
 				board.turn() - 1,
 				move,
 				game_status));
 		}
-		boardPanel.repaint();
-		statusPanel.repaint();
+		board_panel.repaint();
+		status_panel.repaint();
 	}
 	
-	private boolean computerTurn() {
+	private boolean computer_turn() {
 		return board.player() ? computer_w : computer_b;
 	}
 	
 	private final class BoardListener extends KeyAdapter {
 		@Override public void keyPressed(final KeyEvent event) {
-			if (computerTurn())
+			if (computer_turn())
 				return;
 			final var old_x = cursor_x;
 			final var old_y = cursor_y;
@@ -134,11 +134,11 @@ public final class GamePanel extends JPanel {
 				final var figure = board.figure(cursor_x, cursor_y);
 				if (figure != null && figure.owner == board.player()) {
 					selected_figure = null;
-					boardPanel.drawSquare(selected_x, selected_y);
+					board_panel.draw_square(selected_x, selected_y);
 					selected_figure = figure;
 					selected_x = cursor_x;
 					selected_y = cursor_y;
-					boardPanel.drawSquare(selected_x, selected_y);
+					board_panel.draw_square(selected_x, selected_y);
 				} else if (selected_figure != null) {
 					if (board.execute(
 						selected_x,
@@ -146,12 +146,12 @@ public final class GamePanel extends JPanel {
 						cursor_x,
 						cursor_y))
 					{
-						historyPanel.history_data.addElement(new PastMove(
+						history_panel.history_data.addElement(new PastMove(
 							board.turn() - 1,
-							board.previousMove(board.turn() - 1),
+							board.previous_move(board.turn() - 1),
 							board.status()));
 						selected_figure = null;
-						runGame();
+						run_game();
 					}
 				}
 				return;
@@ -166,27 +166,27 @@ public final class GamePanel extends JPanel {
 			} else { // Unknown key or invalid movement:
 				return;
 			}
-			boardPanel.drawSquare(old_x, old_y);
-			boardPanel.drawSquare(cursor_x, cursor_y);
+			board_panel.draw_square(old_x, old_y);
+			board_panel.draw_square(cursor_x, cursor_y);
 		}
 	}
 	
 	private final class HistoryListener extends KeyAdapter {
 		@Override public void keyPressed(final KeyEvent event) {
-			final var gameStatus = board.status();
-			if (computerTurn() && !capitulation &&
-				gameStatus != Board.GameStatus.Checkmate &&
-				gameStatus != Board.GameStatus.Stalemate)
+			final var game_status = board.status();
+			if (computer_turn() && !capitulation &&
+				game_status != Board.GameStatus.Checkmate &&
+				game_status != Board.GameStatus.Stalemate)
 			{
 				return;
 			}
 			final var key = event.getKeyCode();
 			if (key == KeyEvent.VK_SPACE) {
-				final var selected = historyPanel.history_list.getSelectedIndex();
+				final var selected = history_panel.history_list.getSelectedIndex();
 				for (var i = board.turn() - selected - 1; i > 0; i--) {
 					undo();
 				}
-				runGame();
+				run_game();
 			}
 		}
 	}
@@ -254,29 +254,29 @@ public final class GamePanel extends JPanel {
 			// Draw tiles:
 			for (var x = 7; x >= 0; x--) {
 				for (var y = 7; y >= 0; y--) {
-					drawSquare(graphic, x, y);
+					draw_square(graphic, x, y);
 				}
 			}
 		}
 		
-		private void drawSquare(final int x, final int y) {
-			drawSquare(getGraphics(), x, y);
+		private void draw_square(final int x, final int y) {
+			draw_square(getGraphics(), x, y);
 		}
 		
-		private void drawSquare(final Graphics graphic, final int x, final int y) {
+		private void draw_square(final Graphics graphic, final int x, final int y) {
 			final var y_trans = 7 - y;
 			
 			// Draw background tile:
 			var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
-			final var lastMove = board.previousMove(board.turn() - 1);
-			if (lastMove != 0) {
-				final var _x_ = Move.x(lastMove);
-				final var _X_ = Move.X(lastMove);
-				if ((x == _x_ && y == Move.y(lastMove)) ||
-					(y == Move.Y(lastMove) &&
+			final var last_move = board.previous_move(board.turn() - 1);
+			if (last_move != 0) {
+				final var _x_ = Move.x(last_move);
+				final var _X_ = Move.X(last_move);
+				if ((x == _x_ && y == Move.y(last_move)) ||
+					(y == Move.Y(last_move) &&
 					(x == _X_ ||
 					// Check for rook positions of recent castling:
-					(Move.figure_moved(lastMove).isKing() &&
+					(Move.figure_moved(last_move).is_king() &&
 					((_X_ == _x_ - 2 && (x == 0 || x == 3)) ||
 					 (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
 				{
@@ -301,7 +301,7 @@ public final class GamePanel extends JPanel {
 			}
 			
 			// Draw cursor and figure selection:
-			final var oldStroke = ((Graphics2D)graphic).getStroke();
+			final var old_stroke = ((Graphics2D)graphic).getStroke();
 			((Graphics2D)graphic).setStroke(new BasicStroke(cursor_width));
 			if (x == cursor_x && y == cursor_y) {
 				graphic.setColor(Color.blue);
@@ -319,12 +319,12 @@ public final class GamePanel extends JPanel {
 					tile_size - cursor_width,
 					tile_size - cursor_width);
 			}
-			((Graphics2D)graphic).setStroke(oldStroke);
+			((Graphics2D)graphic).setStroke(old_stroke);
 		}
 	}
 	
 	private final class StatusPanel extends JPanel {
-		private final int panel_x_size = boardPanel.panel_size;
+		private final int panel_x_size = board_panel.panel_size;
 		private final int panel_y_size = 140; // configuration-variable
 		private final int border_x_size = 10; // configuration-variable
 		private final int status_x_size = panel_x_size - 4 * border_x_size;
@@ -337,15 +337,15 @@ public final class GamePanel extends JPanel {
 		private final JLabel status = new JLabel() {
 			@Override public void paintComponent(final Graphics graphic) {
 				super.paintComponent(graphic);
-				final var gameStatus = board.status();
+				final var game_status = board.status();
 				final var bulb_x =
 					status_x_size - bulb.getWidth(StatusPanel.this);
 				final var bulb_y =
 					(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
-				if (computerTurn() &&
+				if (computer_turn() &&
 					!capitulation &&
-					gameStatus != Board.GameStatus.Checkmate &&
-					gameStatus != Board.GameStatus.Stalemate)
+					game_status != Board.GameStatus.Checkmate &&
+					game_status != Board.GameStatus.Stalemate)
 				{
 					graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
 				}
@@ -405,25 +405,25 @@ public final class GamePanel extends JPanel {
 			super.paintComponent(graphic);
 			
 			// Update status message:
-			final var pNow = board.player() ? "White" : "Black";
-			final var pNext = board.player() ? "Black" : "White";
-			final var gameStatus = board.status();
+			final var now = board.player() ? "White" : "Black";
+			final var next = board.player() ? "Black" : "White";
+			final var game_status = board.status();
 			final String message;
 			if (capitulation) {
-				message = pNow + " capitulates. " + pNext + " wins.";
+				message = now + " capitulates. " + next + " wins.";
 			} else {
-				switch (gameStatus) {
+				switch (game_status) {
 				case Checkmate:
-					message = pNow + " checkmate. " + pNext + " wins.";
+					message = now + " checkmate. " + next + " wins.";
 					break;
 				case Check:
-					message = pNow + " in check. " + pNow + "'s turn.";
+					message = now + " in check. " + now + "'s turn.";
 					break;
 				case Stalemate:
-					message = "Stalemate. " + pNow + " cannot move.";
+					message = "Stalemate. " + now + " cannot move.";
 					break;
 				default:
-					message = pNow + "'s turn.";
+					message = now + "'s turn.";
 				}
 			}
 			status.setBackground(board.player() ? Color.white : Color.black);
@@ -431,16 +431,16 @@ public final class GamePanel extends JPanel {
 			status.setText("  " + Integer.toString(board.move()) + ": " + message);
 			
 			// Update allowed castlings:
-			castling_l_w.setSelected(board.castlingAllowed(true, true));
-			castling_r_w.setSelected(board.castlingAllowed(false, true));
-			castling_l_b.setSelected(board.castlingAllowed(true, false));
-			castling_r_b.setSelected(board.castlingAllowed(false, false));
+			castling_l_w.setSelected(board.castling_allowed(true, true));
+			castling_r_w.setSelected(board.castling_allowed(false, true));
+			castling_l_b.setSelected(board.castling_allowed(true, false));
+			castling_r_b.setSelected(board.castling_allowed(false, false));
 		}
 	}
 	
 	private final class HistoryPanel extends JPanel {
 		private final int panel_x_size = 150; // configuration-variable
-		private final int panel_y_size = boardPanel.panel_size + statusPanel.panel_y_size;
+		private final int panel_y_size = board_panel.panel_size + status_panel.panel_y_size;
 		private final int border_size = 15; // configuration-variable
 		
 		private final DefaultListModel<PastMove> history_data = new DefaultListModel<>();
@@ -459,19 +459,19 @@ public final class GamePanel extends JPanel {
 			// History list:
 			history_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			history_list.setLayoutOrientation(JList.VERTICAL);
-			final var historyScrollPane = new JScrollPane(history_list);
-			historyScrollPane.setVerticalScrollBarPolicy(
+			final var history_scroll_pane = new JScrollPane(history_list);
+			history_scroll_pane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			final var historyScrollPane_dimension = new Dimension(
+			final var history_scroll_pane_dimension = new Dimension(
 				panel_x_size - border_size,
 				panel_y_size - (5 * border_size) / 2);
-			historyScrollPane.setMaximumSize(historyScrollPane_dimension);
-			historyScrollPane.setMinimumSize(historyScrollPane_dimension);
-			historyScrollPane.setPreferredSize(historyScrollPane_dimension);
+			history_scroll_pane.setMaximumSize(history_scroll_pane_dimension);
+			history_scroll_pane.setMinimumSize(history_scroll_pane_dimension);
+			history_scroll_pane.setPreferredSize(history_scroll_pane_dimension);
 			history_list.addKeyListener(new HistoryListener());
 			history_list.setCellRenderer(new HistoryRenderer());
 			history_data.addElement(new PastMove(0, 0, Board.GameStatus.Normal));
-			add(historyScrollPane);
+			add(history_scroll_pane);
 		}
 		
 	}
@@ -493,15 +493,15 @@ public final class GamePanel extends JPanel {
 			final JList<?> list,
 			final Object value,
 			final int index,
-			final boolean isSelected,
-			final boolean cellHasFocus)
+			final boolean is_selected,
+			final boolean cell_has_focus)
 		{
 			super.getListCellRendererComponent(
 				list,
 				"",
 				index,
-				isSelected,
-				cellHasFocus);
+				is_selected,
+				cell_has_focus);
 			
 			final var move = (PastMove)value;
 			if (move.move == 0) {
@@ -520,17 +520,17 @@ public final class GamePanel extends JPanel {
 			final var figure_captured = Move.figure_destination(move.move);
 			
 			final String notation; // algebraic notation according to FIDE
-			if (figure_moved.figure.isKing() && X - x == 2) {
+			if (figure_moved.figure.is_king() && X - x == 2) {
 				notation = move("0-0");
-			} else if (figure_moved.figure.isKing() && x - X == 2) {
+			} else if (figure_moved.figure.is_king() && x - X == 2) {
 				notation = move("0-0-0");
 			} else {
 				final var en_passant =
-					figure_moved.figure.isPawn() &&
+					figure_moved.figure.is_pawn() &&
 					figure_captured == null &&
 					x != X;
 				notation =
-					(figure_moved.figure.isPawn() ?
+					(figure_moved.figure.is_pawn() ?
 						"" :
 						figure(figure_moved)) +
 					move(file(x) + rank(y)) +

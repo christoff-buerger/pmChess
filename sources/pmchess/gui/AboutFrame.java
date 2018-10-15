@@ -17,12 +17,12 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public final class AboutFrame extends JFrame {
-	private static final String releaseNotes = Resources.loadText("release-notes.txt");
-	private static final Image logo = Resources.loadImage("logo/logo-animated.gif");
+	private static final String release_notes = Resources.load_text("release-notes.txt");
+	private static final Image logo = Resources.load_image("logo/logo-animated.gif");
 	
 	private final JTabbedPane tabs = new JTabbedPane();
 	
-	protected void showContactTab() {
+	protected void show_contact_tab() {
 		tabs.setSelectedIndex(2);
 		setVisible(true);
 	}
@@ -36,80 +36,83 @@ public final class AboutFrame extends JFrame {
 		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
 		
 		// Release notes:
-		final var releaseNotesTextArea = new JTextArea(releaseNotes);
-		releaseNotesTextArea.setFont(Resources.font_regular);
-		releaseNotesTextArea.setLineWrap(false);
-		releaseNotesTextArea.setEditable(false);
-		final var releaseNotesScrollPane = new JScrollPane(releaseNotesTextArea);
-		releaseNotesScrollPane.setVerticalScrollBarPolicy(
+		final var release_notes_text_area = new JTextArea(release_notes);
+		release_notes_text_area.setFont(Resources.font_regular);
+		release_notes_text_area.setLineWrap(false);
+		release_notes_text_area.setEditable(false);
+		final var release_notes_scroll_pane = new JScrollPane(release_notes_text_area);
+		release_notes_scroll_pane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		releaseNotesScrollPane.setPreferredSize(new Dimension(570, 460));
+		release_notes_scroll_pane.setPreferredSize(new Dimension(570, 460));
 		
-		final var releaseNotesPanel = new JPanel();
-		releaseNotesPanel.add(releaseNotesScrollPane);
+		final var release_notes_panel = new JPanel();
+		release_notes_panel.add(release_notes_scroll_pane);
 		
 		// Licenses:
-		final var licenseTextArea = new JTextArea(pmchess.pmChess.pmChessLicense);
-		licenseTextArea.setFont(Resources.font_italic);
-		licenseTextArea.setLineWrap(false);
-		licenseTextArea.setEditable(false);
-		final var licenseScrollPane = new JScrollPane(licenseTextArea);
-		licenseScrollPane.setVerticalScrollBarPolicy(
+		final var license_text_area = new JTextArea(pmchess.pmChess.pmChess_license);
+		license_text_area.setFont(Resources.font_italic);
+		license_text_area.setLineWrap(false);
+		license_text_area.setEditable(false);
+		final var license_scroll_pane = new JScrollPane(license_text_area);
+		license_scroll_pane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		licenseScrollPane.setPreferredSize(new Dimension(570, 425));
+		license_scroll_pane.setPreferredSize(new Dimension(570, 425));
 		
-		final var pmChessButton = new JToggleButton("pmChess", true);
-		final var openSansButton = new JToggleButton("Open Sans", false);
-		final var chessMeridaUnicodeButton =
+		final var pmChess_button = new JToggleButton("pmChess", true);
+		final var open_sans_button = new JToggleButton("Open Sans", false);
+		final var chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
-		final var chessPiecesButton = new JToggleButton("Chess pieces", false);
-		pmChessButton.addActionListener(new ActionListener() {
+		final var chess_pieces_button = new JToggleButton("Chess pieces", false);
+		pmChess_button.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(final ActionEvent e) {
-					pmChessButton.setSelected(true);
-					openSansButton.setSelected(false);
-					chessMeridaUnicodeButton.setSelected(false);
-					chessPiecesButton.setSelected(false);
-					licenseTextArea.setText(pmchess.pmChess.pmChessLicense);
+					pmChess_button.setSelected(true);
+					open_sans_button.setSelected(false);
+					chess_merida_unicode_button.setSelected(false);
+					chess_pieces_button.setSelected(false);
+					license_text_area.setText(
+						pmchess.pmChess.pmChess_license);
 				}
 			});
-		openSansButton.addActionListener(new ActionListener() {
+		open_sans_button.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(final ActionEvent e) {
-					pmChessButton.setSelected(false);
-					openSansButton.setSelected(true);
-					chessMeridaUnicodeButton.setSelected(false);
-					chessPiecesButton.setSelected(false);
-					licenseTextArea.setText(pmchess.pmChess.openSansLicense);
+					pmChess_button.setSelected(false);
+					open_sans_button.setSelected(true);
+					chess_merida_unicode_button.setSelected(false);
+					chess_pieces_button.setSelected(false);
+					license_text_area.setText(
+						pmchess.pmChess.open_sans_license);
 				}
 			});
-		chessMeridaUnicodeButton.addActionListener(new ActionListener() {
+		chess_merida_unicode_button.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(final ActionEvent e) {
-					pmChessButton.setSelected(false);
-					openSansButton.setSelected(false);
-					chessMeridaUnicodeButton.setSelected(true);
-					chessPiecesButton.setSelected(false);
-					licenseTextArea.setText(
-						pmchess.pmChess.chessMeridaUnicodeLicense);
+					pmChess_button.setSelected(false);
+					open_sans_button.setSelected(false);
+					chess_merida_unicode_button.setSelected(true);
+					chess_pieces_button.setSelected(false);
+					license_text_area.setText(
+						pmchess.pmChess.chess_merida_unicode_license);
 				}
 			});
-		chessPiecesButton.addActionListener(new ActionListener() {
+		chess_pieces_button.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(final ActionEvent e) {
-					pmChessButton.setSelected(false);
-					openSansButton.setSelected(false);
-					chessMeridaUnicodeButton.setSelected(false);
-					chessPiecesButton.setSelected(true);
-					licenseTextArea.setText(pmchess.pmChess.chessPiecesLicense);
+					pmChess_button.setSelected(false);
+					open_sans_button.setSelected(false);
+					chess_merida_unicode_button.setSelected(false);
+					chess_pieces_button.setSelected(true);
+					license_text_area.setText(
+						pmchess.pmChess.chess_pieces_license);
 				}
 			});
 		
-		final var licensesPanel = new JPanel();
-		licensesPanel.add(pmChessButton);
-		licensesPanel.add(openSansButton);
-		licensesPanel.add(chessMeridaUnicodeButton);
-		licensesPanel.add(chessPiecesButton);
-		licensesPanel.add(licenseScrollPane);
+		final var licenses_panel = new JPanel();
+		licenses_panel.add(pmChess_button);
+		licenses_panel.add(open_sans_button);
+		licenses_panel.add(chess_merida_unicode_button);
+		licenses_panel.add(chess_pieces_button);
+		licenses_panel.add(license_scroll_pane);
 		
 		// Contact:
-		final var descriptionTextArea = new JTextArea(
+		final var description_text_area = new JTextArea(
 			"Feedback is always welcome; sharing your issues and opinion regarding " +
 			"pmChess is very kind! Please select a subject from the proposed set " +
 			"and decide if it is OK to quote your message for example on the " +
@@ -117,17 +120,17 @@ public final class AboutFrame extends JFrame {
 			"feasible subject helps classifying your mail; and a quote permission " +
 			"is particularly kind for general feedback as it enables us to publicly " +
 			"share your opinion.");
-		descriptionTextArea.setFont(Resources.font_regular);
-		descriptionTextArea.setLineWrap(true);
-		descriptionTextArea.setWrapStyleWord(true);
-		descriptionTextArea.setEditable(false);
-		final var descriptionScrollPane = new JScrollPane(descriptionTextArea);
-		descriptionScrollPane.setVerticalScrollBarPolicy(
+		description_text_area.setFont(Resources.font_regular);
+		description_text_area.setLineWrap(true);
+		description_text_area.setWrapStyleWord(true);
+		description_text_area.setEditable(false);
+		final var description_scroll_pane = new JScrollPane(description_text_area);
+		description_scroll_pane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		descriptionScrollPane.setPreferredSize(new Dimension(570, 125));
+		description_scroll_pane.setPreferredSize(new Dimension(570, 125));
 		
-		final var subjectLabel = new JLabel("Subject:", SwingConstants.LEFT);
-		final var subjectComboBox = new JComboBox<>(new String[]{
+		final var subject_label = new JLabel("Subject:", SwingConstants.LEFT);
+		final var subject_combo_box = new JComboBox<>(new String[]{
 			"Please select subject\u2026",
 			"chess logic error (rule violation)",
 			"bug report",
@@ -135,49 +138,52 @@ public final class AboutFrame extends JFrame {
 			"user interface proposal",
 			"enhancement proposal",
 			"general feedback"});
-		subjectComboBox.setSelectedIndex(0);
+		subject_combo_box.setSelectedIndex(0);
 		
-		final var permissionLabel = new JLabel("Quote permission:", SwingConstants.LEFT);
-		final var permissionComboBox = new JComboBox<>(new String[]{
+		final var permission_label = new JLabel("Quote permission:", SwingConstants.LEFT);
+		final var permission_combo_box = new JComboBox<>(new String[]{
 			"Please decide whether you give us quote permission\u2026",
 			"REJECTED (no permission to quote mail)",
 			"GRANTED (mail can be publicly quoted)"});
-		permissionComboBox.setSelectedIndex(0);
+		permission_combo_box.setSelectedIndex(0);
 		
-		final var nameLabel = new JLabel("Your name:", SwingConstants.LEFT);
-		final var nameField = new JTextField();
+		final var name_label = new JLabel("Your name:", SwingConstants.LEFT);
+		final var name_field = new JTextField();
 		
 		final var description_dimension =
-			new Dimension(130, subjectLabel.getPreferredSize().height);
+			new Dimension(130, subject_label.getPreferredSize().height);
 		final var selection_dimension =
-			new Dimension(430, subjectComboBox.getPreferredSize().height);
+			new Dimension(430, subject_combo_box.getPreferredSize().height);
 		
-		subjectLabel.setPreferredSize(description_dimension);
-		subjectComboBox.setPreferredSize(selection_dimension);
-		permissionLabel.setPreferredSize(description_dimension);
-		permissionComboBox.setPreferredSize(selection_dimension);
-		nameLabel.setPreferredSize(description_dimension);
-		nameField.setPreferredSize(selection_dimension);
+		subject_label.setPreferredSize(description_dimension);
+		subject_combo_box.setPreferredSize(selection_dimension);
+		permission_label.setPreferredSize(description_dimension);
+		permission_combo_box.setPreferredSize(selection_dimension);
+		name_label.setPreferredSize(description_dimension);
+		name_field.setPreferredSize(selection_dimension);
 		
-		final var messageTextArea = new JTextArea();
-		messageTextArea.setFont(Resources.font_italic);
-		messageTextArea.setLineWrap(true);
-		messageTextArea.setWrapStyleWord(true);
-		messageTextArea.setEditable(true);
-		final var messageScrollPane = new JScrollPane(messageTextArea);
-		messageScrollPane.setVerticalScrollBarPolicy(
+		final var message_text_area = new JTextArea();
+		message_text_area.setFont(Resources.font_italic);
+		message_text_area.setLineWrap(true);
+		message_text_area.setWrapStyleWord(true);
+		message_text_area.setEditable(true);
+		final var message_scroll_pane = new JScrollPane(message_text_area);
+		message_scroll_pane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		messageScrollPane.setPreferredSize(new Dimension(570, 195));
+		message_scroll_pane.setPreferredSize(new Dimension(570, 195));
 		
-		final var sendButton = new JButton("send e-mail");
-		sendButton.setPreferredSize(new Dimension(570, selection_dimension.height));
-		sendButton.addActionListener(new ActionListener() {
+		final var send_button = new JButton("send e-mail");
+		send_button.setPreferredSize(new Dimension(570, selection_dimension.height));
+		send_button.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(final ActionEvent e) {
-				final var subject_index = subjectComboBox.getSelectedIndex();
-				final var permission_index = permissionComboBox.getSelectedIndex();
-				final var name = nameField.getText().trim();
+				final var subject_index =
+					subject_combo_box.getSelectedIndex();
+				final var permission_index =
+					permission_combo_box.getSelectedIndex();
+				final var name =
+					name_field.getText().trim();
 				if (subject_index == 0 || permission_index == 0 ||
-					name.length() < 2)
+					name.length() < 1)
 				{
 					JOptionPane.showMessageDialog(
 						AboutFrame.this,
@@ -187,17 +193,17 @@ public final class AboutFrame extends JFrame {
 					return;
 				}
 				final var subject =
-					"pmChess: " + subjectComboBox.getItemAt(subject_index);
+					"pmChess: " + subject_combo_box.getItemAt(subject_index);
 				final var body =
 					"Dear Christoff," +
 					"\n\n" +
-					messageTextArea.getText().trim() +
+					message_text_area.getText().trim() +
 					"\n\n" +
 					"Best regards,\n" + name +
 					"\n\n" +
 					"PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n" +
 					"  Quote permission: " +
-					permissionComboBox.getItemAt(permission_index) + "\n" +
+					permission_combo_box.getItemAt(permission_index) + "\n" +
 					"  pmChess version: " +
 					pmchess.pmChess.version + "\n" +
 					"  Platform: " +
@@ -227,23 +233,23 @@ public final class AboutFrame extends JFrame {
 			}
 		});
 		
-		final var contactPanel = new JPanel();
-		contactPanel.add(descriptionScrollPane);
-		contactPanel.add(subjectLabel);
-		contactPanel.add(subjectComboBox);
-		contactPanel.add(permissionLabel);
-		contactPanel.add(permissionComboBox);
-		contactPanel.add(nameLabel);
-		contactPanel.add(nameField);
-		contactPanel.add(messageScrollPane);
-		contactPanel.add(sendButton);
+		final var contact_panel = new JPanel();
+		contact_panel.add(description_scroll_pane);
+		contact_panel.add(subject_label);
+		contact_panel.add(subject_combo_box);
+		contact_panel.add(permission_label);
+		contact_panel.add(permission_combo_box);
+		contact_panel.add(name_label);
+		contact_panel.add(name_field);
+		contact_panel.add(message_scroll_pane);
+		contact_panel.add(send_button);
 		
 		// Compose all:
 		tabs.setPreferredSize(new Dimension(590, 500));
 		tabs.addTab("Tea time", new JLabel(new ImageIcon(logo)));
-		tabs.addTab("Release notes", releaseNotesPanel);
-		tabs.addTab("Contact", contactPanel);
-		tabs.addTab("Licenses", licensesPanel);
+		tabs.addTab("Release notes", release_notes_panel);
+		tabs.addTab("Contact", contact_panel);
+		tabs.addTab("Licenses", licenses_panel);
 		
 		final var header_1 = new JLabel(pmchess.pmChess.about[0], SwingConstants.CENTER);
 		final var header_2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
@@ -257,57 +263,59 @@ public final class AboutFrame extends JFrame {
 		add(panel);
 		
 		// Setup user-input processing:
-		final var rootPane = getRootPane();
-		final var inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		final var actionMap = rootPane.getActionMap();
-		inputMap.put(
+		final var root_pane = getRootPane();
+		final var input_map = root_pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		final var action_map = root_pane.getActionMap();
+		input_map.put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 			"Close");
-		actionMap.put(
+		action_map.put(
 			"Close",
 			new AbstractAction() {
 				@Override public void actionPerformed(ActionEvent e) {
 					AboutFrame.this.setVisible(false);
 				}
 			});
-		inputMap.put(
+		input_map.put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0),
 			"ScrollUp");
-		actionMap.put(
+		action_map.put(
 			"ScrollUp",
 			new AbstractAction() {
 				@Override public void actionPerformed(ActionEvent e) {
 					final JScrollBar bar;
 					if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(releaseNotesPanel))
+						tabs.indexOfComponent(release_notes_panel))
 					{
-						bar = releaseNotesScrollPane.getVerticalScrollBar();
+						bar = release_notes_scroll_pane
+							.getVerticalScrollBar();
 					} else if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(licensesPanel))
+						tabs.indexOfComponent(licenses_panel))
 					{
-						bar = licenseScrollPane.getVerticalScrollBar();
+						bar = license_scroll_pane.getVerticalScrollBar();
 					} else {
 						return;
 					}
 					bar.setValue(bar.getValue() > 42 ? bar.getValue() - 42 : 0);
 				}
 			});
-		inputMap.put(
+		input_map.put(
 			KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),
 			"ScrollDown");
-		actionMap.put(
+		action_map.put(
 			"ScrollDown",
 			new AbstractAction() {
 				@Override public void actionPerformed(ActionEvent e) {
 					final JScrollBar bar;
 					if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(releaseNotesPanel))
+						tabs.indexOfComponent(release_notes_panel))
 					{
-						bar = releaseNotesScrollPane.getVerticalScrollBar();
+						bar = release_notes_scroll_pane
+							.getVerticalScrollBar();
 					} else if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(licensesPanel))
+						tabs.indexOfComponent(licenses_panel))
 					{
-						bar = licenseScrollPane.getVerticalScrollBar();
+						bar = license_scroll_pane.getVerticalScrollBar();
 					} else {
 						return;
 					}

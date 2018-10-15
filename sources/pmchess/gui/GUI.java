@@ -19,7 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class GUI extends JFrame {
-	private static final Image taskbar_icon = Resources.loadImage("icons/taskbar.png");
+	private static final Image taskbar_icon = Resources.load_image("icons/taskbar.png");
 	
 	static {
 		// Initialize fonts:
@@ -42,9 +42,9 @@ public final class GUI extends JFrame {
 		}
 	}
 	
-	private final JMenuItem whiteComp;
-	private final JMenuItem blackComp;
-	private final GamePanel gamePanel;
+	private final JMenuItem white_computer;
+	private final JMenuItem black_computer;
+	private final GamePanel game_panel;
 	
 	/*
 		Create the GUI and show it.
@@ -53,45 +53,45 @@ public final class GUI extends JFrame {
 		super("pmChess");
 		
 		// Setup "About"-window and icon:
-		final var about = new AboutAction();
+		final var about_action = new AboutAction();
 		try {
-			Desktop.getDesktop().setAboutHandler(about);
+			Desktop.getDesktop().setAboutHandler(about_action);
 			Taskbar.getTaskbar().setIconImage(taskbar_icon);
 		} catch (SecurityException | UnsupportedOperationException exception) {
 			setIconImage(taskbar_icon); // Fallback for older operating systems.
 		}
 		
 		// Setup menu bar:
-		final var menuBar = new JMenuBar();
-		final var gameMenu = new JMenu("Game"); // Game menu:
-		gameMenu.setMnemonic(KeyEvent.VK_G);
-		gameMenu.add(new NewGameAction());
-		final var compPlayer = new ButtonGroup();
-		whiteComp = new NonclosingRadioButtonMenuItem("White computer");
-		whiteComp.setSelected(false);
-		blackComp = new NonclosingRadioButtonMenuItem("Black computer");
-		blackComp.setSelected(false);
-		final var noComp = new NonclosingRadioButtonMenuItem("No computer");
-		noComp.setSelected(true);
-		compPlayer.add(whiteComp);
-		compPlayer.add(blackComp);
-		compPlayer.add(noComp);
-		gameMenu.add(whiteComp);
-		gameMenu.add(blackComp);
-		gameMenu.add(noComp);
-		gameMenu.addSeparator();
-		gameMenu.add(new ExitAction());
-		menuBar.add(gameMenu);
-		final var helpMenu = new JMenu("Help"); // Help menu:
-		helpMenu.setMnemonic(KeyEvent.VK_H);
-		helpMenu.add(about);
-		helpMenu.add(new ContactAction());
-		menuBar.add(helpMenu);
-		setJMenuBar(menuBar);
+		final var menu_bar = new JMenuBar();
+		final var game_menu = new JMenu("Game"); // Game menu:
+		game_menu.setMnemonic(KeyEvent.VK_G);
+		game_menu.add(new NewGameAction());
+		final var computer_player = new ButtonGroup();
+		white_computer = new NonclosingRadioButtonMenuItem("White computer");
+		white_computer.setSelected(false);
+		black_computer = new NonclosingRadioButtonMenuItem("Black computer");
+		black_computer.setSelected(false);
+		final var no_computer = new NonclosingRadioButtonMenuItem("No computer");
+		no_computer.setSelected(true);
+		computer_player.add(white_computer);
+		computer_player.add(black_computer);
+		computer_player.add(no_computer);
+		game_menu.add(white_computer);
+		game_menu.add(black_computer);
+		game_menu.add(no_computer);
+		game_menu.addSeparator();
+		game_menu.add(new ExitAction());
+		menu_bar.add(game_menu);
+		final var help_menu = new JMenu("Help"); // Help menu:
+		help_menu.setMnemonic(KeyEvent.VK_H);
+		help_menu.add(about_action);
+		help_menu.add(new ContactAction());
+		menu_bar.add(help_menu);
+		setJMenuBar(menu_bar);
 		
 		// Setup main panel:
-		gamePanel = new GamePanel();
-		setContentPane(gamePanel);
+		game_panel = new GamePanel();
+		setContentPane(game_panel);
 		
 		// Setup window and display it:
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -113,7 +113,9 @@ public final class GUI extends JFrame {
 		}
 
 		@Override public void actionPerformed(final ActionEvent event) {
-			gamePanel.initialize(whiteComp.isSelected(), blackComp.isSelected());
+			game_panel.initialize(
+				white_computer.isSelected(),
+				black_computer.isSelected());
 		}
 	}
 	
@@ -149,7 +151,7 @@ public final class GUI extends JFrame {
 		}
 		
 		@Override public void actionPerformed(final ActionEvent event) {
-			AboutAction.about_frame.showContactTab();
+			AboutAction.about_frame.show_contact_tab();
 		}
 	}
 	
@@ -170,8 +172,8 @@ public final class GUI extends JFrame {
 			super(text);
 		}
 		
-		@Override public void doClick(int pressTime) {
-			super.doClick(pressTime);
+		@Override public void doClick(int press_time) {
+			super.doClick(press_time);
 			MenuSelectionManager.defaultManager().setSelectedPath(path);
 		}
 	}
