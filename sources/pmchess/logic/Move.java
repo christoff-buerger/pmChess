@@ -45,16 +45,18 @@ public final class Move {
 		final var figure_destination = board.figure(X, Y);
 		final var player = figure_moved.owner;
 		
-		var encoded_move = x | y << 3 | X << 6 | Y << 9 | figure_moved.key << 12 |
-			(figure_destination == null ? 0 : figure_destination.key << 16);
+		var encoded_move = x | y << 3 | X << 6 | Y << 9 | figure_moved.key << 12
+			| (figure_destination == null ? 0 : figure_destination.key << 16);
 		
 		// Update castling information:
 		if (figure_moved.is_king()) { // Moving king disables castlings.
 			final var player_offset = player ? 0 : 2;
-			if (board.castling_allowed(true, player))
+			if (board.castling_allowed(true, player)) {
 				encoded_move |= 0x100000 << player_offset;
-			if (board.castling_allowed(false, player))
+			}
+			if (board.castling_allowed(false, player)) {
 				encoded_move |= 0x200000 << player_offset;
+			}
 		} else if (figure_moved.is_rook()) { // Moving rook from start disables castlings.
 			final var player_offset = player ? 0 : 2;
 			if (y == (player ? 0 : 7)) {
@@ -116,8 +118,9 @@ public final class Move {
 	public static Figure figure_placed(final int move) {
 		final var figure_moved = Move.figure_moved(move);
 		final var Y = Move.Y(move);
-		return figure_moved.is_pawn() && (Y == 0 | Y == 7) ?
-			Figure.queen(figure_moved.owner) : figure_moved;
+		return figure_moved.is_pawn() && (Y == 0 | Y == 7)
+			? Figure.queen(figure_moved.owner)
+			: figure_moved;
 	}
 	
 	/*

@@ -45,8 +45,9 @@ public final class Search {
 		final int depth,
 		final Evaluator evaluator)
 	{
-		if (depth == 0)
+		if (depth == 0) {
 			return evaluator.score(board, board.player());
+		}
 		var any_move_done = false;
 		var result = Search.min_score;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
@@ -63,15 +64,17 @@ public final class Search {
 				board.undo();
 				any_move_done = true;
 			}
-			if (result >= beta)
+			if (result >= beta) {
 				return beta;
-			if (result > alpha)
+			}
+			if (result > alpha) {
 				alpha = result;
+			}
 		}
 		if (!any_move_done) {
-			return board.check(board.player()) ?
-				Search.min_score : // current player lost
-				evaluator.score(board, board.player()); // stalemate
+			return board.check(board.player())
+				? Search.min_score // current player lost
+				: evaluator.score(board, board.player()); // stalemate
 		}
 		return alpha;
 	}
@@ -89,8 +92,9 @@ public final class Search {
 					best_score = last_score;
 					best_move = board.moves_selected();
 				}
-				if (move == 0)
+				if (move == 0) {
 					return best_move;
+				}
 			}
 			if (move == 0) { // Evaluate early leafs and backtrack:
 				if (board.moves_selected() == 0) {

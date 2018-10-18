@@ -75,7 +75,9 @@ public final class Board {
 		The beginning of the current frame is indexed by the 'moves_frame' field.
 	*/
 	private int moves_frame = 0;
-	private final int[] moves = new int[16384]; { // Initialization:
+	private final int[] moves = new int[16384];
+	
+	{ // Initialization of 'moves':
 		moves[0] = 3;
 		moves[1] = -1;
 		moves[2] = 0;
@@ -83,10 +85,13 @@ public final class Board {
 	}
 	
 	private void moves_compute_possible() {
-		for (var x = 0; x <= 7; x++) for (var y = 0; y <= 7; y++) {
-			final var f = board[x][y];
-			if (f != null && f.owner == player)
-				f.compute_moves(this, x, y);
+		for (var x = 0; x <= 7; x++) {
+			for (var y = 0; y <= 7; y++) {
+				final var f = board[x][y];
+				if (f != null && f.owner == player) {
+					f.compute_moves(this, x, y);
+				}
+			}
 		}
 	}
 	
@@ -132,8 +137,8 @@ public final class Board {
 		final var moves_end = moves[moves_frame];
 		for (var i = moves_frame + 3; i < moves_end; i++) {
 			final var move = moves[i];
-			if (Move.x(move) == x && Move.y(move) == y &&
-				Move.X(move) == X && Move.Y(move) == Y)
+			if (Move.x(move) == x && Move.y(move) == y
+				&& Move.X(move) == X && Move.Y(move) == Y)
 			{
 				return execute(move);
 			}
@@ -176,9 +181,9 @@ public final class Board {
 					castling_done_b = true;
 				}
 			}
-		} else if (figure_placed.is_pawn() &&
-			X != x &&
-			Move.figure_destination(move) == null)
+		} else if (figure_placed.is_pawn()
+			&& X != x
+			&& Move.figure_destination(move) == null)
 		{
 			board[X][y] = null; // perform en passant capture
 		}
@@ -203,8 +208,9 @@ public final class Board {
 	}
 	
 	public int undo() {
-		if (turn == 1)
+		if (turn == 1) {
 			return 0;
+		}
 		// Restore game history (pop current moves frame and reset selected move):
 		moves_frame = moves[moves_frame + 1];
 		final var move = moves[moves_frame + 2];// TODO: fix when moves_selected contains index not move
@@ -282,10 +288,12 @@ public final class Board {
 	}
 	
 	public int previous_move(final int turn) {
-		if (turn < 1 | turn >= this.turn)
+		if (turn < 1 | turn >= this.turn) {
 			return 0;
+		}
 		var previous_frame = moves_frame;
-		for (var i = this.turn - turn; i-- > 0; previous_frame = moves[previous_frame + 1]);
+		for (var i = this.turn - turn; i-- > 0; previous_frame = moves[previous_frame + 1]) {
+		}
 		return moves[previous_frame + 2];
 	}
 	
@@ -303,9 +311,9 @@ public final class Board {
 	}
 	
 	protected boolean check(final boolean player) {
-		return player ?
-			threatens(false, king_x_w, king_y_w) :
-			threatens(true, king_x_b, king_y_b);
+		return player
+			? threatens(false, king_x_w, king_y_w)
+			: threatens(true, king_x_b, king_y_b);
 	}
 	
 	protected boolean threatens(final boolean player, final int X, final int Y) {
@@ -322,73 +330,123 @@ public final class Board {
 		if (y_pawn > 0 & y_pawn < 7) {
 			if (xm1_valid) {
 				f = board[xm1][y_pawn];
-				if (f != null && f.owner == player && f.is_pawn())
+				if (f != null && f.owner == player && f.is_pawn()) {
 					return true;
+				}
 			}
 			if (xp1_valid) {
 				f = board[xp1][y_pawn];
-				if (f != null && f.owner == player && f.is_pawn())
+				if (f != null && f.owner == player && f.is_pawn()) {
 					return true;
+				}
 			}
 		}
 		
 		// Check for rooks and straight-line queens:
 		for (var x = xm1; x >= 0; x--) {
 			f = board[x][Y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_rook() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_rook() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		for (var x = xp1; x <= 7; x++) {
 			f = board[x][Y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_rook() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_rook() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		for (var y = ym1; y >= 0; y--) {
 			f = board[X][y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_rook() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_rook() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		for (var y = yp1; y <= 7; y++) {
 			f = board[X][y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_rook() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_rook() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		
 		// Check for bishops and diagonal-line queens:
 		for (int x = xm1, y = ym1; x >= 0 & y >= 0; x--, y--) {
 			f = board[x][y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_bishop() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_bishop() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		for (int x = xp1, y = ym1; x <= 7 & y >= 0; x++, y--) {
 			f = board[x][y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_bishop() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_bishop() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		for (int x = xm1, y = yp1; x >= 0 & y <= 7; x--, y++) {
 			f = board[x][y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_bishop() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_bishop() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		for (int x = xp1, y = yp1; x <= 7 & y <= 7; x++, y++) {
 			f = board[x][y];
-			if (f == null) continue;
-			if (f.owner != player) break;
-			if (f.is_bishop() || f.is_queen()) return true;
+			if (f == null) {
+				continue;
+			}
+			if (f.owner != player) {
+				break;
+			}
+			if (f.is_bishop() || f.is_queen()) {
+				return true;
+			}
 			break;
 		}
 		
@@ -397,93 +455,109 @@ public final class Board {
 		final var ym2_valid = ym2 >= 0;
 		if (xm1_valid & ym2_valid) {
 			f = board[xm1][ym2];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		final var ym1_valid = ym1 >= 0;
 		final var xm2 = X - 2;
 		final var xm2_valid = xm2 >= 0;
 		if (xm2_valid & ym1_valid) {
 			f = board[xm2][ym1];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		if (xp1_valid & ym2_valid) {
 			f = board[xp1][ym2];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		final var xp2 = X + 2;
 		final var xp2_valid = xp2 <= 7;
 		if (xp2_valid & ym1_valid) {
 			f = board[xp2][ym1];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		final var yp2 = Y + 2;
 		final var yp2_valid = yp2 <= 7;
 		if (xm1_valid & yp2_valid) {
 			f = board[xm1][yp2];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		final var yp1_valid = yp1 <= 7;
 		if (xm2_valid & yp1_valid) {
 			f = board[xm2][yp1];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		if (xp1_valid & yp2_valid) {
 			f = board[xp1][yp2];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		if (xp2_valid & yp1_valid) {
 			f = board[xp2][yp1];
-			if (f != null && f.owner == player && f.is_knight())
+			if (f != null && f.owner == player && f.is_knight()) {
 				return true;
+			}
 		}
 		
 		// Check for king:
 		if (xm1_valid) {
 			f = board[xm1][Y];
-			if (f != null && f.owner == player && f.is_king())
+			if (f != null && f.owner == player && f.is_king()) {
 				return true;
+			}
 			if (ym1_valid) {
 				f = board[xm1][ym1];
-				if (f != null && f.owner == player && f.is_king())
+				if (f != null && f.owner == player && f.is_king()) {
 					return true;
+				}
 			}
 			if (yp1_valid) {
 				f = board[xm1][yp1];
-				if (f != null && f.owner == player && f.is_king())
+				if (f != null && f.owner == player && f.is_king()) {
 					return true;
+				}
 			}
 		}
 		if (xp1_valid) {
 			f = board[xp1][Y];
-			if (f != null && f.owner == player && f.is_king())
+			if (f != null && f.owner == player && f.is_king()) {
 				return true;
+			}
 			if (ym1_valid) {
 				f = board[xp1][ym1];
-				if (f != null && f.owner == player && f.is_king())
+				if (f != null && f.owner == player && f.is_king()) {
 					return true;
+				}
 			}
 			if (yp1_valid) {
 				f = board[xp1][yp1];
-				if (f != null && f.owner == player && f.is_king())
+				if (f != null && f.owner == player && f.is_king()) {
 					return true;
+				}
 			}
 		}
 		if (ym1_valid) {
 			f = board[X][ym1];
-			if (f != null && f.owner == player && f.is_king())
+			if (f != null && f.owner == player && f.is_king()) {
 				return true;
+			}
 		}
 		if (yp1_valid) {
 			f = board[X][yp1];
-			if (f != null && f.owner == player && f.is_king())
+			if (f != null && f.owner == player && f.is_king()) {
 				return true;
+			}
 		}
 		
 		return false;

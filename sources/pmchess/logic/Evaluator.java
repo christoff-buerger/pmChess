@@ -92,16 +92,24 @@ public final class Evaluator {
 		
 		// Material evaluation (also counts pawns for later pawn formation evaluation):
 		var material = 0;
-		for (var x = 7; x >= 0; x--) for (var y = 7; y >= 0; y--) {
-			final var f = board.figure(x, y);
-			if (f == null) continue;
-			if (f.owner == player) {
-				material += value_table[f.key];
-				if (f.is_pawn()) pawns[0][x + 1]++;
-				continue;
+		for (var x = 7; x >= 0; x--) {
+			for (var y = 7; y >= 0; y--) {
+				final var f = board.figure(x, y);
+				if (f == null) {
+					continue;
+				}
+				if (f.owner == player) {
+					material += value_table[f.key];
+					if (f.is_pawn()) {
+						pawns[0][x + 1]++;
+					}
+					continue;
+				}
+				material -= value_table[f.key];
+				if (f.is_pawn()) {
+					pawns[1][x + 1]++;
+				}
 			}
-			material -= value_table[f.key];
-			if (f.is_pawn()) pawns[1][x + 1]++;
 		}
 		
 		// Pawn formation evaluation:
@@ -113,10 +121,16 @@ public final class Evaluator {
 			rp = mp, mp = lp, lp = pawns[0][--x],
 			ro = mo, mo = lo, lo = pawns[1][x])
 		{
-			if (mp == 0) continue;
+			if (mp == 0) {
+				continue;
+			}
 			pawn_formation -= (mp - 1) * 2; // Doubled pawns penalty.
-			if (lp == 0 & rp == 0) pawn_formation -= 7; // Isolated pawn penalty.
-			if (lo == 0 & ro == 0) pawn_formation += 12; // Breached pawn bonus.
+			if (lp == 0 & rp == 0) {
+				pawn_formation -= 7; // Isolated pawn penalty.
+			}
+			if (lo == 0 & ro == 0) {
+				pawn_formation += 12; // Breached pawn bonus.
+			}
 		}
 		
 		// Castling bonus and penalties:
@@ -125,21 +139,29 @@ public final class Evaluator {
 			development = 10;
 		} else {
 			final var right = board.castling_allowed(false, player);
-			development = board.castling_allowed(true, player) ?
-				(right ? 0 : -5) :
-				(right ? -5 : -12);
+			development = board.castling_allowed(true, player)
+				? (right ? 0 : -5)
+				: (right ? -5 : -12);
 		}
 		
 		// Unmoved pawn penalties:
 		final var base_row = player ? 1 : 6;
 		var f = board.figure(3, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) development -= 4;
+		if (f != null && f.is_pawn() && f.owner == player) {
+			development -= 4;
+		}
 		f = board.figure(4, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) development -= 4;
+		if (f != null && f.is_pawn() && f.owner == player) {
+			development -= 4;
+		}
 		f = board.figure(2, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) development -= 3;
+		if (f != null && f.is_pawn() && f.owner == player) {
+			development -= 3;
+		}
 		f = board.figure(5, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) development -= 3;
+		if (f != null && f.is_pawn() && f.owner == player) {
+			development -= 3;
+		}
 		
 		// Mobility evaluation:
 		var mobility = 0;
@@ -153,17 +175,21 @@ public final class Evaluator {
 		{
 			final var x = Move.x(move);
 			final var y = Move.y(move);
-			if (x_current == x & y_current == y) continue;
+			if (x_current == x & y_current == y) {
+				continue;
+			}
 			mobility += mobility_table[f_current.key][n_current];
 			x_current = x;
 			y_current = y;
 			f_current = Move.figure_moved(move);
 			n_current = 0;
 		}
-		if (f_current != null) mobility += mobility_table[f_current.key][n_current];
+		if (f_current != null) {
+			mobility += mobility_table[f_current.key][n_current];
+		}
 		
 		// Weight and sum up scoring criteria:
-		return 15 * material + 3 * pawn_formation + 2 * development + mobility +
-			random_shifts[random.nextInt(random_shifts.length)];
+		return 15 * material + 3 * pawn_formation + 2 * development + mobility
+			+ random_shifts[random.nextInt(random_shifts.length)];
 	}
 }
