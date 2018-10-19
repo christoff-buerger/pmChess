@@ -27,18 +27,19 @@ public final class GUI extends JFrame {
 		while (keys.hasMoreElements()) {
 			final var key = keys.nextElement();
 			final var value = UIManager.get(key);
-			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
+			if (value != null && value instanceof javax.swing.plaf.FontUIResource) {
 				UIManager.put(key, Resources.font_regular);
+			}
 		}
 		// Setup cross-platform look:
 		try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (ClassNotFoundException |
-			InstantiationException |
-			IllegalAccessException |
-			UnsupportedLookAndFeelException e)
+		} catch (ClassNotFoundException
+			| InstantiationException
+			| IllegalAccessException
+			| UnsupportedLookAndFeelException exception)
 		{
-			throw new RuntimeException(e);
+			throw new RuntimeException(exception);
 		}
 	}
 	
@@ -157,13 +158,14 @@ public final class GUI extends JFrame {
 	
 	private static final class NonclosingRadioButtonMenuItem extends JRadioButtonMenuItem {
 		private static MenuElement[] path;
+		
 		{ // Instance initialization:
 			getModel().addChangeListener(new ChangeListener() {
 				@Override public void stateChanged(ChangeEvent e) {
 					if (getModel().isArmed() && isShowing()) {
-						path =  MenuSelectionManager.
-							defaultManager().
-							getSelectedPath();
+						path =  MenuSelectionManager
+							.defaultManager()
+							.getSelectedPath();
 					}
 				}});
   		}

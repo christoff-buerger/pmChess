@@ -16,18 +16,21 @@ import java.awt.*;
 import pmchess.logic.*;
 
 public final class Resources {
-	private Resources() {} // No instances.
+	private Resources() { // No instances.
+	}
 	
 	public static final String text_encoding = StandardCharsets.UTF_8.name();
 	
 	public static String load_text(final String file) {
 		try {
 			final var stream = Resources.class.getResourceAsStream(file);
-			if (stream == null) throw new IOException();
+			if (stream == null) {
+				throw new IOException();
+			}
 			final var result = new ByteArrayOutputStream();
 			final var buffer = new byte[1024];
-			int character;
 			try {
+				int character;
 				while ((character = stream.read(buffer)) != -1) {
 					result.write(buffer, 0, character);
 				}
@@ -35,7 +38,7 @@ public final class Resources {
 				stream.close();
 			}
 			return result.toString(text_encoding);
-		} catch (IOException e) {
+		} catch (IOException exception) {
 			throw new RuntimeException("Failed to load text file " + file + ".");
 		}
 	}
@@ -52,13 +55,15 @@ public final class Resources {
 			final var environment =
 				GraphicsEnvironment.getLocalGraphicsEnvironment();
 			for (final var existing_font : environment.getAllFonts()) {
-				if (existing_font.getFontName().equals(loaded_font.getFontName()))
+				if (existing_font.getFontName().equals(loaded_font.getFontName())) {
 					return existing_font.deriveFont(scale * 14f);
+				}
 			}
-			if (!environment.registerFont(loaded_font))
+			if (!environment.registerFont(loaded_font)) {
 				throw new IOException();
+			}
 			return loaded_font.deriveFont(scale * 14f);
-		} catch (IOException | FontFormatException e) {
+		} catch (IOException | FontFormatException exception) {
 			throw new RuntimeException("Failed to load font " + font_name + ".");
 		}
 	}
@@ -125,8 +130,9 @@ public final class Resources {
 		
 		protected static FigurePresentation get(final Figure figure) {
 			for (final var f : Resources.figures) {
-				if (f.figure == figure)
+				if (f.figure == figure) {
 					return f;
+				}
 			}
 			throw new RuntimeException("ERROR: missing figure presentation.");
 		}

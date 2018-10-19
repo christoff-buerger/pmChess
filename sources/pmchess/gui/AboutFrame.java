@@ -64,7 +64,7 @@ public final class AboutFrame extends JFrame {
 			new JToggleButton("Chess Merida Unicode", false);
 		final var chess_pieces_button = new JToggleButton("Chess pieces", false);
 		pmChess_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent event) {
 					pmChess_button.setSelected(true);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(false);
@@ -74,7 +74,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		open_sans_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent event) {
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(true);
 					chess_merida_unicode_button.setSelected(false);
@@ -84,7 +84,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		chess_merida_unicode_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent event) {
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(true);
@@ -94,7 +94,7 @@ public final class AboutFrame extends JFrame {
 				}
 			});
 		chess_pieces_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent e) {
+				@Override public void actionPerformed(final ActionEvent event) {
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(false);
@@ -113,13 +113,13 @@ public final class AboutFrame extends JFrame {
 		
 		// Contact:
 		final var description_text_area = new JTextArea(
-			"Feedback is always welcome; sharing your issues and opinion regarding " +
-			"pmChess is very kind! Please select a subject from the proposed set " +
-			"and decide if it is OK to quote your message for example on the " +
-			"pmChesss issue tracker or within its documentation. Selecting a " +
-			"feasible subject helps classifying your mail; and a quote permission " +
-			"is particularly kind for general feedback as it enables us to publicly " +
-			"share your opinion.");
+			"Feedback is always welcome; sharing your issues and opinion regarding "
+			+ "pmChess is very kind! Please select a subject from the proposed set "
+			+ "and decide if it is OK to quote your message for example on the "
+			+ "pmChesss issue tracker or within its documentation. Selecting a "
+			+ "feasible subject helps classifying your mail; and a quote permission "
+			+ "is particularly kind for general feedback as it enables us to publicly "
+			+ "share your opinion.");
 		description_text_area.setFont(Resources.font_regular);
 		description_text_area.setLineWrap(true);
 		description_text_area.setWrapStyleWord(true);
@@ -175,15 +175,15 @@ public final class AboutFrame extends JFrame {
 		final var send_button = new JButton("send e-mail");
 		send_button.setPreferredSize(new Dimension(570, selection_dimension.height));
 		send_button.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(final ActionEvent e) {
+			@Override public void actionPerformed(final ActionEvent event) {
 				final var subject_index =
 					subject_combo_box.getSelectedIndex();
 				final var permission_index =
 					permission_combo_box.getSelectedIndex();
 				final var name =
 					name_field.getText().trim();
-				if (subject_index == 0 || permission_index == 0 ||
-					name.length() < 1)
+				if (subject_index == 0 || permission_index == 0
+					|| name.length() < 1)
 				{
 					JOptionPane.showMessageDialog(
 						AboutFrame.this,
@@ -195,29 +195,29 @@ public final class AboutFrame extends JFrame {
 				final var subject =
 					"pmChess: " + subject_combo_box.getItemAt(subject_index);
 				final var body =
-					"Dear Christoff," +
-					"\n\n" +
-					message_text_area.getText().trim() +
-					"\n\n" +
-					"Best regards,\n" + name +
-					"\n\n" +
-					"PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n" +
-					"  Quote permission: " +
-					permission_combo_box.getItemAt(permission_index) + "\n" +
-					"  pmChess version: " +
-					pmchess.pmChess.version + "\n" +
-					"  Platform: " +
-					System.getProperty("os.name");
+					"Dear Christoff,"
+					+ "\n\n"
+					+ message_text_area.getText().trim()
+					+ "\n\n"
+					+ "Best regards,\n" + name
+					+ "\n\n"
+					+ "PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n"
+					+ "  Quote permission: "
+					+ permission_combo_box.getItemAt(permission_index) + "\n"
+					+ "  pmChess version: "
+					+ pmchess.pmChess.version + "\n"
+					+ "  Platform: "
+					+ System.getProperty("os.name");
 				try {
 					Desktop.getDesktop().mail(new URI(
-						"mailto:Christoff.Buerger@gmail.com?" +
-						"subject=" + encode(subject) + "&" +
-						"body=" + encode(body)));
-				} catch (URISyntaxException |
-					UnsupportedOperationException |
-					IllegalArgumentException |
-					IOException |
-					SecurityException exception)
+						"mailto:Christoff.Buerger@gmail.com?"
+						+ "subject=" + encode(subject) + "&"
+						+ "body=" + encode(body)));
+				} catch (URISyntaxException
+					| UnsupportedOperationException
+					| IllegalArgumentException
+					| IOException
+					| SecurityException exception)
 				{
 					JOptionPane.showMessageDialog(
 						AboutFrame.this,
@@ -272,7 +272,7 @@ public final class AboutFrame extends JFrame {
 		action_map.put(
 			"Close",
 			new AbstractAction() {
-				@Override public void actionPerformed(ActionEvent e) {
+				@Override public void actionPerformed(ActionEvent event) {
 					AboutFrame.this.setVisible(false);
 				}
 			});
@@ -282,15 +282,15 @@ public final class AboutFrame extends JFrame {
 		action_map.put(
 			"ScrollUp",
 			new AbstractAction() {
-				@Override public void actionPerformed(ActionEvent e) {
+				@Override public void actionPerformed(ActionEvent event) {
 					final JScrollBar bar;
-					if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(release_notes_panel))
+					if (tabs.getSelectedIndex()
+						== tabs.indexOfComponent(release_notes_panel))
 					{
 						bar = release_notes_scroll_pane
 							.getVerticalScrollBar();
-					} else if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(licenses_panel))
+					} else if (tabs.getSelectedIndex()
+						== tabs.indexOfComponent(licenses_panel))
 					{
 						bar = license_scroll_pane.getVerticalScrollBar();
 					} else {
@@ -305,23 +305,23 @@ public final class AboutFrame extends JFrame {
 		action_map.put(
 			"ScrollDown",
 			new AbstractAction() {
-				@Override public void actionPerformed(ActionEvent e) {
+				@Override public void actionPerformed(ActionEvent event) {
 					final JScrollBar bar;
-					if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(release_notes_panel))
+					if (tabs.getSelectedIndex()
+						== tabs.indexOfComponent(release_notes_panel))
 					{
 						bar = release_notes_scroll_pane
 							.getVerticalScrollBar();
-					} else if (tabs.getSelectedIndex() ==
-						tabs.indexOfComponent(licenses_panel))
+					} else if (tabs.getSelectedIndex()
+						== tabs.indexOfComponent(licenses_panel))
 					{
 						bar = license_scroll_pane.getVerticalScrollBar();
 					} else {
 						return;
 					}
-					bar.setValue(bar.getValue() + 42 > bar.getMaximum() ?
-						bar.getMaximum() :
-						bar.getValue() + 42);
+					bar.setValue(bar.getValue() + 42 > bar.getMaximum()
+						? bar.getMaximum()
+						: bar.getValue() + 42);
 				}
 			});
 	}

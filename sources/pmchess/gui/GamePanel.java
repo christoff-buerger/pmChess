@@ -78,7 +78,8 @@ public final class GamePanel extends JPanel {
 	}
 	
 	protected void initialize(final boolean computer_w, final boolean computer_b) {
-		while (undo());
+		while (undo()) {
+		}
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
 		run_game();
@@ -99,15 +100,16 @@ public final class GamePanel extends JPanel {
 	
 	private void run_game() {
 		var game_status = board.status();
-		while (computer_turn() &&
-			(game_status == Board.GameStatus.Normal ||
-			 game_status == Board.GameStatus.Check))
+		while (computer_turn()
+			&& (game_status == Board.GameStatus.Normal
+				|| game_status == Board.GameStatus.Check))
 		{
 			paintImmediately(0, 0, getWidth(), getHeight());
 			final var move = search.select_move(board, evaluator);
 			capitulation = move == 0;
-			if (capitulation)
+			if (capitulation) {
 				break;
+			}
 			board.execute(Move.x(move), Move.y(move), Move.X(move), Move.Y(move));
 			game_status = board.status();
 			history_panel.history_data.addElement(new PastMove(
@@ -125,8 +127,9 @@ public final class GamePanel extends JPanel {
 	
 	private final class BoardListener extends KeyAdapter {
 		@Override public void keyPressed(final KeyEvent event) {
-			if (computer_turn())
+			if (computer_turn()) {
 				return;
+			}
 			final var old_x = cursor_x;
 			final var old_y = cursor_y;
 			final var key = event.getKeyCode();
@@ -174,9 +177,9 @@ public final class GamePanel extends JPanel {
 	private final class HistoryListener extends KeyAdapter {
 		@Override public void keyPressed(final KeyEvent event) {
 			final var game_status = board.status();
-			if (computer_turn() && !capitulation &&
-				game_status != Board.GameStatus.Checkmate &&
-				game_status != Board.GameStatus.Stalemate)
+			if (computer_turn() && !capitulation
+				&& game_status != Board.GameStatus.Checkmate
+				&& game_status != Board.GameStatus.Stalemate)
 			{
 				return;
 			}
@@ -221,13 +224,13 @@ public final class GamePanel extends JPanel {
 			final var font_metrics = graphic.getFontMetrics();
 			final var font_height = font_metrics.getAscent();
 			final var h_y_base =
-				border_size +
-				(tile_size - font_height) / 2 +
-				font_height;
+				border_size
+				+ (tile_size - font_height) / 2
+				+ font_height;
 			final var v_y_base =
-				(border_size - font_height) / 2 +
-				font_height +
-				/* Adjust for lowercase and titled border: */ font_height / 3;
+				(border_size - font_height) / 2
+				+ font_height
+				+ /* Adjust for lowercase and titled border: */ font_height / 3;
 			for (var i = 0; i < 8; i++) {
 				final var h_marking = String.valueOf((char)('8' - i));
 				final var h_width = font_metrics.stringWidth(h_marking);
@@ -241,9 +244,9 @@ public final class GamePanel extends JPanel {
 				final var v_marking = String.valueOf((char)('a' + i));
 				final var v_width = font_metrics.stringWidth(v_marking);
 				final var v_x =
-					border_size +
-					i * tile_size +
-					(tile_size - v_width) / 2;
+					border_size
+					+ i * tile_size
+					+ (tile_size - v_width) / 2;
 				graphic.drawString(v_marking, v_x, v_y_base);
 				graphic.drawString(
 					v_marking,
@@ -272,13 +275,13 @@ public final class GamePanel extends JPanel {
 			if (last_move != 0) {
 				final var _x_ = Move.x(last_move);
 				final var _X_ = Move.X(last_move);
-				if ((x == _x_ && y == Move.y(last_move)) ||
-					(y == Move.Y(last_move) &&
-					(x == _X_ ||
+				if ((x == _x_ && y == Move.y(last_move))
+					|| (y == Move.Y(last_move)
+					&& (x == _X_
 					// Check for rook positions of recent castling:
-					(Move.figure_moved(last_move).is_king() &&
-					((_X_ == _x_ - 2 && (x == 0 || x == 3)) ||
-					 (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
+					|| (Move.figure_moved(last_move).is_king()
+					&& ((_X_ == _x_ - 2 && (x == 0 || x == 3))
+						|| (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
 				{
 					color = new Color(77, 164, 77);
 				}
@@ -329,8 +332,8 @@ public final class GamePanel extends JPanel {
 		private final int border_x_size = 10; // configuration-variable
 		private final int status_x_size = panel_x_size - 4 * border_x_size;
 		private final int status_y_size =
-			(new FontMetrics(Resources.font_bold) {}).getHeight() +
-			3 * border_x_size;
+			(new FontMetrics(Resources.font_bold) {}).getHeight()
+			+ 3 * border_x_size;
 		private final int castling_x_size = panel_x_size / 2 - 2 * border_x_size;
 		private final int castling_y_size = (2 * (panel_y_size - status_y_size)) / 3;
 		
@@ -342,10 +345,10 @@ public final class GamePanel extends JPanel {
 					status_x_size - bulb.getWidth(StatusPanel.this);
 				final var bulb_y =
 					(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
-				if (computer_turn() &&
-					!capitulation &&
-					game_status != Board.GameStatus.Checkmate &&
-					game_status != Board.GameStatus.Stalemate)
+				if (computer_turn()
+					&& !capitulation
+					&& game_status != Board.GameStatus.Checkmate
+					&& game_status != Board.GameStatus.Stalemate)
 				{
 					graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
 				}
@@ -526,28 +529,28 @@ public final class GamePanel extends JPanel {
 				notation = move("0-0-0");
 			} else {
 				final var en_passant =
-					figure_moved.figure.is_pawn() &&
-					figure_captured == null &&
-					x != X;
+					figure_moved.figure.is_pawn()
+					&& figure_captured == null
+					&& x != X;
 				notation =
-					(figure_moved.figure.is_pawn() ?
-						"" :
-						figure(figure_moved)) +
-					move(file(x) + rank(y)) +
-					(figure_captured == null && !en_passant ?
-						"" :
-						info("x")) +
-					move(file(X) + rank(Y)) +
-					(figure_moved.figure == figure_placed.figure ?
-						"" :
-						figure(figure_placed)) +
-					(en_passant ? info("e.p.") : "");
+					(figure_moved.figure.is_pawn()
+						? ""
+						: figure(figure_moved))
+					+ move(file(x) + rank(y))
+					+ (figure_captured == null && !en_passant
+						? ""
+						: info("x"))
+					+ move(file(X) + rank(Y))
+					+ (figure_moved.figure == figure_placed.figure
+						? ""
+						: figure(figure_placed))
+					+ (en_passant ? info("e.p.") : "");
 			}
-			setText(Board.move(move.turn) +
-				(move.turn % 2 == 0 ? "\u2026 " : ". ") +
-				notation +
-				(move.status == Board.GameStatus.Check ? info("+") : "") +
-				(move.status == Board.GameStatus.Checkmate ? info("++") : ""));
+			setText(Board.move(move.turn)
+				+ (move.turn % 2 == 0 ? "\u2026 " : ". ")
+				+ notation
+				+ (move.status == Board.GameStatus.Check ? info("+") : "")
+				+ (move.status == Board.GameStatus.Checkmate ? info("++") : ""));
 			
 			return this;
 		}
@@ -577,13 +580,13 @@ public final class GamePanel extends JPanel {
 		}
 		
 		private static String html(final Font font, final String text) {
-			return "<span style=\"font-family:" +
-				font.getFontName() +
-				";font-size:" +
-				Math.round(1.1f * font.getSize2D()) +
-				"pt;\">" +
-				text +
-				"</span>";
+			return "<span style=\"font-family:"
+				+ font.getFontName()
+				+ ";font-size:"
+				+ Math.round(1.1f * font.getSize2D())
+				+ "pt;\">"
+				+ text
+				+ "</span>";
 		}
 	}
 }

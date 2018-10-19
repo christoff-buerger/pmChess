@@ -8,6 +8,9 @@
 package pmchess.logic;
 
 public final class Move {
+	private Move() { // No instances.
+	}
+		
 	/*
 		+---------------------------------------+
 		| 24 bit move encoding                  |
