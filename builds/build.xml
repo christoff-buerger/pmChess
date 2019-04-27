@@ -34,7 +34,7 @@
 	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
-			source="11"
+			source="12"
 			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"
@@ -76,6 +76,22 @@
 			<manifest>
 				<attribute
 					name="Created-By"
+					value="https://github.com/christoff-buerger/pmChess"
+				/>
+				<attribute
+					name="Built-By"
+					value="https://github.com/christoff-buerger/pmChess"
+				/>
+				<attribute
+					name="Implementation-Title"
+					value="stable"
+				/>
+				<attribute
+					name="Implementation-Version"
+					value="1.1.0"
+				/>
+				<attribute
+					name="Implementation-Vendor"
 					value="https://github.com/christoff-buerger/pmChess"
 				/>
 				<attribute
