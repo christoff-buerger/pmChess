@@ -18,7 +18,7 @@ Version 1.1.0 (in development):
     bugs and give feedback. The form is also directly reachable via a new
     "Contact and feedback"-entry of the "Help"-menu.
   - Added taskbar icon and application logo.
-  - Portable jar-file distribution now requires 'Java 11' ('Java SE 18.9').
+  - Portable jar-file distribution now requires 'Java SE 12.0.2'.
 
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a
