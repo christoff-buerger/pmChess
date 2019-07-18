@@ -7,6 +7,8 @@
 
 package pmchess.gui;
 
+import java.util.*;
+
 import java.io.*;
 
 import java.nio.charset.*;
@@ -77,6 +79,40 @@ public final class Resources {
 		}
 	}
 	
+	protected static void configure_rendering(final Graphics graphics) {
+		final var g2d = (Graphics2D)graphics;
+		
+		// Setup general and image rendering:
+		g2d.setRenderingHint(
+			RenderingHints.KEY_ANTIALIASING,
+			RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(
+			RenderingHints.KEY_ALPHA_INTERPOLATION,
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		g2d.setRenderingHint(
+			RenderingHints.KEY_COLOR_RENDERING,
+			RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		g2d.setRenderingHint(
+			RenderingHints.KEY_DITHERING,
+			RenderingHints.VALUE_DITHER_ENABLE);
+		g2d.setRenderingHint(
+			RenderingHints.KEY_INTERPOLATION,
+			RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g2d.setRenderingHint(
+			RenderingHints.KEY_RENDERING,
+			RenderingHints.VALUE_RENDER_QUALITY);
+		g2d.setRenderingHint(
+			RenderingHints.KEY_STROKE_CONTROL,
+			RenderingHints.VALUE_STROKE_NORMALIZE);
+		
+		// Setup text font rendering:
+		final var desktophints = (Map<?, ?>)Toolkit.getDefaultToolkit()
+			.getDesktopProperty("awt.font.desktophints");
+		if (desktophints != null) {
+			g2d.addRenderingHints(desktophints);
+		}
+	}
+	
 	protected static final Font font_regular = load_font("Open-Sans-Regular.ttf");
 	protected static final Font font_italic = load_font("Open-Sans-Italic.ttf");
 	protected static final Font font_bold = load_font("Open-Sans-Bold.ttf");
@@ -84,46 +120,43 @@ public final class Resources {
 	
 	private static final FigurePresentation[] figures = {
 		new FigurePresentation(
-			Figure.pawn(true), load_image("figures/pawn-w.png"), "\u2659", ""),
+			Figure.pawn(true), "\u2659", ""),
 		new FigurePresentation(
-			Figure.rook(true), load_image("figures/rook-w.png"), "\u2656", "R"),
+			Figure.rook(true), "\u2656", "R"),
 		new FigurePresentation(
-			Figure.knight(true), load_image("figures/knight-w.png"), "\u2658", "N"),
+			Figure.knight(true), "\u2658", "N"),
 		new FigurePresentation(
-			Figure.bishop(true), load_image("figures/bishop-w.png"), "\u2657", "B"),
+			Figure.bishop(true), "\u2657", "B"),
 		new FigurePresentation(
-			Figure.queen(true), load_image("figures/queen-w.png"), "\u2655", "Q"),
+			Figure.queen(true), "\u2655", "Q"),
 		new FigurePresentation(
-			Figure.king(true), load_image("figures/king-w.png"), "\u2654", "K"),
+			Figure.king(true), "\u2654", "K"),
 		new FigurePresentation(
-			Figure.pawn(false), load_image("figures/pawn-b.png"), "\u265F", ""),
+			Figure.pawn(false), "\u265F", ""),
 		new FigurePresentation(
-			Figure.rook(false), load_image("figures/rook-b.png"), "\u265C", "R"),
+			Figure.rook(false), "\u265C", "R"),
 		new FigurePresentation(
-			Figure.knight(false), load_image("figures/knight-b.png"), "\u265E", "N"),
+			Figure.knight(false), "\u265E", "N"),
 		new FigurePresentation(
-			Figure.bishop(false), load_image("figures/bishop-b.png"), "\u265D", "B"),
+			Figure.bishop(false), "\u265D", "B"),
 		new FigurePresentation(
-			Figure.queen(false), load_image("figures/queen-b.png"), "\u265B", "Q"),
+			Figure.queen(false), "\u265B", "Q"),
 		new FigurePresentation(
-			Figure.king(false), load_image("figures/king-b.png"), "\u265A", "K")
+			Figure.king(false), "\u265A", "K")
 	};
 	
 	protected static final class FigurePresentation {
 		protected final Figure figure;
-		protected final Image image;
 		protected final String unicode;
 		protected final String ascii;
 		protected static final Font font = load_font("Chess-Merida-Unicode.ttf", 1.2f);
 		
 		private FigurePresentation(
 			final Figure figure,
-			final Image image,
 			final String unicode,
 			final String ascii)
 		{
 			this.figure = figure;
-			this.image = image;
 			this.unicode = unicode;
 			this.ascii = ascii;
 		}

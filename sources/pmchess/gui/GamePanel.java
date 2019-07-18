@@ -13,6 +13,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import pmchess.logic.*;
+
 import pmchess.gui.Resources.*;
 
 public final class GamePanel extends JPanel {
@@ -75,6 +76,11 @@ public final class GamePanel extends JPanel {
 		
 		// Initialize and start game:
 		initialize(false, false);
+	}
+	
+	@Override public void paintComponent(final Graphics graphics) {
+		super.paintComponent(graphics);
+		Resources.configure_rendering(graphics);
 	}
 	
 	protected void initialize(final boolean computer_w, final boolean computer_b) {
@@ -199,6 +205,9 @@ public final class GamePanel extends JPanel {
 		private final int tile_size = 36;	// configuration-variable
 		private final int cursor_width = 3;	// configuration-variable
 		private final int panel_size = 8 * tile_size + 2 * border_size;
+		private final Font figure_font = FigurePresentation.font.deriveFont(
+			tile_size - 2.0f * cursor_width);
+		
 		
 		private BoardPanel() {
 			// Setup panel size and layout:
@@ -218,6 +227,7 @@ public final class GamePanel extends JPanel {
 		
 		@Override public void paintComponent(final Graphics graphic) {
 			super.paintComponent(graphic);
+			Resources.configure_rendering(graphic);
 			
 			// Draw horizontal (h) and vertical (v) border-markings:
 			graphic.setFont(Resources.font_bold);
@@ -267,6 +277,8 @@ public final class GamePanel extends JPanel {
 		}
 		
 		private void draw_square(final Graphics graphic, final int x, final int y) {
+			Resources.configure_rendering(graphic);
+			
 			final var y_trans = 7 - y;
 			
 			// Draw background tile:
@@ -296,11 +308,19 @@ public final class GamePanel extends JPanel {
 			// Draw figure:
 			final var figure = board.figure(x, y);
 			if (figure != null) {
-				graphic.drawImage(
-					FigurePresentation.get(figure).image,
-					x * tile_size + border_size,
-					y_trans * tile_size + border_size,
-					this);
+				graphic.setColor(Color.black);
+				graphic.setFont(figure_font);
+				final var text = FigurePresentation.get(figure).unicode;
+				final var metrics = graphic.getFontMetrics();
+				final var width_fix =
+					(tile_size - metrics.stringWidth(text)) / 2;
+				final var height_fix =
+					(tile_size + metrics.getAscent() + metrics.getDescent()) / 2
+					- metrics.getDescent();
+				graphic.drawString(
+					text,
+					x * tile_size + border_size + width_fix,
+					y_trans * tile_size + border_size + height_fix);
 			}
 			
 			// Draw cursor and figure selection:
@@ -340,6 +360,8 @@ public final class GamePanel extends JPanel {
 		private final JLabel status = new JLabel() {
 			@Override public void paintComponent(final Graphics graphic) {
 				super.paintComponent(graphic);
+				Resources.configure_rendering(graphic);
+				
 				final var game_status = board.status();
 				final var bulb_x =
 					status_x_size - bulb.getWidth(StatusPanel.this);
@@ -406,6 +428,7 @@ public final class GamePanel extends JPanel {
 		
 		@Override public void paintComponent(final Graphics graphic) {
 			super.paintComponent(graphic);
+			Resources.configure_rendering(graphic);
 			
 			// Update status message:
 			final var now = board.player() ? "White" : "Black";
@@ -477,6 +500,10 @@ public final class GamePanel extends JPanel {
 			add(history_scroll_pane);
 		}
 		
+		@Override public void paintComponent(final Graphics graphics) {
+			super.paintComponent(graphics);
+			Resources.configure_rendering(graphics);
+		}
 	}
 	
 	private static final class PastMove {
@@ -587,6 +614,11 @@ public final class GamePanel extends JPanel {
 				+ "pt;\">"
 				+ text
 				+ "</span>";
+		}
+		
+		@Override public void paintComponent(final Graphics graphics) {
+			super.paintComponent(graphics);
+			Resources.configure_rendering(graphics);
 		}
 	}
 }

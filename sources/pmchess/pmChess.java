@@ -19,8 +19,6 @@ public final class pmChess {
 	// Static => enforce licenses exist:
 	public static final String pmChess_license =
 		Resources.load_text("license.txt");
-	public static final String chess_pieces_license =
-		Resources.load_text("figures/LICENSE.txt");
 	public static final String open_sans_license =
 		Resources.load_text("fonts/Open-Sans-license.txt");
 	public static final String chess_merida_unicode_license =

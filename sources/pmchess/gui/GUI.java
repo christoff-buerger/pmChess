@@ -106,6 +106,11 @@ public final class GUI extends JFrame {
 		setVisible(true);
 	}
 	
+	@Override public void paint(final Graphics graphics) {
+		super.paint(graphics);
+		Resources.configure_rendering(graphics);
+	}
+	
 	/* ************************************ menu actions ************************************ */
 	
 	private final class NewGameAction extends AbstractAction {

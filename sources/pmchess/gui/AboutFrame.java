@@ -62,13 +62,11 @@ public final class AboutFrame extends JFrame {
 		final var open_sans_button = new JToggleButton("Open Sans", false);
 		final var chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
-		final var chess_pieces_button = new JToggleButton("Chess pieces", false);
 		pmChess_button.addActionListener(new ActionListener() {
 				@Override public void actionPerformed(final ActionEvent event) {
 					pmChess_button.setSelected(true);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(false);
-					chess_pieces_button.setSelected(false);
 					license_text_area.setText(
 						pmchess.pmChess.pmChess_license);
 				}
@@ -78,7 +76,6 @@ public final class AboutFrame extends JFrame {
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(true);
 					chess_merida_unicode_button.setSelected(false);
-					chess_pieces_button.setSelected(false);
 					license_text_area.setText(
 						pmchess.pmChess.open_sans_license);
 				}
@@ -88,19 +85,8 @@ public final class AboutFrame extends JFrame {
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(true);
-					chess_pieces_button.setSelected(false);
 					license_text_area.setText(
 						pmchess.pmChess.chess_merida_unicode_license);
-				}
-			});
-		chess_pieces_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent event) {
-					pmChess_button.setSelected(false);
-					open_sans_button.setSelected(false);
-					chess_merida_unicode_button.setSelected(false);
-					chess_pieces_button.setSelected(true);
-					license_text_area.setText(
-						pmchess.pmChess.chess_pieces_license);
 				}
 			});
 		
@@ -108,7 +94,6 @@ public final class AboutFrame extends JFrame {
 		licenses_panel.add(pmChess_button);
 		licenses_panel.add(open_sans_button);
 		licenses_panel.add(chess_merida_unicode_button);
-		licenses_panel.add(chess_pieces_button);
 		licenses_panel.add(license_scroll_pane);
 		
 		// Contact:
@@ -324,5 +309,10 @@ public final class AboutFrame extends JFrame {
 						: bar.getValue() + 42);
 				}
 			});
+	}
+	
+	@Override public void paint(final Graphics graphics) {
+		super.paint(graphics);
+		Resources.configure_rendering(graphics);
 	}
 }

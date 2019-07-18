@@ -45,9 +45,6 @@
 			verbose="no"
 			failonerror="true"
 		/>
-		<copy todir="binaries/pmchess/gui/figures">
-			<fileset dir="../sources/pmchess/gui/figures"/>
-		</copy>
 		<copy todir="binaries/pmchess/gui/icons">
 			<fileset dir="../sources/pmchess/gui/icons"/>
 		</copy>
