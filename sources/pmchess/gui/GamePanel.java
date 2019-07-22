@@ -41,7 +41,7 @@ public final class GamePanel extends JPanel {
 	protected GamePanel() {
 		// Setup panel size and layout:
 		setOpaque(true);
-		final var border_size = 5;
+		final var border_size = 5; // graphical-layout configuration-variable
 		final var panel_dimension = new Dimension(
 			board_panel.panel_size + history_panel.panel_x_size + 2 * border_size,
 			board_panel.panel_size + status_panel.panel_y_size + 2 * border_size);
@@ -201,12 +201,15 @@ public final class GamePanel extends JPanel {
 	}
 	
 	private final class BoardPanel extends JPanel {
-		private final int border_size = 40;	// configuration-variable
-		private final int tile_size = 36;	// configuration-variable
-		private final int cursor_width = 3;	// configuration-variable
+		private final int border_size = 40;	// graphical-layout configuration-variable
+		private final int tile_size = 36;	// graphical-layout configuration-variable
+		private final int cursor_line_width =
+			(int)Math.ceil(tile_size / 10.0f) % 2 == 0
+			? (int)Math.ceil(tile_size / 10.0f)
+			: (int)Math.ceil(tile_size / 10.0f) + 1;
 		private final int panel_size = 8 * tile_size + 2 * border_size;
 		private final Font figure_font = FigurePresentation.font.deriveFont(
-			tile_size - 2.0f * cursor_width);
+			tile_size - 2.0f * cursor_line_width);
 		
 		
 		private BoardPanel() {
@@ -325,22 +328,17 @@ public final class GamePanel extends JPanel {
 			
 			// Draw cursor and figure selection:
 			final var old_stroke = ((Graphics2D)graphic).getStroke();
-			((Graphics2D)graphic).setStroke(new BasicStroke(cursor_width));
+			((Graphics2D)graphic).setStroke(new BasicStroke(cursor_line_width));
+			final var x_pos = x * tile_size + border_size + (cursor_line_width / 2) + 1;
+			final var y_pos = y_trans * tile_size + border_size + (cursor_line_width / 2) + 1;
+			final var distance = tile_size - cursor_line_width - 2;
 			if (x == cursor_x && y == cursor_y) {
 				graphic.setColor(Color.blue);
-				graphic.drawRect(
-					x * tile_size + border_size + 1,
-					y_trans * tile_size + border_size + 1,
-					tile_size - cursor_width,
-					tile_size - cursor_width);
+				graphic.drawRect(x_pos, y_pos, distance, distance);
 			}
 			if (selected_figure != null && x == selected_x && y == selected_y) {
 				graphic.setColor(Color.red);
-				graphic.drawRect(
-					x * tile_size + border_size + 1,
-					y_trans * tile_size + border_size + 1,
-					tile_size - cursor_width,
-					tile_size - cursor_width);
+				graphic.drawRect(x_pos, y_pos, distance, distance);
 			}
 			((Graphics2D)graphic).setStroke(old_stroke);
 		}
@@ -348,8 +346,8 @@ public final class GamePanel extends JPanel {
 	
 	private final class StatusPanel extends JPanel {
 		private final int panel_x_size = board_panel.panel_size;
-		private final int panel_y_size = 140; // configuration-variable
-		private final int border_x_size = 10; // configuration-variable
+		private final int panel_y_size = 140; // graphical-layout configuration-variable
+		private final int border_x_size = 10; // graphical-layout configuration-variable
 		private final int status_x_size = panel_x_size - 4 * border_x_size;
 		private final int status_y_size =
 			(new FontMetrics(Resources.font_bold) {}).getHeight()
@@ -465,9 +463,9 @@ public final class GamePanel extends JPanel {
 	}
 	
 	private final class HistoryPanel extends JPanel {
-		private final int panel_x_size = 150; // configuration-variable
+		private final int panel_x_size = 150; // graphical-layout configuration-variable
 		private final int panel_y_size = board_panel.panel_size + status_panel.panel_y_size;
-		private final int border_size = 15; // configuration-variable
+		private final int border_size = 15; // graphical-layout configuration-variable
 		
 		private final DefaultListModel<PastMove> history_data = new DefaultListModel<>();
 		private final JList<PastMove> history_list = new JList<>(history_data);
