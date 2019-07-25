@@ -57,7 +57,9 @@ public final class Resources {
 			final var environment =
 				GraphicsEnvironment.getLocalGraphicsEnvironment();
 			for (final var existing_font : environment.getAllFonts()) {
-				if (existing_font.getFontName().equals(loaded_font.getFontName())) {
+				if (existing_font.getFontName().equals(
+					loaded_font.getFontName()))
+				{
 					return existing_font.deriveFont(scale * 14f);
 				}
 			}

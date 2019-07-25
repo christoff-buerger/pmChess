@@ -167,7 +167,8 @@ public final class AboutFrame extends JFrame {
 					permission_combo_box.getSelectedIndex();
 				final var name =
 					name_field.getText().trim();
-				if (subject_index == 0 || permission_index == 0
+				if (subject_index == 0
+					|| permission_index == 0
 					|| name.length() < 1)
 				{
 					JOptionPane.showMessageDialog(
@@ -281,7 +282,9 @@ public final class AboutFrame extends JFrame {
 					} else {
 						return;
 					}
-					bar.setValue(bar.getValue() > 42 ? bar.getValue() - 42 : 0);
+					bar.setValue(bar.getValue() > 42
+						? bar.getValue() - 42
+						: 0);
 				}
 			});
 		input_map.put(

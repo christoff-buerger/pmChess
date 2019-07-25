@@ -211,7 +211,6 @@ public final class GamePanel extends JPanel {
 		private final Font figure_font = FigurePresentation.font.deriveFont(
 			tile_size - 2.0f * cursor_line_width);
 		
-		
 		private BoardPanel() {
 			// Setup panel size and layout:
 			setOpaque(true);
@@ -329,8 +328,14 @@ public final class GamePanel extends JPanel {
 			// Draw cursor and figure selection:
 			final var old_stroke = ((Graphics2D)graphic).getStroke();
 			((Graphics2D)graphic).setStroke(new BasicStroke(cursor_line_width));
-			final var x_pos = x * tile_size + border_size + (cursor_line_width / 2) + 1;
-			final var y_pos = y_trans * tile_size + border_size + (cursor_line_width / 2) + 1;
+			final var x_pos = x * tile_size
+				+ border_size
+				+ (cursor_line_width / 2)
+				+ 1;
+			final var y_pos = y_trans * tile_size
+				+ border_size
+				+ (cursor_line_width / 2)
+				+ 1;
 			final var distance = tile_size - cursor_line_width - 2;
 			if (x == cursor_x && y == cursor_y) {
 				graphic.setColor(Color.blue);
@@ -464,7 +469,8 @@ public final class GamePanel extends JPanel {
 	
 	private final class HistoryPanel extends JPanel {
 		private final int panel_x_size = 150; // graphical-layout configuration-variable
-		private final int panel_y_size = board_panel.panel_size + status_panel.panel_y_size;
+		private final int panel_y_size = board_panel.panel_size
+			+ status_panel.panel_y_size;
 		private final int border_size = 15; // graphical-layout configuration-variable
 		
 		private final DefaultListModel<PastMove> history_data = new DefaultListModel<>();

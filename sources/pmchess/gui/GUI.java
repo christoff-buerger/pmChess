@@ -31,6 +31,7 @@ public final class GUI extends JFrame {
 				UIManager.put(key, Resources.font_regular);
 			}
 		}
+		
 		// Setup cross-platform look:
 		try {
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -111,7 +112,7 @@ public final class GUI extends JFrame {
 		Resources.configure_rendering(graphics);
 	}
 	
-	/* ************************************ menu actions ************************************ */
+	/* *********************************** menu  actions *********************************** */
 	
 	private final class NewGameAction extends AbstractAction {
 		private NewGameAction() {

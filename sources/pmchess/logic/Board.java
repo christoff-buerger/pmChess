@@ -292,7 +292,10 @@ public final class Board {
 			return 0;
 		}
 		var previous_frame = moves_frame;
-		for (var i = this.turn - turn; i-- > 0; previous_frame = moves[previous_frame + 1]) {
+		for (var i = this.turn - turn;
+			i-- > 0;
+			previous_frame = moves[previous_frame + 1])
+		{
 		}
 		return moves[previous_frame + 2];
 	}

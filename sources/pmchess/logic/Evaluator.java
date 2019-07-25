@@ -189,7 +189,10 @@ public final class Evaluator {
 		}
 		
 		// Weight and sum up scoring criteria:
-		return 15 * material + 3 * pawn_formation + 2 * development + mobility
+		return 15 * material
+			+ 3 * pawn_formation
+			+ 2 * development
+			+ mobility
 			+ random_shifts[random.nextInt(random_shifts.length)];
 	}
 }
