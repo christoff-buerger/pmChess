@@ -21,6 +21,8 @@ public final class Resources {
 	private Resources() { // No instances.
 	}
 	
+	private static final float base_scale = 14f;
+	
 	public static final String text_encoding = StandardCharsets.UTF_8.name();
 	
 	public static String load_text(final String file) {
@@ -53,27 +55,23 @@ public final class Resources {
 		try {
 			final var loaded_font = Font.createFont(
 				Font.TRUETYPE_FONT,
-				GUI.class.getResourceAsStream("fonts/" + font_name));
+				Resources.class.getResourceAsStream("fonts/" + font_name));
 			final var environment =
 				GraphicsEnvironment.getLocalGraphicsEnvironment();
 			for (final var existing_font : environment.getAllFonts()) {
-				if (existing_font.getFontName().equals(
-					loaded_font.getFontName()))
-				{
-					return existing_font.deriveFont(scale * 14f);
+				if (existing_font.getFontName().equals(loaded_font.getFontName())) {
+					return existing_font.deriveFont(scale * base_scale);
 				}
 			}
-			if (!environment.registerFont(loaded_font)) {
-				throw new IOException();
-			}
-			return loaded_font.deriveFont(scale * 14f);
+			environment.registerFont(loaded_font);
+			return loaded_font.deriveFont(scale * base_scale);
 		} catch (IOException | FontFormatException exception) {
 			throw new RuntimeException("Failed to load font " + font_name + ".");
 		}
 	}
 	
 	protected static Image load_image(final String image_name) {
-		final var image_url = GamePanel.class.getResource(image_name);
+		final var image_url = Resources.class.getResource(image_name);
 		if (image_url != null) {
 			return Toolkit.getDefaultToolkit().getImage(image_url);
 		} else {
@@ -170,6 +168,10 @@ public final class Resources {
 				}
 			}
 			throw new RuntimeException("ERROR: missing figure presentation.");
+		}
+		
+		@Override public String toString() {
+			return unicode;
 		}
 	}
 }

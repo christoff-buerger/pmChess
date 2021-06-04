@@ -46,7 +46,7 @@ public final class GUI extends JFrame {
 	
 	private final JMenuItem white_computer;
 	private final JMenuItem black_computer;
-	private final GamePanel game_panel;
+	private final MainPanel main_panel;
 	
 	/*
 		Create the GUI and show it.
@@ -92,8 +92,8 @@ public final class GUI extends JFrame {
 		setJMenuBar(menu_bar);
 		
 		// Setup main panel:
-		game_panel = new GamePanel();
-		setContentPane(game_panel);
+		main_panel = new MainPanel();
+		setContentPane(main_panel);
 		
 		// Setup window and display it:
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -120,7 +120,7 @@ public final class GUI extends JFrame {
 		}
 
 		@Override public void actionPerformed(final ActionEvent event) {
-			game_panel.initialize(
+			main_panel.initialize(
 				white_computer.isSelected(),
 				black_computer.isSelected());
 		}
@@ -167,9 +167,9 @@ public final class GUI extends JFrame {
 		
 		{ // Instance initialization:
 			getModel().addChangeListener(new ChangeListener() {
-				@Override public void stateChanged(ChangeEvent e) {
+				@Override public void stateChanged(final ChangeEvent e) {
 					if (getModel().isArmed() && isShowing()) {
-						path =  MenuSelectionManager
+						path = MenuSelectionManager
 							.defaultManager()
 							.getSelectedPath();
 					}
@@ -180,7 +180,7 @@ public final class GUI extends JFrame {
 			super(text);
 		}
 		
-		@Override public void doClick(int press_time) {
+		@Override public void doClick(final int press_time) {
 			super.doClick(press_time);
 			MenuSelectionManager.defaultManager().setSelectedPath(path);
 		}
