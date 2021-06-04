@@ -9,12 +9,12 @@ package pmchess;
 
 import pmchess.gui.*;
 
-public final class pmChess {
+public final class pmChess
+{
 	public static final String version = "1.1.0";
 	public static final String[] about = {
 		"pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com).",
-		"Source code available at https://github.com/christoff-buerger/pmChess."
-	};
+		"Source code available at https://github.com/christoff-buerger/pmChess."};
 	
 	// Static => enforce licenses exist:
 	public static final String pmChess_license =
@@ -26,16 +26,19 @@ public final class pmChess {
 	
 	/*
 		Print license and start GUI. No command line arguments supported.
-	 */
-	public static void main(final String[] args) {
+	*/
+	public static void main(final String[] args)
+	{
 		System.out.println(about[0]);
 		System.out.println(about[1]);
 		System.out.println();
 		System.out.println(pmChess_license);
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override public void run() {
-				new GUI();
-			}
-		});
+		java.awt.EventQueue.invokeLater(new Runnable()
+			{
+				@Override public void run()
+				{
+					new GUI();
+				}
+			});
 	}
 }

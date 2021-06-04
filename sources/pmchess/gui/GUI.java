@@ -18,24 +18,30 @@ import java.awt.desktop.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public final class GUI extends JFrame {
+public final class GUI extends JFrame
+{
 	private static final Image taskbar_icon = Resources.load_image("icons/taskbar.png");
 	
-	static {
+	static
+	{
 		// Initialize fonts:
 		final var keys = UIManager.getDefaults().keys();
-		while (keys.hasMoreElements()) {
+		while (keys.hasMoreElements())
+		{
 			final var key = keys.nextElement();
 			final var value = UIManager.get(key);
-			if (value != null && value instanceof javax.swing.plaf.FontUIResource) {
+			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
+			{
 				UIManager.put(key, Resources.font_regular);
 			}
 		}
 		
 		// Setup cross-platform look:
-		try {
+		try
+		{
 			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (ClassNotFoundException
+		}
+		catch (ClassNotFoundException
 			| InstantiationException
 			| IllegalAccessException
 			| UnsupportedLookAndFeelException exception)
@@ -51,15 +57,19 @@ public final class GUI extends JFrame {
 	/*
 		Create the GUI and show it.
 	 */
-	public GUI() {
+	public GUI()
+	{
 		super("pmChess");
 		
 		// Setup "About"-window and icon:
 		final var about_action = new AboutAction();
-		try {
+		try
+		{
 			Desktop.getDesktop().setAboutHandler(about_action);
 			Taskbar.getTaskbar().setIconImage(taskbar_icon);
-		} catch (SecurityException | UnsupportedOperationException exception) {
+		}
+		catch (SecurityException | UnsupportedOperationException exception)
+		{
 			setIconImage(taskbar_icon); // Fallback for older operating systems.
 		}
 		
@@ -107,80 +117,101 @@ public final class GUI extends JFrame {
 		setVisible(true);
 	}
 	
-	@Override public void paint(final Graphics graphics) {
+	@Override public void paint(final Graphics graphics)
+	{
 		super.paint(graphics);
 		Resources.configure_rendering(graphics);
 	}
 	
 	/* *********************************** menu  actions *********************************** */
 	
-	private final class NewGameAction extends AbstractAction {
-		private NewGameAction() {
+	private final class NewGameAction extends AbstractAction
+	{
+		private NewGameAction()
+		{
 			super("New game with:");
 		}
 
-		@Override public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event)
+		{
 			main_panel.initialize(
 				white_computer.isSelected(),
 				black_computer.isSelected());
 		}
 	}
 	
-	private static final class ExitAction extends AbstractAction {
-		private ExitAction() {
+	private static final class ExitAction extends AbstractAction
+	{
+		private ExitAction()
+		{
 			super("Quit pmChess");
 		}
 
-		@Override public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event)
+		{
 			System.exit(0);
 		}
 	}
 	
-	private static final class AboutAction extends AbstractAction implements AboutHandler {
+	private static final class AboutAction extends AbstractAction implements AboutHandler
+	{
 		private static final AboutFrame about_frame = new AboutFrame();
 		
-		private AboutAction() {
+		private AboutAction()
+		{
 			super("About pmChess");
 		}
 
-		@Override public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event)
+		{
 			about_frame.setVisible(true);
 		}
 		
-		@Override public void handleAbout(final AboutEvent event) {
+		@Override public void handleAbout(final AboutEvent event)
+		{
 			about_frame.setVisible(true);
 		}
 	}
 	
-	private static final class ContactAction extends AbstractAction {
-		private ContactAction() {
+	private static final class ContactAction extends AbstractAction
+	{
+		private ContactAction()
+		{
 			super("Contact and feedback");
 		}
 		
-		@Override public void actionPerformed(final ActionEvent event) {
+		@Override public void actionPerformed(final ActionEvent event)
+		{
 			AboutAction.about_frame.show_contact_tab();
 		}
 	}
 	
-	private static final class NonclosingRadioButtonMenuItem extends JRadioButtonMenuItem {
+	private static final class NonclosingRadioButtonMenuItem extends JRadioButtonMenuItem
+	{
 		private static MenuElement[] path;
 		
 		{ // Instance initialization:
-			getModel().addChangeListener(new ChangeListener() {
-				@Override public void stateChanged(final ChangeEvent e) {
-					if (getModel().isArmed() && isShowing()) {
-						path = MenuSelectionManager
-							.defaultManager()
-							.getSelectedPath();
+			getModel().addChangeListener(new ChangeListener()
+				{
+					@Override public void stateChanged(final ChangeEvent e)
+					{
+						if (getModel().isArmed() && isShowing())
+						{
+							path = MenuSelectionManager
+								.defaultManager()
+								.getSelectedPath();
+						}
 					}
-				}});
+				});
   		}
 		
-		private NonclosingRadioButtonMenuItem(final String text) {
+		private NonclosingRadioButtonMenuItem(final String text)
+		{
 			super(text);
 		}
 		
-		@Override public void doClick(final int press_time) {
+		@Override public void doClick(final int press_time)
+		{
 			super.doClick(press_time);
 			MenuSelectionManager.defaultManager().setSelectedPath(path);
 		}

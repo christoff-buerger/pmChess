@@ -7,8 +7,10 @@
 
 package pmchess.logic;
 
-public final class Move {
-	private Move() { // No instances.
+public final class Move
+{
+	private Move() // No instances.
+	{
 	}
 		
 	/*
@@ -48,24 +50,37 @@ public final class Move {
 		final var figure_destination = board.figure(X, Y);
 		final var player = figure_moved.owner;
 		
-		var encoded_move = x | y << 3 | X << 6 | Y << 9 | figure_moved.key << 12
+		var encoded_move = x
+			| y << 3
+			| X << 6
+			| Y << 9
+			| figure_moved.key << 12
 			| (figure_destination == null ? 0 : figure_destination.key << 16);
 		
 		// Update castling information:
-		if (figure_moved.is_king()) { // Moving king disables castlings.
+		if (figure_moved.is_king())
+		{ // Moving king disables castlings:
 			final var player_offset = player ? 0 : 2;
-			if (board.castling_allowed(true, player)) {
+			if (board.castling_allowed(true, player))
+			{
 				encoded_move |= 0x100000 << player_offset;
 			}
-			if (board.castling_allowed(false, player)) {
+			if (board.castling_allowed(false, player))
+			{
 				encoded_move |= 0x200000 << player_offset;
 			}
-		} else if (figure_moved.is_rook()) { // Moving rook from start disables castlings.
+		}
+		else if (figure_moved.is_rook())
+		{ // Moving rook from start disables castlings:
 			final var player_offset = player ? 0 : 2;
-			if (y == (player ? 0 : 7)) {
-				if (x == 0 && board.castling_allowed(true, player)) {
+			if (y == (player ? 0 : 7))
+			{
+				if (x == 0 && board.castling_allowed(true, player))
+				{
 					encoded_move |= 0x100000 << player_offset;
-				} else if (x == 7 && board.castling_allowed(false, player)) {
+				}
+				else if (x == 7 && board.castling_allowed(false, player))
+				{
 					encoded_move |= 0x200000 << player_offset;
 				}
 			}
@@ -77,12 +92,17 @@ public final class Move {
 			 - and uses it for castling
 			Thus, killing a rook on a start position disables its castling:
 		*/
-		if (figure_destination != null && figure_destination.is_rook()) {
+		if (figure_destination != null && figure_destination.is_rook())
+		{
 			final var player_offset = player ? 2 : 0;
-			if (Y == (player ? 7 : 0)) {
-				if (X == 0 && board.castling_allowed(true, !player)) {
+			if (Y == (player ? 7 : 0))
+			{
+				if (X == 0 && board.castling_allowed(true, !player))
+				{
 					encoded_move |= 0x100000 << player_offset;
-				} else if (X == 7 && board.castling_allowed(false, !player)) {
+				}
+				else if (X == 7 && board.castling_allowed(false, !player))
+				{
 					encoded_move |= 0x200000 << player_offset;
 				}
 			}
@@ -91,34 +111,41 @@ public final class Move {
 		return encoded_move;
 	}
 	
-	public static int x(final int move) {
+	public static int x(final int move)
+	{
 		return move & 0x7;
 	}
 	
-	public static int y(final int move) {
+	public static int y(final int move)
+	{
 		return (move >> 3) & 0x7;
 	}
 	
-	public static int X(final int move) {
+	public static int X(final int move)
+	{
 		return (move >> 6) & 0x7;
 	}
 	
-	public static int Y(final int move) {
+	public static int Y(final int move)
+	{
 		return (move >> 9) & 0x7;
 	}
 	
-	public static Figure figure_moved(final int move) {
+	public static Figure figure_moved(final int move)
+	{
 		return Figure.figures[(move >> 12) & 0xF];
 	}
 	
-	public static Figure figure_destination(final int move) {
+	public static Figure figure_destination(final int move)
+	{
 		return Figure.figures[(move >> 16) & 0xF];
 	}
 	
 	/*
 		Figure placed considering 8th rank pawns promotions.
 	*/
-	public static Figure figure_placed(final int move) {
+	public static Figure figure_placed(final int move)
+	{
 		final var figure_moved = Move.figure_moved(move);
 		final var Y = Move.Y(move);
 		return figure_moved.is_pawn() && (Y == 0 | Y == 7)
@@ -129,7 +156,8 @@ public final class Move {
 	/*
 		Return 4 bits representing castling changes (cf. encodeMove).
 	*/
-	public static int castling_changes(final int move) {
+	public static int castling_changes(final int move)
+	{
 		return move >> 20; // Castling bits are highest of encoding => just shift.
 	}
 }

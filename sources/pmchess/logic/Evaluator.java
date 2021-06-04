@@ -7,29 +7,32 @@
 
 package pmchess.logic;
 
-public final class Evaluator {
+public final class Evaluator
+{
 	private static final java.util.Random random = new java.util.Random();
 	private static final int[] random_shifts = {0, 0, 0, 0, 0, 5, 5, 5, 10, 10, 20};
 	
-	private static final int[] value_table = {
-		0,  // null
-				/* white figures */
-		1,  // pawn
-		5,  // rook
-		3,  // knight
-		3,  // bishop
-		9,  // queen
-		10, // king
-				/* black figures */
-		1,
-		5,
-		3,
-		3,
-		9,
-		10
-	};
+	private static final int[] value_table =
+		{
+			0,  // null
+					/* white figures */
+			1,  // pawn
+			5,  // rook
+			3,  // knight
+			3,  // bishop
+			9,  // queen
+			10, // king
+					/* black figures */
+			1,
+			5,
+			3,
+			3,
+			9,
+			10
+		};
 	
-	private static final int[][] mobility_table = {
+	private static final int[][] mobility_table =
+		{
 		// null (no figure; never accessed):
 		{  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 		   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -84,29 +87,39 @@ public final class Evaluator {
 		{  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 		   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
 		   0,   0,   0,   0,   0,   0,   0,   0}
-	};
+		};
 	
-	public int score(final Board board, final boolean player) {
-		final int[][] pawns = {/* player   */ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		                       /* opponent */ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+	public int score(final Board board, final boolean player)
+	{
+		final int[][] pawns =
+			{
+			/* player   */ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		    /* opponent */ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+			};
 		
 		// Material evaluation (also counts pawns for later pawn formation evaluation):
 		var material = 0;
-		for (var x = 7; x >= 0; x--) {
-			for (var y = 7; y >= 0; y--) {
+		for (var x = 7; x >= 0; x--)
+		{
+			for (var y = 7; y >= 0; y--)
+			{
 				final var f = board.figure(x, y);
-				if (f == null) {
+				if (f == null)
+				{
 					continue;
 				}
-				if (f.owner == player) {
+				if (f.owner == player)
+				{
 					material += value_table[f.key];
-					if (f.is_pawn()) {
+					if (f.is_pawn())
+					{
 						pawns[0][x + 1]++;
 					}
 					continue;
 				}
 				material -= value_table[f.key];
-				if (f.is_pawn()) {
+				if (f.is_pawn())
+				{
 					pawns[1][x + 1]++;
 				}
 			}
@@ -121,23 +134,29 @@ public final class Evaluator {
 			rp = mp, mp = lp, lp = pawns[0][--x],
 			ro = mo, mo = lo, lo = pawns[1][x])
 		{
-			if (mp == 0) {
+			if (mp == 0)
+			{
 				continue;
 			}
 			pawn_formation -= (mp - 1) * 2; // Doubled pawns penalty.
-			if (lp == 0 & rp == 0) {
+			if (lp == 0 & rp == 0)
+			{
 				pawn_formation -= 7; // Isolated pawn penalty.
 			}
-			if (lo == 0 & ro == 0) {
+			if (lo == 0 & ro == 0)
+			{
 				pawn_formation += 12; // Breached pawn bonus.
 			}
 		}
 		
 		// Castling bonus and penalties:
 		var development = 0;
-		if (board.castling_done(player)) {
+		if (board.castling_done(player))
+		{
 			development = 10;
-		} else {
+		}
+		else
+		{
 			final var right = board.castling_allowed(false, player);
 			development = board.castling_allowed(true, player)
 				? (right ? 0 : -5)
@@ -147,19 +166,23 @@ public final class Evaluator {
 		// Unmoved pawn penalties:
 		final var base_row = player ? 1 : 6;
 		var f = board.figure(3, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) {
+		if (f != null && f.is_pawn() && f.owner == player)
+		{
 			development -= 4;
 		}
 		f = board.figure(4, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) {
+		if (f != null && f.is_pawn() && f.owner == player)
+		{
 			development -= 4;
 		}
 		f = board.figure(2, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) {
+		if (f != null && f.is_pawn() && f.owner == player)
+		{
 			development -= 3;
 		}
 		f = board.figure(5, base_row);
-		if (f != null && f.is_pawn() && f.owner == player) {
+		if (f != null && f.is_pawn() && f.owner == player)
+		{
 			development -= 3;
 		}
 		
@@ -175,7 +198,8 @@ public final class Evaluator {
 		{
 			final var x = Move.x(move);
 			final var y = Move.y(move);
-			if (x_current == x & y_current == y) {
+			if (x_current == x & y_current == y)
+			{
 				continue;
 			}
 			mobility += mobility_table[f_current.key][n_current];
@@ -184,7 +208,8 @@ public final class Evaluator {
 			f_current = Move.figure_moved(move);
 			n_current = 0;
 		}
-		if (f_current != null) {
+		if (f_current != null)
+		{
 			mobility += mobility_table[f_current.key][n_current];
 		}
 		

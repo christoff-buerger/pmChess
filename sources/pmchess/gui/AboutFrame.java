@@ -16,18 +16,21 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public final class AboutFrame extends JFrame {
+public final class AboutFrame extends JFrame
+{
 	private static final String release_notes = Resources.load_text("release-notes.txt");
 	private static final Image logo = Resources.load_image("logo/logo-animated.gif");
 	
 	private final JTabbedPane tabs = new JTabbedPane();
 	
-	protected void show_contact_tab() {
+	protected void show_contact_tab()
+	{
 		tabs.setSelectedIndex(2);
 		setVisible(true);
 	}
 	
-	protected AboutFrame() {
+	protected AboutFrame()
+	{
 		super("About pmChess");
 		
 		setSize(600, 580);
@@ -62,8 +65,10 @@ public final class AboutFrame extends JFrame {
 		final var open_sans_button = new JToggleButton("Open Sans", false);
 		final var chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
-		pmChess_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent event) {
+		pmChess_button.addActionListener(new ActionListener()
+			{
+				@Override public void actionPerformed(final ActionEvent event)
+				{
 					pmChess_button.setSelected(true);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(false);
@@ -71,8 +76,10 @@ public final class AboutFrame extends JFrame {
 						pmchess.pmChess.pmChess_license);
 				}
 			});
-		open_sans_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent event) {
+		open_sans_button.addActionListener(new ActionListener()
+			{
+				@Override public void actionPerformed(final ActionEvent event)
+				{
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(true);
 					chess_merida_unicode_button.setSelected(false);
@@ -80,8 +87,10 @@ public final class AboutFrame extends JFrame {
 						pmchess.pmChess.open_sans_license);
 				}
 			});
-		chess_merida_unicode_button.addActionListener(new ActionListener() {
-				@Override public void actionPerformed(final ActionEvent event) {
+		chess_merida_unicode_button.addActionListener(new ActionListener()
+			{
+				@Override public void actionPerformed(final ActionEvent event)
+				{
 					pmChess_button.setSelected(false);
 					open_sans_button.setSelected(false);
 					chess_merida_unicode_button.setSelected(true);
@@ -159,65 +168,70 @@ public final class AboutFrame extends JFrame {
 		
 		final var send_button = new JButton("send e-mail");
 		send_button.setPreferredSize(new Dimension(570, selection_dimension.height));
-		send_button.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(final ActionEvent event) {
-				final var subject_index =
-					subject_combo_box.getSelectedIndex();
-				final var permission_index =
-					permission_combo_box.getSelectedIndex();
-				final var name =
-					name_field.getText().trim();
-				if (subject_index == 0
-					|| permission_index == 0
-					|| name.length() < 1)
+		send_button.addActionListener(new ActionListener()
+			{
+				@Override public void actionPerformed(final ActionEvent event)
 				{
-					JOptionPane.showMessageDialog(
-						AboutFrame.this,
-						"Please select subject, quote permission and name.",
-						"Sending mail aborted",
-						JOptionPane.ERROR_MESSAGE);
-					return;
+					final var subject_index =
+						subject_combo_box.getSelectedIndex();
+					final var permission_index =
+						permission_combo_box.getSelectedIndex();
+					final var name =
+						name_field.getText().trim();
+					if (subject_index == 0
+						|| permission_index == 0
+						|| name.length() < 1)
+					{
+						JOptionPane.showMessageDialog(
+							AboutFrame.this,
+							"Please select subject, quote permission and name.",
+							"Sending mail aborted",
+							JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					final var subject =
+						"pmChess: " + subject_combo_box.getItemAt(subject_index);
+					final var body =
+						"Dear Christoff,"
+						+ "\n\n"
+						+ message_text_area.getText().trim()
+						+ "\n\n"
+						+ "Best regards,\n" + name
+						+ "\n\n"
+						+ "PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n"
+						+ "  Quote permission: "
+						+ permission_combo_box.getItemAt(permission_index) + "\n"
+						+ "  pmChess version: "
+						+ pmchess.pmChess.version + "\n"
+						+ "  Platform: "
+						+ System.getProperty("os.name");
+					try
+					{
+						Desktop.getDesktop().mail(new URI(
+							"mailto:Christoff.Buerger@gmail.com?"
+							+ "subject=" + encode(subject) + "&"
+							+ "body=" + encode(body)));
+					}
+					catch (URISyntaxException
+						| UnsupportedOperationException
+						| IllegalArgumentException
+						| IOException
+						| SecurityException exception)
+					{
+						JOptionPane.showMessageDialog(
+							AboutFrame.this,
+							"Failed to open default e-mail client.",
+							"Sending mail aborted",
+							JOptionPane.ERROR_MESSAGE);
+					}
 				}
-				final var subject =
-					"pmChess: " + subject_combo_box.getItemAt(subject_index);
-				final var body =
-					"Dear Christoff,"
-					+ "\n\n"
-					+ message_text_area.getText().trim()
-					+ "\n\n"
-					+ "Best regards,\n" + name
-					+ "\n\n"
-					+ "PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n"
-					+ "  Quote permission: "
-					+ permission_combo_box.getItemAt(permission_index) + "\n"
-					+ "  pmChess version: "
-					+ pmchess.pmChess.version + "\n"
-					+ "  Platform: "
-					+ System.getProperty("os.name");
-				try {
-					Desktop.getDesktop().mail(new URI(
-						"mailto:Christoff.Buerger@gmail.com?"
-						+ "subject=" + encode(subject) + "&"
-						+ "body=" + encode(body)));
-				} catch (URISyntaxException
-					| UnsupportedOperationException
-					| IllegalArgumentException
-					| IOException
-					| SecurityException exception)
+				
+				private String encode(final String text) throws IOException
 				{
-					JOptionPane.showMessageDialog(
-						AboutFrame.this,
-						"Failed to open default e-mail client.",
-						"Sending mail aborted",
-						JOptionPane.ERROR_MESSAGE);
+					return URLEncoder.encode(text, Resources.text_encoding)
+						.replace("+", "%20");
 				}
-			}
-			
-			private String encode(final String text) throws IOException {
-				return URLEncoder.encode(text, Resources.text_encoding)
-					.replace("+", "%20");
-			}
-		});
+			});
 		
 		final var contact_panel = new JPanel();
 		contact_panel.add(description_scroll_pane);
@@ -257,8 +271,10 @@ public final class AboutFrame extends JFrame {
 			"Close");
 		action_map.put(
 			"Close",
-			new AbstractAction() {
-				@Override public void actionPerformed(ActionEvent event) {
+			new AbstractAction()
+			{
+				@Override public void actionPerformed(ActionEvent event)
+				{
 					AboutFrame.this.setVisible(false);
 				}
 			});
@@ -267,19 +283,24 @@ public final class AboutFrame extends JFrame {
 			"ScrollUp");
 		action_map.put(
 			"ScrollUp",
-			new AbstractAction() {
-				@Override public void actionPerformed(ActionEvent event) {
+			new AbstractAction()
+			{
+				@Override public void actionPerformed(ActionEvent event)
+				{
 					final JScrollBar bar;
 					if (tabs.getSelectedIndex()
 						== tabs.indexOfComponent(release_notes_panel))
 					{
 						bar = release_notes_scroll_pane
 							.getVerticalScrollBar();
-					} else if (tabs.getSelectedIndex()
+					}
+					else if (tabs.getSelectedIndex()
 						== tabs.indexOfComponent(licenses_panel))
 					{
 						bar = license_scroll_pane.getVerticalScrollBar();
-					} else {
+					}
+					else
+					{
 						return;
 					}
 					bar.setValue(bar.getValue() > 42
@@ -292,19 +313,24 @@ public final class AboutFrame extends JFrame {
 			"ScrollDown");
 		action_map.put(
 			"ScrollDown",
-			new AbstractAction() {
-				@Override public void actionPerformed(ActionEvent event) {
+			new AbstractAction()
+			{
+				@Override public void actionPerformed(ActionEvent event)
+				{
 					final JScrollBar bar;
 					if (tabs.getSelectedIndex()
 						== tabs.indexOfComponent(release_notes_panel))
 					{
 						bar = release_notes_scroll_pane
 							.getVerticalScrollBar();
-					} else if (tabs.getSelectedIndex()
+					}
+					else if (tabs.getSelectedIndex()
 						== tabs.indexOfComponent(licenses_panel))
 					{
 						bar = license_scroll_pane.getVerticalScrollBar();
-					} else {
+					}
+					else
+					{
 						return;
 					}
 					bar.setValue(bar.getValue() + 42 > bar.getMaximum()
@@ -314,7 +340,8 @@ public final class AboutFrame extends JFrame {
 			});
 	}
 	
-	@Override public void paint(final Graphics graphics) {
+	@Override public void paint(final Graphics graphics)
+	{
 		super.paint(graphics);
 		Resources.configure_rendering(graphics);
 	}

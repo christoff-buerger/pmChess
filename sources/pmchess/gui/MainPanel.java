@@ -18,7 +18,8 @@ import pmchess.logic.*;
 
 import pmchess.gui.Resources.*;
 
-public final class MainPanel extends JPanel {
+public final class MainPanel extends JPanel
+{
 	private final int text_height =
 		(new FontMetrics(Resources.font_regular) {}).getHeight();
 	private final int border_size =
@@ -45,10 +46,10 @@ public final class MainPanel extends JPanel {
 	private final GamePanel game_panel = new GamePanel();
 	private final HistoryPanel history_panel = new HistoryPanel();
 	
-	protected MainPanel() {
+	protected MainPanel()
+	{
 		// Setup panel size and layout:
 		setOpaque(true);
-		//final var border_size = 5; // graphical-layout configuration-variable
 		final var panel_dimension = new Dimension(
 			board_panel.panel_size + history_panel.panel_x_size + 2 * border_size,
 			board_panel.panel_size + game_panel.panel_y_size + 2 * border_size);
@@ -85,21 +86,26 @@ public final class MainPanel extends JPanel {
 		initialize(false, false);
 	}
 	
-	@Override public void paintComponent(final Graphics graphics) {
+	@Override public void paintComponent(final Graphics graphics)
+	{
 		super.paintComponent(graphics);
 		Resources.configure_rendering(graphics);
 	}
 	
-	protected void initialize(final boolean computer_w, final boolean computer_b) {
-		while (undo()) {
+	protected void initialize(final boolean computer_w, final boolean computer_b)
+	{
+		while (undo())
+		{
 		}
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
 		run_game();
 	}
 	
-	private boolean undo() {
-		if (board.undo() != 0) {
+	private boolean undo()
+	{
+		if (board.undo() != 0)
+		{
 			history_panel.history_data.removeElementAt(
 				history_panel.history_data.size() - 1);
 			selected_figure = null;
@@ -111,7 +117,8 @@ public final class MainPanel extends JPanel {
 		return false;
 	}
 	
-	private void run_game() {
+	private void run_game()
+	{
 		var game_status = board.status();
 		while (computer_turn()
 			&& (game_status == Board.GameStatus.Normal
@@ -120,7 +127,8 @@ public final class MainPanel extends JPanel {
 			paintImmediately(0, 0, getWidth(), getHeight());
 			final var move = search.select_move(board, evaluator);
 			capitulation = move == 0;
-			if (capitulation) {
+			if (capitulation)
+			{
 				break;
 			}
 			board.execute(Move.x(move), Move.y(move), Move.X(move), Move.Y(move));
@@ -134,28 +142,36 @@ public final class MainPanel extends JPanel {
 		game_panel.repaint();
 	}
 	
-	private boolean computer_turn() {
+	private boolean computer_turn()
+	{
 		return board.player() ? computer_w : computer_b;
 	}
 	
-	private final class BoardListener extends KeyAdapter {
-		@Override public void keyPressed(final KeyEvent event) {
-			if (computer_turn()) {
+	private final class BoardListener extends KeyAdapter
+	{
+		@Override public void keyPressed(final KeyEvent event)
+		{
+			if (computer_turn())
+			{
 				return;
 			}
 			final var old_x = cursor_x;
 			final var old_y = cursor_y;
 			final var key = event.getKeyCode();
-			if (key == KeyEvent.VK_SPACE) {
+			if (key == KeyEvent.VK_SPACE)
+			{
 				final var figure = board.figure(cursor_x, cursor_y);
-				if (figure != null && figure.owner == board.player()) {
+				if (figure != null && figure.owner == board.player())
+				{
 					selected_figure = null;
 					board_panel.draw_square(selected_x, selected_y);
 					selected_figure = figure;
 					selected_x = cursor_x;
 					selected_y = cursor_y;
 					board_panel.draw_square(selected_x, selected_y);
-				} else if (selected_figure != null) {
+				}
+				else if (selected_figure != null)
+				{
 					if (board.execute(
 						selected_x,
 						selected_y,
@@ -171,15 +187,25 @@ public final class MainPanel extends JPanel {
 					}
 				}
 				return;
-			} else if (key == KeyEvent.VK_UP && cursor_y < 7) {
+			}
+			else if (key == KeyEvent.VK_UP && cursor_y < 7)
+			{
 				cursor_y++;
-			} else if (key == KeyEvent.VK_DOWN && cursor_y > 0) {
+			}
+			else if (key == KeyEvent.VK_DOWN && cursor_y > 0)
+			{
 				cursor_y--;
-			} else if (key == KeyEvent.VK_LEFT && cursor_x > 0) {
+			}
+			else if (key == KeyEvent.VK_LEFT && cursor_x > 0)
+			{
 				cursor_x--;
-			} else if (key == KeyEvent.VK_RIGHT && cursor_x < 7) {
+			}
+			else if (key == KeyEvent.VK_RIGHT && cursor_x < 7)
+			{
 				cursor_x++;
-			} else { // Unknown key or invalid movement:
+			}
+			else
+			{ // Unknown key or invalid movement:
 				return;
 			}
 			board_panel.draw_square(old_x, old_y);
@@ -187,8 +213,10 @@ public final class MainPanel extends JPanel {
 		}
 	}
 	
-	private final class HistoryListener extends KeyAdapter {
-		@Override public void keyPressed(final KeyEvent event) {
+	private final class HistoryListener extends KeyAdapter
+	{
+		@Override public void keyPressed(final KeyEvent event)
+		{
 			final var game_status = board.status();
 			if (computer_turn() && !capitulation
 				&& game_status != Board.GameStatus.Checkmate
@@ -197,9 +225,11 @@ public final class MainPanel extends JPanel {
 				return;
 			}
 			final var key = event.getKeyCode();
-			if (key == KeyEvent.VK_SPACE) {
+			if (key == KeyEvent.VK_SPACE)
+			{
 				final var selected = history_panel.history_list.getSelectedIndex();
-				for (var i = board.turn() - selected - 1; i > 0; i--) {
+				for (var i = board.turn() - selected - 1; i > 0; i--)
+				{
 					undo();
 				}
 				run_game();
@@ -207,7 +237,8 @@ public final class MainPanel extends JPanel {
 		}
 	}
 	
-	private final class BoardPanel extends JPanel {
+	private final class BoardPanel extends JPanel
+	{
 		private final int tile_size =
 			(int)Math.ceil(2.5f * text_height);
 		private final int border_size =
@@ -223,7 +254,8 @@ public final class MainPanel extends JPanel {
 		private final Font figure_font =
 			FigurePresentation.font.deriveFont(tile_size - 2.0f * cursor_line_width);
 		
-		private BoardPanel() {
+		private BoardPanel()
+		{
 			// Setup panel size and layout:
 			setOpaque(true);
 			final var panel_dimension = new Dimension(panel_size, panel_size);
@@ -239,7 +271,8 @@ public final class MainPanel extends JPanel {
 					border_size)));
 		}
 		
-		@Override public void paintComponent(final Graphics graphic) {
+		@Override public void paintComponent(final Graphics graphic)
+		{
 			super.paintComponent(graphic);
 			Resources.configure_rendering(graphic);
 			
@@ -255,7 +288,8 @@ public final class MainPanel extends JPanel {
 				(border_size - font_height) / 2
 				+ font_height
 				+ /* Adjust for lowercase and titled border: */ font_height / 3;
-			for (var i = 0; i < 8; i++) {
+			for (var i = 0; i < 8; i++)
+			{
 				final var h_marking = String.valueOf((char)('8' - i));
 				final var h_width = font_metrics.stringWidth(h_marking);
 				final var h_x_base = (border_size - h_width) / 2;
@@ -279,18 +313,22 @@ public final class MainPanel extends JPanel {
 			}
 			
 			// Draw tiles:
-			for (var x = 7; x >= 0; x--) {
-				for (var y = 7; y >= 0; y--) {
+			for (var x = 7; x >= 0; x--)
+			{
+				for (var y = 7; y >= 0; y--)
+				{
 					draw_square(graphic, x, y);
 				}
 			}
 		}
 		
-		private void draw_square(final int x, final int y) {
+		private void draw_square(final int x, final int y)
+		{
 			draw_square(getGraphics(), x, y);
 		}
 		
-		private void draw_square(final Graphics graphic, final int x, final int y) {
+		private void draw_square(final Graphics graphic, final int x, final int y)
+		{
 			Resources.configure_rendering(graphic);
 			
 			final var y_trans = 7 - y;
@@ -298,16 +336,17 @@ public final class MainPanel extends JPanel {
 			// Draw background tile:
 			var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
 			final var last_move = board.previous_move(board.turn() - 1);
-			if (last_move != 0) {
+			if (last_move != 0)
+			{
 				final var _x_ = Move.x(last_move);
 				final var _X_ = Move.X(last_move);
 				if ((x == _x_ && y == Move.y(last_move))
 					|| (y == Move.Y(last_move)
-					&& (x == _X_
-					// Check for rook positions of recent castling:
-					|| (Move.figure_moved(last_move).is_king()
-					&& ((_X_ == _x_ - 2 && (x == 0 || x == 3))
-						|| (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
+						&& (x == _X_
+							// Check for rook positions of recent castling:
+							|| (Move.figure_moved(last_move).is_king()
+								&& ((_X_ == _x_ - 2 && (x == 0 || x == 3))
+									|| (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
 				{
 					color = new Color(77, 164, 77);
 				}
@@ -321,7 +360,8 @@ public final class MainPanel extends JPanel {
 			
 			// Draw figure:
 			final var figure = board.figure(x, y);
-			if (figure != null) {
+			if (figure != null)
+			{
 				graphic.setColor(Color.black);
 				graphic.setFont(figure_font);
 				final var text = FigurePresentation.get(figure).unicode;
@@ -349,11 +389,13 @@ public final class MainPanel extends JPanel {
 				+ (cursor_line_width / 2)
 				+ 1;
 			final var distance = tile_size - cursor_line_width - 2;
-			if (x == cursor_x && y == cursor_y) {
+			if (x == cursor_x && y == cursor_y)
+			{
 				graphic.setColor(Color.blue);
 				graphic.drawRect(x_pos, y_pos, distance, distance);
 			}
-			if (selected_figure != null && x == selected_x && y == selected_y) {
+			if (selected_figure != null && x == selected_x && y == selected_y)
+			{
 				graphic.setColor(Color.red);
 				graphic.drawRect(x_pos, y_pos, distance, distance);
 			}
@@ -361,7 +403,8 @@ public final class MainPanel extends JPanel {
 		}
 	}
 	
-	private final class GamePanel extends JPanel {
+	private final class GamePanel extends JPanel
+	{
 		private final int panel_x_size =
 			board_panel.panel_size;
 		private final int tabs_x_size =
@@ -403,7 +446,8 @@ public final class MainPanel extends JPanel {
 		private final int panel_y_size =
 			tabs_y_size + (int)Math.ceil(0.5f * border_size);
 		
-		private GamePanel() {
+		private GamePanel()
+		{
 			// Setup panel size and layout:
 			setOpaque(true);
 			final var panel_dimension = new Dimension(panel_x_size, panel_y_size);
@@ -422,8 +466,10 @@ public final class MainPanel extends JPanel {
 			add(tabs);
 		}
 	
-		private abstract class GamePanelTab extends JPanel {
-			private GamePanelTab() {
+		private abstract class GamePanelTab extends JPanel
+		{
+			private GamePanelTab()
+			{
 				setOpaque(true);
 				final var tab_dimension = new Dimension(tab_x_size, tab_y_size);
 				setMaximumSize(tab_dimension);
@@ -432,26 +478,29 @@ public final class MainPanel extends JPanel {
 			}
 		}
 		
-		private final class StatusPanel extends GamePanelTab {
-			private final JLabel status = new JLabel() {
-				@Override public void paintComponent(final Graphics graphic) {
-					super.paintComponent(graphic);
-					Resources.configure_rendering(graphic);
-					
-					final var game_status = board.status();
-					final var bulb_x =
-						status_x_size - bulb.getWidth(StatusPanel.this);
-					final var bulb_y =
-						(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
-					if (computer_turn()
-						&& !capitulation
-						&& game_status != Board.GameStatus.Checkmate
-						&& game_status != Board.GameStatus.Stalemate)
+		private final class StatusPanel extends GamePanelTab
+		{
+			private final JLabel status = new JLabel()
+				{
+					@Override public void paintComponent(final Graphics graphic)
 					{
-						graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
+						super.paintComponent(graphic);
+						Resources.configure_rendering(graphic);
+						
+						final var game_status = board.status();
+						final var bulb_x =
+							status_x_size - bulb.getWidth(StatusPanel.this);
+						final var bulb_y =
+							(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
+						if (computer_turn()
+							&& !capitulation
+							&& game_status != Board.GameStatus.Checkmate
+							&& game_status != Board.GameStatus.Stalemate)
+						{
+							graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
+						}
 					}
-				}
-			};
+				};
 			
 			private final JCheckBox castling_l_w = new JCheckBox("left");
 			private final JCheckBox castling_r_w = new JCheckBox("right");
@@ -464,7 +513,8 @@ public final class MainPanel extends JPanel {
 				new DefaultListModel<>();
 			private final JList<FigurePresentation> pawn_promotion_list = new JList<>();
 			
-			private StatusPanel() {
+			private StatusPanel()
+			{
 				super();
 				
 				// Status message:
@@ -523,45 +573,62 @@ public final class MainPanel extends JPanel {
 				pawn_promotion_list.setMaximumSize(pawn_promotion_list_dimensions);
 				pawn_promotion_list.setMinimumSize(pawn_promotion_list_dimensions);
 				pawn_promotion_list.setPreferredSize(pawn_promotion_list_dimensions);
-				final var pawn_promotion_label = new JLabel("Promotion") {
-					private boolean painting = false;
-					@Override public void paintComponent(final Graphics graphics) {
-						Resources.configure_rendering(graphics);
-						final var g2d = (Graphics2D)graphics;
-						g2d.rotate(Math.toRadians(-90));
-						g2d.translate(-getHeight(), 0);
-						painting = true;
-						super.paintComponent(g2d);
-						painting = false;
-						g2d.rotate(-Math.toRadians(-90));
-						g2d.translate(0, -getHeight());
-					}
-					@Override public Insets getInsets() {
-						final var i = super.getInsets();
-						return painting
-							? new Insets(i.right, i.top, i.left, i.bottom)
-							: i;
-					}
-					@Override public Insets getInsets(final Insets insets) {
-						return getInsets();
-					}
-					@Override public int getWidth() {
-						return painting ? super.getHeight() : super.getWidth();
-					}
-					@Override public int getHeight() {
-						return painting ? super.getWidth() : super.getHeight();
-					}
-					@Override public Dimension getPreferredSize() {
-						final var size = super.getPreferredSize();
-						return new Dimension(size.height, size.width);
-					}
-					@Override public Dimension getMinimumSize() {
-						return getPreferredSize();
-					}
-					@Override public Dimension getMaximumSize() {
-						return getPreferredSize();
-					}
-				};
+				final var pawn_promotion_label = new JLabel("Promotion")
+					{
+						private boolean painting = false;
+						
+						@Override public void paintComponent(final Graphics graphics)
+						{
+							Resources.configure_rendering(graphics);
+							final var g2d = (Graphics2D)graphics;
+							g2d.rotate(Math.toRadians(-90));
+							g2d.translate(-getHeight(), 0);
+							painting = true;
+							super.paintComponent(g2d);
+							painting = false;
+							g2d.rotate(-Math.toRadians(-90));
+							g2d.translate(0, -getHeight());
+						}
+						
+						@Override public Insets getInsets()
+						{
+							final var i = super.getInsets();
+							return painting
+								? new Insets(i.right, i.top, i.left, i.bottom)
+								: i;
+						}
+						
+						@Override public Insets getInsets(final Insets insets)
+						{
+							return getInsets();
+						}
+						
+						@Override public int getWidth()
+						{
+							return painting ? super.getHeight() : super.getWidth();
+						}
+						
+						@Override public int getHeight()
+						{
+							return painting ? super.getWidth() : super.getHeight();
+						}
+						
+						@Override public Dimension getPreferredSize()
+						{
+							final var size = super.getPreferredSize();
+							return new Dimension(size.height, size.width);
+						}
+						
+						@Override public Dimension getMinimumSize()
+						{
+							return getPreferredSize();
+						}
+						
+						@Override public Dimension getMaximumSize()
+						{
+							return getPreferredSize();
+						}
+					};
 				
 				final var castlings_panel = new JPanel();
 				final var castlings_panel_dimension = new Dimension(
@@ -610,7 +677,8 @@ public final class MainPanel extends JPanel {
 				add(Box.createHorizontalGlue());
 			}
 			
-			@Override public void paintComponent(final Graphics graphic) {
+			@Override public void paintComponent(final Graphics graphic)
+			{
 				super.paintComponent(graphic);
 				Resources.configure_rendering(graphic);
 				
@@ -619,10 +687,14 @@ public final class MainPanel extends JPanel {
 				final var next = board.player() ? "Black" : "White";
 				final var game_status = board.status();
 				final String message;
-				if (capitulation) {
+				if (capitulation)
+				{
 					message = now + " capitulates. " + next + " wins.";
-				} else {
-					switch (game_status) {
+				}
+				else
+				{
+					switch (game_status)
+					{
 					case Checkmate:
 						message = now + " checkmate. " + next + " wins.";
 						break;
@@ -657,7 +729,8 @@ public final class MainPanel extends JPanel {
 		}
 	}
 	
-	private final class HistoryPanel extends JPanel {
+	private final class HistoryPanel extends JPanel
+	{
 		private final int panel_x_size =
 			(int)Math.ceil(
 				1.6f * Resources.font_italic.getStringBounds(
@@ -670,7 +743,8 @@ public final class MainPanel extends JPanel {
 		private final DefaultListModel<PastMove> history_data = new DefaultListModel<>();
 		private final JList<PastMove> history_list = new JList<>(history_data);
 		
-		private HistoryPanel() {
+		private HistoryPanel()
+		{
 			// Setup panel size and layout:
 			setOpaque(true);
 			final var panel_dimension =
@@ -699,25 +773,29 @@ public final class MainPanel extends JPanel {
 			add(history_scroll_pane);
 		}
 		
-		@Override public void paintComponent(final Graphics graphics) {
+		@Override public void paintComponent(final Graphics graphics)
+		{
 			super.paintComponent(graphics);
 			Resources.configure_rendering(graphics);
 		}
 	}
 	
-	private static final class PastMove {
+	private static final class PastMove
+	{
 		private final int turn;
 		private final int move;
 		private final Board.GameStatus status;
 		
-		private PastMove(final int turn, final int move, final Board.GameStatus status) {
+		private PastMove(final int turn, final int move, final Board.GameStatus status)
+		{
 			this.turn = turn;
 			this.move = move;
 			this.status = status;
 		}
 	}
 	
-	private static final class HistoryRenderer extends DefaultListCellRenderer {
+	private static final class HistoryRenderer extends DefaultListCellRenderer
+	{
 		@Override public Component getListCellRendererComponent(
 			final JList<?> list,
 			final Object value,
@@ -733,7 +811,8 @@ public final class MainPanel extends JPanel {
 				cell_has_focus);
 			
 			final var move = (PastMove)value;
-			if (move.move == 0) {
+			if (move.move == 0)
+			{
 				setText("initial position");
 				return this;
 			}
@@ -749,11 +828,16 @@ public final class MainPanel extends JPanel {
 			final var figure_captured = Move.figure_destination(move.move);
 			
 			final String notation; // algebraic notation according to FIDE
-			if (figure_moved.figure.is_king() && X - x == 2) {
+			if (figure_moved.figure.is_king() && X - x == 2)
+			{
 				notation = move("0-0");
-			} else if (figure_moved.figure.is_king() && x - X == 2) {
+			}
+			else if (figure_moved.figure.is_king() && x - X == 2)
+			{
 				notation = move("0-0-0");
-			} else {
+			}
+			else
+			{
 				final var en_passant =
 					figure_moved.figure.is_pawn()
 					&& figure_captured == null
@@ -781,31 +865,38 @@ public final class MainPanel extends JPanel {
 			return this;
 		}
 		
-		@Override public void setText(final String text) {
+		@Override public void setText(final String text)
+		{
 			super.setText("<html>" + html(Resources.font_italic, text) + "</html>");
 		}
 		
-		private static String file(final int x) {
+		private static String file(final int x)
+		{
 			return String.valueOf((char)('a' + x));
 		}
 		
-		private static String rank(final int y) {
+		private static String rank(final int y)
+		{
 			return String.valueOf((char)('1' + y));
 		}
 		
-		private static String figure(final FigurePresentation figure) {
+		private static String figure(final FigurePresentation figure)
+		{
 			return html(figure.font, figure.unicode);
 		}
 		
-		private static String move(final String text) {
+		private static String move(final String text)
+		{
 			return html(Resources.font_regular, text);
 		}
 		
-		private static String info(final String text) {
+		private static String info(final String text)
+		{
 			return html(Resources.font_bold_italic, text);
 		}
 		
-		private static String html(final Font font, final String text) {
+		private static String html(final Font font, final String text)
+		{
 			return "<span style=\"font-family:"
 				+ font.getFontName()
 				+ ";font-size:"
@@ -815,7 +906,8 @@ public final class MainPanel extends JPanel {
 				+ "</span>";
 		}
 		
-		@Override public void paintComponent(final Graphics graphics) {
+		@Override public void paintComponent(final Graphics graphics)
+		{
 			super.paintComponent(graphics);
 			Resources.configure_rendering(graphics);
 		}
