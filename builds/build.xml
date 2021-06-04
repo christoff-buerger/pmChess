@@ -34,7 +34,7 @@
 	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
-			source="12"
+			source="16"
 			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"

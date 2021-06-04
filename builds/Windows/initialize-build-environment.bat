@@ -8,6 +8,10 @@
 @rem 	'PATH' environment variable.
 
 @echo off
+setlocal
+
+rem Clear any user set ERRORLEVEL variable:
+set "ERRORLEVEL="
 
 rem Enable advanced batch file commands:
 verify argument_to_enforce_error 2>nul
@@ -36,7 +40,7 @@ if not "%SelfWrapped%"=="%~0" (
 rem Initialize Java:
 call where javac >nul 2>nul
 if ERRORLEVEL 1 (
-	for /d %%j in ( "C:\Program Files\Java\jdk-12" "C:\Program Files\Java\jdk-12.*" ) do (
+	for /d %%j in ( "C:\Program Files\Java\jdk-16" "C:\Program Files\Java\jdk-16.*" ) do (
 		if exist "%%j" (
 			set "JAVA_HOME=%%~fj"
 			set "PATH=!JAVA_HOME!\bin;!PATH!"
@@ -51,19 +55,21 @@ if ERRORLEVEL 1 (
 rem Initialize Microsoft build environment:
 call where msbuild >nul 2>nul
 if ERRORLEVEL 1 (
-	for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
-		if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
-			call "C:\Program Files (x86)\Microsoft Visual Studio\2017\%%v\VC\Auxiliary\Build\vcvarsall.bat" x86
-			if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
-				set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio v15.0)"
-				call :ERROR
+	for %%y in ( "2019" "2017" ) do (
+		for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
+			if exist "C:\Program Files (x86)\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
+				call "C:\Program Files (x86)\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
+				if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
+					set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
+					call :ERROR
+				)
+				goto :VISUAL_STUDIO_INITIALIZED
 			)
-			goto :VISUAL_STUDIO_INITIALIZED
 		)
 	)
 	for %%v in ( "14.0" "12.0" "11.0" "10.0" ) do (
 		if exist "C:\Program Files (x86)\Microsoft Visual Studio %%v\VC\vcvarsall.bat" (
-			call "C:\Program Files (x86)\Microsoft Visual Studio %%v\VC\vcvarsall.bat" x86
+			call "C:\Program Files (x86)\Microsoft Visual Studio %%v\VC\vcvarsall.bat" x64
 			if ERRORLEVEL 1 (
 				set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio v%%v)"
 				call :ERROR

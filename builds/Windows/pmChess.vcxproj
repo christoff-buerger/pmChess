@@ -7,7 +7,7 @@
 -->
 <Project
 	DefaultTargets="PrepareBuild;Build;FinishBuild"
-	ToolsVersion="14.0"
+	ToolsVersion="15.0"
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	
 	<!-- ================================ Default  elements ================================ -->
@@ -17,9 +17,9 @@
 		'Release|Win32').
 	-->
 	<ItemGroup Label="ProjectConfigurations">
-		<ProjectConfiguration Include="Release|Win32">
+		<ProjectConfiguration Include="Release|x64">
 			<Configuration>Release</Configuration>
-			<Platform>x86</Platform>
+			<Platform>x64</Platform>
 		</ProjectConfiguration>
 	</ItemGroup>
 	
@@ -31,8 +31,9 @@
 	<PropertyGroup Label="Globals">
 		<!-- Visual Studio configuration -->
 		<SchemaVersion>2.0</SchemaVersion>
-		<VisualStudioVersion>14.0</VisualStudioVersion>
-		<PlatformToolset>v140</PlatformToolset>
+		<VisualStudioVersion>15.5</VisualStudioVersion>
+		<PlatformToolset>v141</PlatformToolset>
+		<TargetFramework>net48</TargetFramework>
 		<BuildProjectReferences>true</BuildProjectReferences>
 		<!-- Name-space and version configuration -->
 		<RootNamespace>pmChess</RootNamespace>
@@ -43,9 +44,11 @@
 		<ProjectGuid>{a023bd13-2699-5acc-918e-3b45ded2fe62}</ProjectGuid>
 		<Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
 		<!-- Target platform configuration -->
-		<Platform>x86</Platform>
-		<PlatformTarget>x86</PlatformTarget>
-		<ProcessorArchitecture>x86</ProcessorArchitecture>
+		<LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
+		<WindowsTargetPlatformVersion Condition="'$(WindowsTargetPlatformVersion)' == ''">$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+		<TargetPlatformVersion>$(WindowsTargetPlatformVersion)</TargetPlatformVersion>
+		<PlatformTarget>$(Platform)</PlatformTarget>
+		<ProcessorArchitecture>$(Platform)</ProcessorArchitecture>
 		<ConfigurationType>Application</ConfigurationType>
 		<OutputType>Winexe</OutputType>
 		<!-- Source code encoding configuration -->
@@ -67,7 +70,7 @@
 		<NoVBRuntimeReference>true</NoVBRuntimeReference>
 		<OptionCompare>binary</OptionCompare>
 		<!-- Compiler back-end configuration (code generation features) -->
-		<SubsystemVersion>6.01</SubsystemVersion><!-- Windows 7 -->
+		<SubsystemVersion>6.02</SubsystemVersion><!-- Windows 8 -->
 		<Deterministic>true</Deterministic><!-- produce same binaries for same sources -->
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<Optimize>true</Optimize>
@@ -211,6 +214,7 @@
 	<!-- ================================== User  targets ================================== -->
 	
 	<Target Name="PrepareBuild" BeforeTargets="Build">
+		<Exec Command="cd .. &amp; ant"/>
 		<MakeDir Directories = "pmChess\temp" Condition = "!Exists('pmChess\temp')"/>
 		<Exec Command="rc /nologo /fo pmChess\temp\pmChess.ico.res pmChess.ico.rc"/>
 		<Exec Command="cvtres /nologo /machine:ix86 /out:pmChess\temp\pmChess.ico.obj pmChess\temp\pmChess.ico.res"/>
