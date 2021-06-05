@@ -23,9 +23,7 @@ public final class Resources
 	{
 	}
 	
-	private static final float base_scale = 14f;
-	
-	public static final String text_encoding = StandardCharsets.UTF_8.name();
+	protected static final String text_encoding = StandardCharsets.UTF_8.name();
 	
 	public static String load_text(final String file)
 	{
@@ -57,6 +55,9 @@ public final class Resources
 			throw new RuntimeException("Failed to load text file " + file + ".");
 		}
 	}
+	
+	// Default font size all GUI-layout is derived from:
+	private static final float base_scale = 14f;
 	
 	private static Font load_font(final String font_name)
 	{
