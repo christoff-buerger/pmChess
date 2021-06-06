@@ -106,12 +106,22 @@ public final class Board
 	/*
 		Add a possible move to the current move frame and unset its selected move.
 	*/
-	protected void moves_add(final int x, final int y, final int X, final int Y)
+	protected void moves_add(
+		final int x,
+		final int y,
+		final int X,
+		final int Y,
+		final Figure figure_placed)
 	{
 		final var successor_frame = moves[moves_frame];
-		moves[successor_frame] = Move.encode_move(this, x, y, X, Y);
+		moves[successor_frame] = Move.encode_move(this, x, y, X, Y, figure_placed);
 		moves[moves_frame] = successor_frame + 1;
 //		moves[moves_frame + 2] = 0;
+	}
+	
+	protected void moves_add(final int x, final int y, final int X, final int Y)
+	{
+		moves_add(x, y, X, Y, board[x][y]);
 	}
 	
 	/*
@@ -145,14 +155,20 @@ public final class Board
 		return index < moves[moves_frame] & index > moves_frame + 2 ? moves[index] : 0;
 	}
 	
-	public boolean execute(final int x, final int y, final int X, final int Y)
+	public boolean execute(
+		final int x,
+		final int y,
+		final int X,
+		final int Y,
+		final Figure figure_placed)
 	{
 		final var moves_end = moves[moves_frame];
 		for (var i = moves_frame + 3; i < moves_end; i++)
 		{
 			final var move = moves[i];
 			if (Move.x(move) == x && Move.y(move) == y
-				&& Move.X(move) == X && Move.Y(move) == Y)
+				&& Move.X(move) == X && Move.Y(move) == Y
+				&& Move.figure_placed(move) == figure_placed)
 			{
 				return execute(move);
 			}
@@ -220,7 +236,6 @@ public final class Board
 		player = !player;
 		turn++;
 		// Update game history (push new current moves frame and compute possible moves):
-//		final var old_move_selected = moves[moves_frame + 2];
 		moves[moves_frame + 2] = move; // TODO: push move INDEX, not the move, as selected.
 		final var successor_frame = moves[moves_frame];
 		moves[successor_frame] = successor_frame + 3;
@@ -230,7 +245,6 @@ public final class Board
 		if (check(!player))
 		{ // Undo all changes if move was invalid (threatens own king):
 			undo();
-//			moves[moves_frame + 2] = old_move_selected;
 			return false;
 		}
 		moves_compute_possible();
@@ -367,14 +381,12 @@ public final class Board
 	
 	public GameStatus status()
 	{
-//		final var old_move_selected = moves[moves_frame + 2];
 		final var moves_end = moves[moves_frame];
 		for (var i = moves_frame + 3; i < moves_end; i++)
 		{
 			if (execute(/*TODO: just i when move index*/moves[i]))
 			{
 				undo();
-//				moves[moves_frame + 2] = old_move_selected;
 				return check(player) ? GameStatus.Check : GameStatus.Normal;
 			}
 		}

@@ -5,6 +5,7 @@ Version 1.1.0 (in development):
   - Added native distributions for macOS and Windows. The distributions are
     self-contained and do not require a locally installed 'Java SE'.
   - Added support for en passant captures.
+  - Added support for selecting a figure besides a queen when promoting pawns.
   - Added game history with algebraic notation as specified by FIDE. The history
     can be used to undo moves. To reset the game to a previous position, select
     a move using the up- and down-keys and press space. The game will be reset

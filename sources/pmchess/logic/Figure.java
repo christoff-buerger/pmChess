@@ -123,6 +123,24 @@ public abstract class Figure
 			return -1;
 		}
 		
+		private void moves_add(
+			final Board board,
+			final int x,
+			final int y,
+			final int X,
+			final int Y)
+		{
+			if (Y == 0 | Y == 7)
+			{ // Pawn promotions:
+				board.moves_add(x, y, X, Y, Figure.queen(owner));
+				board.moves_add(x, y, X, Y, Figure.rook(owner));
+				board.moves_add(x, y, X, Y, Figure.knight(owner));
+				board.moves_add(x, y, X, Y, Figure.bishop(owner));
+				return;
+			}
+			board.moves_add(x, y, X, Y);
+		}
+		
 		@Override protected void compute_moves(
 			final Board board,
 			final int x,
@@ -140,7 +158,7 @@ public abstract class Figure
 					f = board.figure(xm1, Y);
 					if (f == null ? xm1 == en_passant : f.owner != owner)
 					{
-						board.moves_add(x, y, xm1, Y);
+						moves_add(board, x, y, xm1, Y);
 					}
 				}
 				if (xp1 <= 7)
@@ -148,12 +166,12 @@ public abstract class Figure
 					f = board.figure(xp1, Y);
 					if (f == null ? xp1 == en_passant : f.owner != owner)
 					{
-						board.moves_add(x, y, xp1, Y);
+						moves_add(board, x, y, xp1, Y);
 					}
 				}
 				if (board.figure(x, Y) == null)
 				{
-					board.moves_add(x, y, x, Y);
+					moves_add(board, x, y, x, Y);
 					if (y == 1 && board.figure(x, ++Y) == null)
 					{
 						board.moves_add(x, y, x, Y);
@@ -169,7 +187,7 @@ public abstract class Figure
 					f = board.figure(xm1, Y);
 					if (f == null ? xm1 == en_passant : f.owner != owner)
 					{
-						board.moves_add(x, y, xm1, Y);
+						moves_add(board, x, y, xm1, Y);
 					}
 				}
 				if (xp1 <= 7)
@@ -177,12 +195,12 @@ public abstract class Figure
 					f = board.figure(xp1, Y);
 					if (f == null? xp1 == en_passant : f.owner != owner)
 					{
-						board.moves_add(x, y, xp1, Y);
+						moves_add(board, x, y, xp1, Y);
 					}
 				}
 				if (board.figure(x, Y) == null)
 				{
-					board.moves_add(x, y, x, Y);
+					moves_add(board, x, y, x, Y);
 					if (y == 6 && board.figure(x, --Y) == null)
 					{
 						board.moves_add(x, y, x, Y);

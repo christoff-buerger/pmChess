@@ -131,7 +131,12 @@ public final class MainPanel extends JPanel
 			{
 				break;
 			}
-			board.execute(Move.x(move), Move.y(move), Move.X(move), Move.Y(move));
+			board.execute(
+				Move.x(move),
+				Move.y(move),
+				Move.X(move),
+				Move.Y(move),
+				Move.figure_placed(move));
 			game_status = board.status();
 			history_panel.history_data.addElement(new PastMove(
 				board.turn() - 1,
@@ -172,11 +177,16 @@ public final class MainPanel extends JPanel
 				}
 				else if (selected_figure != null)
 				{
+					final var figure_placed =
+						selected_figure.is_pawn() && (cursor_y == 0 || cursor_y == 7)
+						? game_panel.status_panel.pawn_promotion_list.getSelectedValue().figure
+						: selected_figure;
 					if (board.execute(
 						selected_x,
 						selected_y,
 						cursor_x,
-						cursor_y))
+						cursor_y,
+						figure_placed))
 					{
 						history_panel.history_data.addElement(new PastMove(
 							board.turn() - 1,
@@ -446,6 +456,8 @@ public final class MainPanel extends JPanel
 		private final int panel_y_size =
 			tabs_y_size + (int)Math.ceil(0.5f * border_size);
 		
+		private StatusPanel status_panel = new StatusPanel();
+		
 		private GamePanel()
 		{
 			// Setup panel size and layout:
@@ -461,7 +473,7 @@ public final class MainPanel extends JPanel
 			tabs.setMaximumSize(tabs_dimension);
 			tabs.setMinimumSize(tabs_dimension);
 			tabs.setPreferredSize(tabs_dimension);
-			tabs.addTab("Game status", new StatusPanel());
+			tabs.addTab("Game status", status_panel);
 			tabs.setSelectedIndex(0);
 			add(tabs);
 		}

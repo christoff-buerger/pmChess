@@ -15,14 +15,16 @@ public final class Move
 		
 	/*
 		+---------------------------------------+
-		| 24 bit move encoding                  |
+		| 28 bit move encoding                  |
 		+---------------------------------------+
-		| 32 - 25 | unused                      |
-		| 24 - 21 | castling permission changes |
-		|         | black: 24 - 23              |
-		|         | white: 22 - 21              |
-		|         | right: 24 & 22              |
-		|         | left:  23 & 21              |
+		| 32 - 29 | unused                      |
+		| 28 - 25 | castling permission changes |
+		|         | black: 28 - 27              |
+		|         | white: 26 - 25              |
+		|         | right: 28 & 26              |
+		|         | left:  27 & 25              |
+		| 24 - 21 | figure placed               |
+		|         | (needed for pawn promotion) |
 		| 20 - 17 | figure at destination       |
 		| 16 - 13 | figure moved                |
 		| 12 - 10 | y-coordinate destination    |
@@ -44,7 +46,8 @@ public final class Move
 		final int x,
 		final int y,
 		final int X,
-		final int Y)
+		final int Y,
+		final Figure figure_placed)
 	{
 		final var figure_moved = board.figure(x, y);
 		final var figure_destination = board.figure(X, Y);
@@ -55,7 +58,8 @@ public final class Move
 			| X << 6
 			| Y << 9
 			| figure_moved.key << 12
-			| (figure_destination == null ? 0 : figure_destination.key << 16);
+			| (figure_destination == null ? 0 : figure_destination.key << 16)
+			| figure_placed.key << 20;
 		
 		// Update castling information:
 		if (figure_moved.is_king())
@@ -63,11 +67,11 @@ public final class Move
 			final var player_offset = player ? 0 : 2;
 			if (board.castling_allowed(true, player))
 			{
-				encoded_move |= 0x100000 << player_offset;
+				encoded_move |= 0x1000000 << player_offset;
 			}
 			if (board.castling_allowed(false, player))
 			{
-				encoded_move |= 0x200000 << player_offset;
+				encoded_move |= 0x2000000 << player_offset;
 			}
 		}
 		else if (figure_moved.is_rook())
@@ -77,11 +81,11 @@ public final class Move
 			{
 				if (x == 0 && board.castling_allowed(true, player))
 				{
-					encoded_move |= 0x100000 << player_offset;
+					encoded_move |= 0x1000000 << player_offset;
 				}
 				else if (x == 7 && board.castling_allowed(false, player))
 				{
-					encoded_move |= 0x200000 << player_offset;
+					encoded_move |= 0x2000000 << player_offset;
 				}
 			}
 		}
@@ -99,11 +103,11 @@ public final class Move
 			{
 				if (X == 0 && board.castling_allowed(true, !player))
 				{
-					encoded_move |= 0x100000 << player_offset;
+					encoded_move |= 0x1000000 << player_offset;
 				}
 				else if (X == 7 && board.castling_allowed(false, !player))
 				{
-					encoded_move |= 0x200000 << player_offset;
+					encoded_move |= 0x2000000 << player_offset;
 				}
 			}
 		}
@@ -141,16 +145,9 @@ public final class Move
 		return Figure.figures[(move >> 16) & 0xF];
 	}
 	
-	/*
-		Figure placed considering 8th rank pawns promotions.
-	*/
 	public static Figure figure_placed(final int move)
 	{
-		final var figure_moved = Move.figure_moved(move);
-		final var Y = Move.Y(move);
-		return figure_moved.is_pawn() && (Y == 0 | Y == 7)
-			? Figure.queen(figure_moved.owner)
-			: figure_moved;
+		return Figure.figures[(move >> 20) & 0xF];
 	}
 	
 	/*
@@ -158,6 +155,6 @@ public final class Move
 	*/
 	public static int castling_changes(final int move)
 	{
-		return move >> 20; // Castling bits are highest of encoding => just shift.
+		return (move >> 24); // Castling bits are highest of encoding => just shift.
 	}
 }
