@@ -6,26 +6,28 @@
 
 # Introduction
 
-_pmChess_ is a poor man's chess. It started as student project to learn basic artificial intelligence game-playing concepts. To that end, _pmChess_ is nicely modularised, with clean interfaces for user interaction, chessboard representation, movement analysis and search strategy. It uses a common min-max search with alpha-beta pruning in combination with an intuitive scoring-heuristic for figure-constellations. The simple setup eases understanding and the integration of own scoring-heuristics. All in all, _pmChess_ provides a good starting point for wanna-be chess developers.
+_pmChess_ is a poor man's chess. It started as student project to learn basic artificial intelligence game-playing concepts. To that end, _pmChess_ is nicely modularized, with clean interfaces for user interaction, chessboard representation, movement analysis and search strategy. It uses a common min-max search with alpha-beta pruning in combination with an intuitive scoring-heuristic for figure-constellations. The simple setup eases understanding and the integration of own scoring-heuristics. All in all, _pmChess_ provides a good starting point for wanna-be chess developers.
 
-Of course, _pmChess_ cannot compete with professional chess programs; after all, it's just a poor man's chess.
+Of course, _pmChess_ cannot compete with professional chess programs; after all, it's just a poor man's chess. But it is a complete chess program incorporating all rules wrapped in a convenient user interface.
 
 # Rule limitations
 
-_pmChess_ implements the official rules of _FIDE_ (_Fédération Internationale des Échecs_) except for the following draw rules:
- 1. **Threefold repetition:** The same position occurs three times with the same player to move.
- 2. **Fifty-moves rule:** The last fifty successive moves made by both players contain no capture or pawn move.
+_pmChess_ implements the official rules of [_FIDE_](https://www.fide.com/) (_Fédération Internationale des Échecs_) except for the following draw rules:
+ 1. **3- and 5-repetition rules:** The same position occurs 3/5 times (3 times: claimable draw; 5 times: automatic draw).
+ 2. **50- and 75-moves rules:** The last 50/75 successive moves made by both players contain no capture or pawn move (50-moves: claimable draw; 75-moves: automatic draw).
  3. **Insufficient material:** Neither player has a theoretical possibility to checkmate the opponent.
 
 # Graphical user interface
 
 ![pmChess screenshot](releases/version-1.1.0/screenshot.png)
 
-Figures are moved using the keyboard. A blue rectangle marks the cursor position; a red rectangle marks the currently selected figure to move. The arrow keys are used to move the cursor. Space is used to select a figure or to move the currently selected figure to the cursor's position if the respective move is allowed. The last move is highlighted by drawing the involved chessboard tiles green.
+Figures are moved on the _Chessboard_ pane using the keyboard. A blue rectangle marks the cursor position; a red rectangle marks the currently selected figure to move. The arrow keys are used to move the cursor. Space is used to select a figure or to move the currently selected figure to the cursor's position if the respective move is allowed. The last move is highlighted by drawing the involved chessboard tiles green.
 
-The _Game status_ section summarises the current player (background color of the status message), turn number, game status (checkmate, check, stalemate, capitulation or normal move) and castling possibilities considering previous moves (checkboxes for left and right castling of each player). The castling summary shows only whether left or right castling are impossible due to previous king or rook movements; if checked, previous movements are not prohibiting castling. A bulb icon at the end of the status message signals that the computer is busy deciding its move.
+The _Game status_ tab summarizes the current player (background color of the status message), turn number, game status (checkmate, check, draw, stalemate, capitulation or normal move) and castling possibilities considering previous moves (checkboxes for left and right castling of each player). The castling summary shows only whether left or right castling are impossible due to previous king or rook movements; if checked, previous movements are not prohibiting castling. The promotion-list is used to select the figure to promote to in case of pawn promotion. A bulb icon at the end of the status message signals that the computer is busy deciding its move.
 
-The game history to the right can be used to undo moves. It is written according to the algebraic notation specified by FIDE (cf. the [_FIDE Handbook_](https://www.fide.com/component/handbook), Part _E.01. Laws of Chess_, Section _Appendix C. Algebraic notation_). To reset the game to a previous position, select a move using the up- and down-keys and press space. The game will be reset to the state resulting after executing the selected move. The tab-key is used to switch between chessboard and game history navigation.
+The _Game history_ pane to the right can be used to undo moves. It is written according to the algebraic notation specified by FIDE (cf. the [_FIDE Laws of Chess taking effect from 1 January 2018_](https://handbook.fide.com/chapter/E012018), _Appendix C. Algebraic notation_). To reset the game to a previous position, select a move using the up- and down-keys and press space. The game will be reset to the state resulting after executing the selected move.
+
+The tab-key is used to switch between _Chessboard_, _Game status_ and its promotion-list and _Game history_.
 
 # Releases
 
