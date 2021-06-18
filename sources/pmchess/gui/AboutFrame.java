@@ -18,7 +18,17 @@ import javax.swing.*;
 
 public final class AboutFrame extends JFrame
 {
-	private static final String release_notes = Resources.load_text("release-notes.txt");
+	private static Insets compute_insets()
+	{
+		final var insets_frame = new JFrame("About pmChess")
+			{
+				{ // Initialize for display such that insets are valid:
+					pack();
+				}
+			};
+		return insets_frame.getInsets();
+	}
+	
 	private static final Image logo = Resources.load_image("logo/logo-animated.gif");
 	
 	private final JTabbedPane tabs = new JTabbedPane();
@@ -33,80 +43,215 @@ public final class AboutFrame extends JFrame
 	{
 		super("About pmChess");
 		
-		setSize(600, 580);
-		setResizable(false);
-		final var d = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation((d.width - getSize().width) / 2, (d.height - getSize().height) / 2);
+		// Set window and taskbar icon:
+		setIconImage(Resources.pmChess_icon);
+		try
+		{
+			Taskbar.getTaskbar().setIconImage(Resources.pmChess_icon);
+		}
+		catch (SecurityException | UnsupportedOperationException exception)
+		{
+		}
+		
+		// Compute component sizes:
+		final var text_height =
+			(new FontMetrics(Resources.font_regular) {}).getHeight();
+		final var border_size =
+			(int)Math.ceil(2 * text_height / 3.0f);
+		final var frame_x_size = 600; // Graphical layout configuration.
+		final var frame_y_size = 580; // Graphical layout configuration.
+		final var panel_x_size =
+			frame_x_size - (compute_insets().left + compute_insets().right);
+		final var panel_y_size =
+			frame_y_size - (compute_insets().top + compute_insets().bottom);
+		final var header_x_size =
+			panel_x_size;
+		final var header_y_size =
+			(int)Math.ceil(2.5f * text_height) + border_size;
+		final var tabs_x_size =
+			panel_x_size;
+		final var tabs_y_size =
+			panel_y_size - header_y_size;
+		final var tab_x_size =
+			tabs_x_size - 2 * border_size;
+		final var tab_y_size =
+			tabs_y_size - text_height - 3 * border_size;
+		final var licenses_button_panel_x_size =
+			tab_x_size;
+		final var licenses_button_panel_y_size =
+			text_height + 3 * border_size;
+		final var licenses_scroll_pane_x_size =
+			tab_x_size;
+		final var licenses_scroll_pane_y_size =
+			tab_y_size - licenses_button_panel_y_size;
+		final var contact_row_x_size =
+			tab_x_size;
+		final var contact_row_y_size =
+			text_height + border_size;
+		final var contact_rows_x_size =
+			contact_row_x_size;
+		final var contact_rows_y_size =
+			3 * contact_row_y_size + 4 * border_size;
+		final var contact_send_button_x_size =
+			tab_x_size;
+		final var contact_send_button_y_size =
+			(int)Math.ceil(1.5f * contact_row_y_size);
+		final var contact_send_button_panel_x_size =
+			contact_send_button_x_size;
+		final var contact_send_button_panel_y_size =
+			contact_send_button_y_size + (int)Math.ceil(0.5f * border_size);
+		final var contact_description_scroll_pane_x_size =
+			tab_x_size;
+		final var contact_description_scroll_pane_y_size =
+			(int)Math.floor(
+				0.45f * (tab_y_size
+				- contact_rows_y_size
+				- contact_send_button_panel_y_size));
+		final var contact_message_scroll_pane_x_size =
+			tab_x_size;
+		final var contact_message_scroll_pane_y_size =
+			tab_y_size
+			- contact_rows_y_size
+			- contact_send_button_panel_y_size
+			- contact_description_scroll_pane_y_size;
+		
+		final var tab_dimension = new Dimension(tab_x_size, tab_y_size);
+		final var contact_row_dimension = new Dimension(
+			contact_row_x_size, contact_row_y_size);
+		final var contact_row_label_dimension = new Dimension(
+			(int)Math.floor(0.3f * contact_row_x_size), contact_row_y_size);
+		final var contact_row_field_dimension = new Dimension(
+			(int)Math.floor(0.7f * contact_row_x_size), contact_row_y_size);
+		
+		// Header:
+		final var header_1 = new JLabel(pmchess.pmChess.about[0]);
+		header_1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		final var header_2 = new JLabel(pmchess.pmChess.about[1]);
+		header_2.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		final var header_panel = new JPanel();
+		final var header_panel_dimension = new Dimension(header_x_size, header_y_size);
+		header_panel.setMaximumSize(header_panel_dimension);
+		header_panel.setMinimumSize(header_panel_dimension);
+		header_panel.setPreferredSize(header_panel_dimension);
+		header_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		header_panel.setLayout(new BoxLayout(header_panel, BoxLayout.Y_AXIS));
+		header_panel.add(Box.createVerticalGlue());
+		header_panel.add(header_1);
+		header_panel.add(header_2);
+		header_panel.add(Box.createVerticalGlue());
 		
 		// Release notes:
-		final var release_notes_text_area = new JTextArea(release_notes);
+		final var release_notes_text_area = new JTextArea(
+			Resources.load_text("release-notes.txt"));
 		release_notes_text_area.setFont(Resources.font_regular);
 		release_notes_text_area.setLineWrap(false);
 		release_notes_text_area.setEditable(false);
+		
 		final var release_notes_scroll_pane = new JScrollPane(release_notes_text_area);
+		release_notes_scroll_pane.setMaximumSize(tab_dimension);
+		release_notes_scroll_pane.setMinimumSize(tab_dimension);
+		release_notes_scroll_pane.setPreferredSize(tab_dimension);
+		release_notes_scroll_pane.setAlignmentX(Component.CENTER_ALIGNMENT);
 		release_notes_scroll_pane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		release_notes_scroll_pane.setPreferredSize(new Dimension(570, 460));
 		
 		final var release_notes_panel = new JPanel();
+		release_notes_panel.setMaximumSize(tab_dimension);
+		release_notes_panel.setMinimumSize(tab_dimension);
+		release_notes_panel.setPreferredSize(tab_dimension);
+		release_notes_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		release_notes_panel.setLayout(new BoxLayout(release_notes_panel, BoxLayout.Y_AXIS));
+		release_notes_panel.add(Box.createVerticalGlue());
 		release_notes_panel.add(release_notes_scroll_pane);
+		release_notes_panel.add(Box.createVerticalGlue());
 		
 		// Licenses:
-		final var license_text_area = new JTextArea(pmchess.pmChess.pmChess_license);
-		license_text_area.setFont(Resources.font_italic);
-		license_text_area.setLineWrap(false);
-		license_text_area.setEditable(false);
-		final var license_scroll_pane = new JScrollPane(license_text_area);
-		license_scroll_pane.setVerticalScrollBarPolicy(
-			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		license_scroll_pane.setPreferredSize(new Dimension(570, 425));
+		final var licenses_text_area = new JTextArea(pmchess.pmChess.pmChess_license);
+		licenses_text_area.setFont(Resources.font_italic);
+		licenses_text_area.setLineWrap(false);
+		licenses_text_area.setEditable(false);
 		
-		final var pmChess_button = new JToggleButton("pmChess", true);
-		final var open_sans_button = new JToggleButton("Open Sans", false);
-		final var chess_merida_unicode_button =
+		final var licenses_scroll_pane = new JScrollPane(licenses_text_area);
+		final var license_scroll_pane_dimension = new Dimension(
+			licenses_scroll_pane_x_size,
+			licenses_scroll_pane_y_size);
+		licenses_scroll_pane.setMaximumSize(license_scroll_pane_dimension);
+		licenses_scroll_pane.setMinimumSize(license_scroll_pane_dimension);
+		licenses_scroll_pane.setPreferredSize(license_scroll_pane_dimension);
+		licenses_scroll_pane.setAlignmentX(Component.CENTER_ALIGNMENT);
+		licenses_scroll_pane.setVerticalScrollBarPolicy(
+			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		final var licenses_pmChess_button = new JToggleButton("pmChess", true);
+		final var licenses_open_sans_button = new JToggleButton("Open Sans", false);
+		final var licenses_chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
-		pmChess_button.addActionListener(new ActionListener()
+		licenses_pmChess_button.addActionListener(new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
-					pmChess_button.setSelected(true);
-					open_sans_button.setSelected(false);
-					chess_merida_unicode_button.setSelected(false);
-					license_text_area.setText(
+					licenses_pmChess_button.setSelected(true);
+					licenses_open_sans_button.setSelected(false);
+					licenses_chess_merida_unicode_button.setSelected(false);
+					licenses_text_area.setText(
 						pmchess.pmChess.pmChess_license);
 				}
 			});
-		open_sans_button.addActionListener(new ActionListener()
+		licenses_open_sans_button.addActionListener(new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
-					pmChess_button.setSelected(false);
-					open_sans_button.setSelected(true);
-					chess_merida_unicode_button.setSelected(false);
-					license_text_area.setText(
+					licenses_pmChess_button.setSelected(false);
+					licenses_open_sans_button.setSelected(true);
+					licenses_chess_merida_unicode_button.setSelected(false);
+					licenses_text_area.setText(
 						pmchess.pmChess.open_sans_license);
 				}
 			});
-		chess_merida_unicode_button.addActionListener(new ActionListener()
+		licenses_chess_merida_unicode_button.addActionListener(new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
-					pmChess_button.setSelected(false);
-					open_sans_button.setSelected(false);
-					chess_merida_unicode_button.setSelected(true);
-					license_text_area.setText(
+					licenses_pmChess_button.setSelected(false);
+					licenses_open_sans_button.setSelected(false);
+					licenses_chess_merida_unicode_button.setSelected(true);
+					licenses_text_area.setText(
 						pmchess.pmChess.chess_merida_unicode_license);
 				}
 			});
 		
+		final var licenses_button_panel = new JPanel();
+		final var licenses_button_panel_dimension = new Dimension(
+			licenses_button_panel_x_size,
+			licenses_button_panel_y_size);
+		licenses_button_panel.setMaximumSize(licenses_button_panel_dimension);
+		licenses_button_panel.setMinimumSize(licenses_button_panel_dimension);
+		licenses_button_panel.setPreferredSize(licenses_button_panel_dimension);
+		licenses_button_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		licenses_button_panel.setLayout(new BoxLayout(licenses_button_panel, BoxLayout.X_AXIS));
+		licenses_button_panel.add(Box.createHorizontalGlue());
+		licenses_button_panel.add(licenses_pmChess_button);
+		licenses_button_panel.add(Box.createHorizontalGlue());
+		licenses_button_panel.add(licenses_open_sans_button);
+		licenses_button_panel.add(Box.createHorizontalGlue());
+		licenses_button_panel.add(licenses_chess_merida_unicode_button);
+		licenses_button_panel.add(Box.createHorizontalGlue());
+		
 		final var licenses_panel = new JPanel();
-		licenses_panel.add(pmChess_button);
-		licenses_panel.add(open_sans_button);
-		licenses_panel.add(chess_merida_unicode_button);
-		licenses_panel.add(license_scroll_pane);
+		licenses_panel.setMaximumSize(tab_dimension);
+		licenses_panel.setMinimumSize(tab_dimension);
+		licenses_panel.setPreferredSize(tab_dimension);
+		licenses_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		licenses_panel.setLayout(new BoxLayout(licenses_panel, BoxLayout.Y_AXIS));
+		licenses_panel.add(Box.createVerticalGlue());
+		licenses_panel.add(licenses_button_panel);
+		licenses_panel.add(licenses_scroll_pane);
+		licenses_panel.add(Box.createVerticalGlue());
 		
 		// Contact:
-		final var description_text_area = new JTextArea(
+		final var contact_description_text_area = new JTextArea(
 			"Feedback is always welcome; sharing your issues and opinion regarding "
 			+ "pmChess is very kind! Please select a subject from the proposed set "
 			+ "and decide if it is OK to quote your message for example on the "
@@ -114,17 +259,28 @@ public final class AboutFrame extends JFrame
 			+ "feasible subject helps classifying your mail; and a quote permission "
 			+ "is particularly kind for general feedback as it enables us to publicly "
 			+ "share your opinion.");
-		description_text_area.setFont(Resources.font_regular);
-		description_text_area.setLineWrap(true);
-		description_text_area.setWrapStyleWord(true);
-		description_text_area.setEditable(false);
-		final var description_scroll_pane = new JScrollPane(description_text_area);
-		description_scroll_pane.setVerticalScrollBarPolicy(
-			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		description_scroll_pane.setPreferredSize(new Dimension(570, 125));
+		contact_description_text_area.setFont(Resources.font_regular);
+		contact_description_text_area.setLineWrap(true);
+		contact_description_text_area.setWrapStyleWord(true);
+		contact_description_text_area.setEditable(false);
 		
-		final var subject_label = new JLabel("Subject:", SwingConstants.LEFT);
-		final var subject_combo_box = new JComboBox<>(new String[]{
+		final var contact_description_scroll_pane =
+			new JScrollPane(contact_description_text_area);
+		final var contact_description_scroll_pane_dimension = new Dimension(
+			contact_description_scroll_pane_x_size,
+			contact_description_scroll_pane_y_size);
+		contact_description_scroll_pane.setMaximumSize(contact_description_scroll_pane_dimension);
+		contact_description_scroll_pane.setMinimumSize(contact_description_scroll_pane_dimension);
+		contact_description_scroll_pane.setPreferredSize(contact_description_scroll_pane_dimension);
+		contact_description_scroll_pane.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_description_scroll_pane.setVerticalScrollBarPolicy(
+			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		final var contact_subject_label = new JLabel("Subject:", SwingConstants.LEFT);
+		contact_subject_label.setMaximumSize(contact_row_label_dimension);
+		contact_subject_label.setMinimumSize(contact_row_label_dimension);
+		contact_subject_label.setPreferredSize(contact_row_label_dimension);
+		final var contact_subject_combo_box = new JComboBox<>(new String[]{
 			"Please select subject\u2026",
 			"chess logic error (rule violation)",
 			"bug report",
@@ -132,52 +288,115 @@ public final class AboutFrame extends JFrame
 			"user interface proposal",
 			"enhancement proposal",
 			"general feedback"});
-		subject_combo_box.setSelectedIndex(0);
+		contact_subject_combo_box.setMaximumSize(contact_row_field_dimension);
+		contact_subject_combo_box.setMinimumSize(contact_row_field_dimension);
+		contact_subject_combo_box.setPreferredSize(contact_row_field_dimension);
+		contact_subject_combo_box.setSelectedIndex(0);
+		final var contact_subject_panel = new JPanel();
+		contact_subject_panel.setMaximumSize(contact_row_dimension);
+		contact_subject_panel.setMinimumSize(contact_row_dimension);
+		contact_subject_panel.setPreferredSize(contact_row_dimension);
+		contact_subject_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_subject_panel.setLayout(new BoxLayout(contact_subject_panel, BoxLayout.X_AXIS));
+		contact_subject_panel.add(Box.createHorizontalGlue());
+		contact_subject_panel.add(contact_subject_label);
+		contact_subject_panel.add(contact_subject_combo_box);
+		contact_subject_panel.add(Box.createHorizontalGlue());
 		
-		final var permission_label = new JLabel("Quote permission:", SwingConstants.LEFT);
-		final var permission_combo_box = new JComboBox<>(new String[]{
+		final var contact_permission_label = new JLabel("Quote permission:", SwingConstants.LEFT);
+		contact_permission_label.setMaximumSize(contact_row_label_dimension);
+		contact_permission_label.setMinimumSize(contact_row_label_dimension);
+		contact_permission_label.setPreferredSize(contact_row_label_dimension);
+		final var contact_permission_combo_box = new JComboBox<>(new String[]{
 			"Please decide whether you give us quote permission\u2026",
 			"REJECTED (no permission to quote mail)",
 			"GRANTED (mail can be publicly quoted)"});
-		permission_combo_box.setSelectedIndex(0);
+		contact_permission_combo_box.setMaximumSize(contact_row_field_dimension);
+		contact_permission_combo_box.setMinimumSize(contact_row_field_dimension);
+		contact_permission_combo_box.setPreferredSize(contact_row_field_dimension);
+		contact_permission_combo_box.setSelectedIndex(0);
+		final var contact_permission_panel = new JPanel();
+		contact_permission_panel.setMaximumSize(contact_row_dimension);
+		contact_permission_panel.setMinimumSize(contact_row_dimension);
+		contact_permission_panel.setPreferredSize(contact_row_dimension);
+		contact_permission_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_permission_panel.setLayout(new BoxLayout(contact_permission_panel, BoxLayout.X_AXIS));
+		contact_permission_panel.add(Box.createHorizontalGlue());
+		contact_permission_panel.add(contact_permission_label);
+		contact_permission_panel.add(contact_permission_combo_box);
+		contact_permission_panel.add(Box.createHorizontalGlue());
 		
-		final var name_label = new JLabel("Your name:", SwingConstants.LEFT);
-		final var name_field = new JTextField();
+		final var contact_name_label = new JLabel("Your name:", SwingConstants.LEFT);
+		contact_name_label.setMaximumSize(contact_row_label_dimension);
+		contact_name_label.setMinimumSize(contact_row_label_dimension);
+		contact_name_label.setPreferredSize(contact_row_label_dimension);
+		final var contact_name_field = new JTextField();
+		contact_name_field.setMaximumSize(contact_row_field_dimension);
+		contact_name_field.setMinimumSize(contact_row_field_dimension);
+		contact_name_field.setPreferredSize(contact_row_field_dimension);
+		final var contact_name_panel = new JPanel();
+		contact_name_panel.setMaximumSize(contact_row_dimension);
+		contact_name_panel.setMinimumSize(contact_row_dimension);
+		contact_name_panel.setPreferredSize(contact_row_dimension);
+		contact_name_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_name_panel.setLayout(new BoxLayout(contact_name_panel, BoxLayout.X_AXIS));
+		contact_name_panel.add(Box.createHorizontalGlue());
+		contact_name_panel.add(contact_name_label);
+		contact_name_panel.add(contact_name_field);
+		contact_name_panel.add(Box.createHorizontalGlue());
 		
-		final var description_dimension =
-			new Dimension(130, subject_label.getPreferredSize().height);
-		final var selection_dimension =
-			new Dimension(430, subject_combo_box.getPreferredSize().height);
+		final var contact_rows_panel = new JPanel();
+		final var contact_rows_dimension = new Dimension(
+			contact_rows_x_size,
+			contact_rows_y_size);
+		contact_rows_panel.setMaximumSize(contact_rows_dimension);
+		contact_rows_panel.setMinimumSize(contact_rows_dimension);
+		contact_rows_panel.setPreferredSize(contact_rows_dimension);
+		contact_rows_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_rows_panel.setLayout(new BoxLayout(contact_rows_panel, BoxLayout.Y_AXIS));
+		contact_rows_panel.add(Box.createVerticalGlue());
+		contact_rows_panel.add(contact_subject_panel);
+		contact_rows_panel.add(Box.createVerticalGlue());
+		contact_rows_panel.add(contact_permission_panel);
+		contact_rows_panel.add(Box.createVerticalGlue());
+		contact_rows_panel.add(contact_name_panel);
+		contact_rows_panel.add(Box.createVerticalGlue()); 
 		
-		subject_label.setPreferredSize(description_dimension);
-		subject_combo_box.setPreferredSize(selection_dimension);
-		permission_label.setPreferredSize(description_dimension);
-		permission_combo_box.setPreferredSize(selection_dimension);
-		name_label.setPreferredSize(description_dimension);
-		name_field.setPreferredSize(selection_dimension);
+		final var contact_message_text_area = new JTextArea();
+		contact_message_text_area.setFont(Resources.font_italic);
+		contact_message_text_area.setLineWrap(true);
+		contact_message_text_area.setWrapStyleWord(true);
+		contact_message_text_area.setEditable(true);
 		
-		final var message_text_area = new JTextArea();
-		message_text_area.setFont(Resources.font_italic);
-		message_text_area.setLineWrap(true);
-		message_text_area.setWrapStyleWord(true);
-		message_text_area.setEditable(true);
-		final var message_scroll_pane = new JScrollPane(message_text_area);
-		message_scroll_pane.setVerticalScrollBarPolicy(
+		final var contact_message_scroll_pane = new JScrollPane(contact_message_text_area);
+		final var contact_message_scroll_pane_dimension = new Dimension(
+			contact_message_scroll_pane_x_size,
+			contact_message_scroll_pane_y_size);
+		contact_message_scroll_pane.setMaximumSize(contact_message_scroll_pane_dimension);
+		contact_message_scroll_pane.setMinimumSize(contact_message_scroll_pane_dimension);
+		contact_message_scroll_pane.setPreferredSize(contact_message_scroll_pane_dimension);
+		contact_message_scroll_pane.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_message_scroll_pane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		message_scroll_pane.setPreferredSize(new Dimension(570, 195));
 		
-		final var send_button = new JButton("send e-mail");
-		send_button.setPreferredSize(new Dimension(570, selection_dimension.height));
-		send_button.addActionListener(new ActionListener()
+		final var contact_send_button = new JButton("send e-mail");
+		final var contact_send_button_dimension = new Dimension(
+			contact_send_button_x_size,
+			contact_send_button_y_size);
+		contact_send_button.setMaximumSize(contact_send_button_dimension);
+		contact_send_button.setMinimumSize(contact_send_button_dimension);
+		contact_send_button.setPreferredSize(contact_send_button_dimension);
+		contact_send_button.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_send_button.addActionListener(new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
 					final var subject_index =
-						subject_combo_box.getSelectedIndex();
+						contact_subject_combo_box.getSelectedIndex();
 					final var permission_index =
-						permission_combo_box.getSelectedIndex();
+						contact_permission_combo_box.getSelectedIndex();
 					final var name =
-						name_field.getText().trim();
+						contact_name_field.getText().trim();
 					if (subject_index == 0
 						|| permission_index == 0
 						|| name.length() < 1)
@@ -190,17 +409,17 @@ public final class AboutFrame extends JFrame
 						return;
 					}
 					final var subject =
-						"pmChess: " + subject_combo_box.getItemAt(subject_index);
+						"pmChess: " + contact_subject_combo_box.getItemAt(subject_index);
 					final var body =
 						"Dear Christoff,"
 						+ "\n\n"
-						+ message_text_area.getText().trim()
+						+ contact_message_text_area.getText().trim()
 						+ "\n\n"
 						+ "Best regards,\n" + name
 						+ "\n\n"
 						+ "PLEASE DO NOT MODIFY THE FOLLOWING TEXT:\n"
 						+ "  Quote permission: "
-						+ permission_combo_box.getItemAt(permission_index) + "\n"
+						+ contact_permission_combo_box.getItemAt(permission_index) + "\n"
 						+ "  pmChess version: "
 						+ pmchess.pmChess.version + "\n"
 						+ "  Platform: "
@@ -232,35 +451,70 @@ public final class AboutFrame extends JFrame
 						.replace("+", "%20");
 				}
 			});
+		final var contact_send_button_panel = new JPanel();
+		final var contact_send_button_panel_dimension = new Dimension(
+			contact_send_button_panel_x_size,
+			contact_send_button_panel_y_size);
+		contact_send_button_panel.setMaximumSize(contact_send_button_panel_dimension);
+		contact_send_button_panel.setMinimumSize(contact_send_button_panel_dimension);
+		contact_send_button_panel.setPreferredSize(contact_send_button_panel_dimension);
+		contact_send_button_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_send_button_panel.setLayout(new BoxLayout(
+			contact_send_button_panel,
+			BoxLayout.Y_AXIS));
+		contact_send_button_panel.add(Box.createVerticalGlue());
+		contact_send_button_panel.add(contact_send_button);
 		
 		final var contact_panel = new JPanel();
-		contact_panel.add(description_scroll_pane);
-		contact_panel.add(subject_label);
-		contact_panel.add(subject_combo_box);
-		contact_panel.add(permission_label);
-		contact_panel.add(permission_combo_box);
-		contact_panel.add(name_label);
-		contact_panel.add(name_field);
-		contact_panel.add(message_scroll_pane);
-		contact_panel.add(send_button);
+		contact_panel.setMaximumSize(tab_dimension);
+		contact_panel.setMinimumSize(tab_dimension);
+		contact_panel.setPreferredSize(tab_dimension);
+		contact_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		contact_panel.setLayout(new BoxLayout(contact_panel, BoxLayout.Y_AXIS));
+		contact_panel.add(Box.createVerticalGlue());
+		contact_panel.add(contact_description_scroll_pane);
+		contact_panel.add(contact_rows_panel);
+		contact_panel.add(contact_message_scroll_pane);
+		contact_panel.add(contact_send_button_panel);
+		contact_panel.add(Box.createVerticalGlue());
 		
-		// Compose all:
-		tabs.setPreferredSize(new Dimension(590, 500));
+		// Tabs:
+		final var tabs_dimensions = new Dimension(tabs_x_size, tabs_y_size);
+		tabs.setMaximumSize(tabs_dimensions);
+		tabs.setMinimumSize(tabs_dimensions);
+		tabs.setPreferredSize(tabs_dimensions);
+		tabs.setAlignmentX(Component.CENTER_ALIGNMENT);
 		tabs.addTab("Tea time", new JLabel(new ImageIcon(logo)));
 		tabs.addTab("Release notes", release_notes_panel);
 		tabs.addTab("Contact", contact_panel);
 		tabs.addTab("Licenses", licenses_panel);
 		
-		final var header_1 = new JLabel(pmchess.pmChess.about[0], SwingConstants.CENTER);
-		final var header_2 = new JLabel(pmchess.pmChess.about[1], SwingConstants.CENTER);
-		
-		final var panel = new JPanel(new BorderLayout());
-		panel.add(header_1, BorderLayout.PAGE_START);
-		panel.add(header_2, BorderLayout.CENTER);
-		panel.add(tabs, BorderLayout.PAGE_END);
-		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		// Compose all:
+		final var panel = new JPanel();
+		final var panel_dimension = new Dimension(panel_x_size, panel_y_size);
+		panel.setMaximumSize(panel_dimension);
+		panel.setMinimumSize(panel_dimension);
+		panel.setPreferredSize(panel_dimension);
+		panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(Box.createVerticalGlue());
+		panel.add(header_panel);
+		panel.add(tabs);
+		panel.add(Box.createVerticalGlue());
 		
 		add(panel);
+		
+		// Setup window:
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setBackground(Color.gray);
+		setSize(frame_x_size, frame_y_size);
+		pack();
+		setResizable(false);
+		final var screen_size = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation(
+			(int)Math.ceil((screen_size.width - getSize().width) / 2.0f),
+			(int)Math.ceil((screen_size.height - getSize().height) / 2.0f));
+		setVisible(false);
 		
 		// Setup user-input processing:
 		final var root_pane = getRootPane();
@@ -289,7 +543,7 @@ public final class AboutFrame extends JFrame
 				{
 					final JScrollBar bar;
 					if (tabs.getSelectedIndex()
-						== tabs.indexOfComponent(release_notes_panel))
+						== tabs.indexOfComponent(release_notes_scroll_pane))
 					{
 						bar = release_notes_scroll_pane
 							.getVerticalScrollBar();
@@ -297,7 +551,7 @@ public final class AboutFrame extends JFrame
 					else if (tabs.getSelectedIndex()
 						== tabs.indexOfComponent(licenses_panel))
 					{
-						bar = license_scroll_pane.getVerticalScrollBar();
+						bar = licenses_scroll_pane.getVerticalScrollBar();
 					}
 					else
 					{
@@ -319,7 +573,7 @@ public final class AboutFrame extends JFrame
 				{
 					final JScrollBar bar;
 					if (tabs.getSelectedIndex()
-						== tabs.indexOfComponent(release_notes_panel))
+						== tabs.indexOfComponent(release_notes_scroll_pane))
 					{
 						bar = release_notes_scroll_pane
 							.getVerticalScrollBar();
@@ -327,7 +581,7 @@ public final class AboutFrame extends JFrame
 					else if (tabs.getSelectedIndex()
 						== tabs.indexOfComponent(licenses_panel))
 					{
-						bar = license_scroll_pane.getVerticalScrollBar();
+						bar = licenses_scroll_pane.getVerticalScrollBar();
 					}
 					else
 					{

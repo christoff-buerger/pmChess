@@ -570,7 +570,7 @@ public final class MainPanel extends JPanel
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.knight(false)));
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.bishop(false)));
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.rook(false)));
-				final var pawn_promotion_list_dimensions = new Dimension(
+				final var pawn_promotion_list_dimension = new Dimension(
 					pawn_promotion_list_x_size,
 					pawn_promotion_list_y_size);
 				pawn_promotion_list.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -582,9 +582,9 @@ public final class MainPanel extends JPanel
 					? pawn_promotion_w
 					: pawn_promotion_b);
 				pawn_promotion_list.setSelectedIndex(0);
-				pawn_promotion_list.setMaximumSize(pawn_promotion_list_dimensions);
-				pawn_promotion_list.setMinimumSize(pawn_promotion_list_dimensions);
-				pawn_promotion_list.setPreferredSize(pawn_promotion_list_dimensions);
+				pawn_promotion_list.setMaximumSize(pawn_promotion_list_dimension);
+				pawn_promotion_list.setMinimumSize(pawn_promotion_list_dimension);
+				pawn_promotion_list.setPreferredSize(pawn_promotion_list_dimension);
 				final var pawn_promotion_label = new JLabel("Promotion")
 					{
 						private boolean painting = false;

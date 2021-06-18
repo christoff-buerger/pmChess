@@ -19,9 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class GUI extends JFrame
-{
-	private static final Image taskbar_icon = Resources.load_image("icons/taskbar.png");
-	
+{	
 	static
 	{
 		// Initialize fonts:
@@ -61,16 +59,24 @@ public final class GUI extends JFrame
 	{
 		super("pmChess");
 		
-		// Setup "About"-window and icon:
+		// Setup "About"-window:
 		final var about_action = new AboutAction();
 		try
 		{
 			Desktop.getDesktop().setAboutHandler(about_action);
-			Taskbar.getTaskbar().setIconImage(taskbar_icon);
 		}
 		catch (SecurityException | UnsupportedOperationException exception)
 		{
-			setIconImage(taskbar_icon); // Fallback for older operating systems.
+		}
+		
+		// Set window and taskbar icon:
+		setIconImage(Resources.pmChess_icon);
+		try
+		{
+			Taskbar.getTaskbar().setIconImage(Resources.pmChess_icon);
+		}
+		catch (SecurityException | UnsupportedOperationException exception)
+		{
 		}
 		
 		// Setup menu bar:
@@ -105,15 +111,15 @@ public final class GUI extends JFrame
 		main_panel = new MainPanel();
 		setContentPane(main_panel);
 		
-		// Setup window and display it:
+		// Setup window:
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBackground(Color.gray);
 		pack();
 		setResizable(false);
 		final var screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(
-			(screen_size.width - getSize().width) / 2,
-			(screen_size.height - getSize().height) / 2);
+			(int)Math.ceil((screen_size.width - getSize().width) / 2.0f),
+			(int)Math.ceil((screen_size.height - getSize().height) / 2.0f));
 		setVisible(true);
 	}
 	
