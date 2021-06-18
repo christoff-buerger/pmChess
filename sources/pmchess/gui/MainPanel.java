@@ -279,6 +279,90 @@ public final class MainPanel extends JPanel
 					border_size,
 					border_size,
 					border_size)));
+			
+			addMouseListener(new MouseListener()
+				{
+					private void dispatch_key_event(final int key)
+					{
+						MainPanel.this.dispatchEvent(new KeyEvent(
+							MainPanel.this,
+							KeyEvent.KEY_PRESSED,
+							System.currentTimeMillis(),
+							0,//KeyEvent.SHIFT_DOWN_MASK,
+							key,
+							KeyEvent.CHAR_UNDEFINED));
+						MainPanel.this.dispatchEvent(new KeyEvent(
+							MainPanel.this,
+							KeyEvent.KEY_RELEASED,
+							System.currentTimeMillis(),
+							0,//KeyEvent.SHIFT_DOWN_MASK,
+							key,
+							KeyEvent.CHAR_UNDEFINED));
+					}
+					
+					@Override public void mouseClicked(final MouseEvent e)
+					{
+						// Compute selected tile:
+						final var x = e.getX() > border_size
+							&& e.getX() < 8 * tile_size + border_size
+							? (e.getX() - border_size) / tile_size
+							: -1;
+						final var y = e.getY() > border_size
+							&& e.getY() < 8 * tile_size + border_size
+							? Math.abs(((e.getY() - border_size) / tile_size) - 7)
+							: -1;
+						if (x == -1 | y == -1)
+						{
+							return;
+						}
+						
+						// Check, that the selection is unmistakable
+						// (i.e., not to close to the tile border):
+						final var x_tile_start = border_size + x * tile_size;
+						final var y_tile_start = border_size + 7 * tile_size - y * tile_size;
+						final var margine = (int)Math.floor(1.1f * cursor_line_width);
+						if (e.getX() <= x_tile_start + margine
+							| e.getX() >= x_tile_start + tile_size - margine
+							| e.getY() <= y_tile_start + margine
+							| e.getY() >= y_tile_start + tile_size - margine)
+						{
+							return;
+						}
+						
+						// Simulate cursor movement:
+						final var x_movement = x > cursor_x
+							? KeyEvent.VK_RIGHT
+							: KeyEvent.VK_LEFT;
+						final var y_movement = y > cursor_y
+							? KeyEvent.VK_UP
+							: KeyEvent.VK_DOWN;
+						for (int i = Math.abs(cursor_x - x); i != 0; --i)
+						{
+							dispatch_key_event(x_movement);
+						}
+						for (int i = Math.abs(cursor_y - y); i != 0; --i)
+						{
+							dispatch_key_event(y_movement);
+						}
+						dispatch_key_event(KeyEvent.VK_SPACE);
+					}
+					
+					@Override public void mouseEntered(final MouseEvent e)
+					{
+					}
+					
+					@Override public void mouseExited(final MouseEvent e)
+					{
+					}
+					
+					@Override public void mousePressed(final MouseEvent e)
+					{
+					}
+					
+					@Override public void mouseReleased(final MouseEvent e)
+					{
+					}
+				});
 		}
 		
 		@Override public void paintComponent(final Graphics graphic)
