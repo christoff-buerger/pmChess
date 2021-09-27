@@ -34,11 +34,14 @@
 	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
+			release="17"
 			source="17"
+			target="17"
 			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"
 			debug="off"
+			optimize="on"
 			deprecation="on"
 			includeAntRuntime="no"
 			includeJavaRuntime="no"
