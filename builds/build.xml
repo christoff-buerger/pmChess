@@ -34,7 +34,7 @@
 	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
-			source="16"
+			source="17"
 			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"
@@ -85,7 +85,7 @@
 				/>
 				<attribute
 					name="Implementation-Version"
-					value="1.1.0"
+					value="2.0.0"
 				/>
 				<attribute
 					name="Implementation-Vendor"

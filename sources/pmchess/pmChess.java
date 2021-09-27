@@ -11,7 +11,7 @@ import pmchess.gui.*;
 
 public final class pmChess
 {
-	public static final String version = "1.1.0";
+	public static final String version = "2.0.0";
 	public static final String[] about = {
 		"pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com).",
 		"Source code available at https://github.com/christoff-buerger/pmChess."};

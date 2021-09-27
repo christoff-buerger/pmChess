@@ -1,9 +1,9 @@
 This program and the accompanying materials are made available under the
 terms of the MIT license (X11 license) which accompanies this distribution.
 
-Version 1.1.0 (in development):
+Version 2.0.0 (in development):
   - Added native distributions for macOS and Windows. The distributions are
-    self-contained and do not require a locally installed 'Java SE'.
+    self-contained and do not require a locally installed 'Java SE Platform'.
   - Added support for en passant captures.
   - Added support for selecting a figure besides a queen when promoting pawns.
   - Added game history with algebraic notation as specified by FIDE. The history
@@ -19,11 +19,11 @@ Version 1.1.0 (in development):
     bugs and give feedback. The form is also directly reachable via a new
     "Contact and feedback"-entry of the "Help"-menu.
   - Added taskbar icon and application logo.
-  - Portable jar-file distribution now requires 'Java SE 12.0.2'.
+  - Portable jar-file distribution now requires the 'Java SE 17 Platform'.
 
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a
-    locally installed 'Java SE 9.0.4').
+    locally installed 'Java SE 9.0.4 Platform').
   - Implements the official rules of FIDE (Fédération Internationale des
     Échecs) except for en passant moves and the following draw rules:
       1) Threefold repetition: The same position occurs three times with the

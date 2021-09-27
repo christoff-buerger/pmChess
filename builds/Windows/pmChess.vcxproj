@@ -40,7 +40,7 @@
 		<AssemblyName>pmChess</AssemblyName>
 		<ModuleAssemblyName>pmChess</ModuleAssemblyName>
 		<StartupObject>pmChess</StartupObject>
-		<ProductVersion>1.1.0.0</ProductVersion><!-- major.minor.build.revision -->
+		<ProductVersion>2.0.0.0</ProductVersion><!-- major.minor.build.revision -->
 		<ProjectGuid>{a023bd13-2699-5acc-918e-3b45ded2fe62}</ProjectGuid>
 		<Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
 		<!-- Target platform configuration -->

@@ -19,7 +19,7 @@ _pmChess_ implements the official rules of [_FIDE_](https://www.fide.com/) (_Fé
 
 # Graphical user interface
 
-![pmChess screenshot](releases/version-1.1.0/screenshot.png)
+![pmChess screenshot](releases/version-2.0.0/screenshot.png)
 
 Figures are moved on the _Chessboard_ pane using the keyboard. A blue rectangle marks the cursor position; a red rectangle marks the currently selected figure to move. The arrow keys are used to move the cursor. Space is used to select a figure or to move the currently selected figure to the cursor's position if the respective move is allowed. The last move is highlighted by drawing the involved chessboard tiles green.
 
