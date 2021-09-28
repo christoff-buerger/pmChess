@@ -7,7 +7,13 @@
 
 package pmchess.logic;
 
-public abstract class Figure
+public sealed abstract class Figure permits
+	Figure.Pawn,
+	Figure.Rook,
+	Figure.Knight,
+	Figure.Bishop,
+	Figure.Queen,
+	Figure.King
 {
 	private static int key_count = 1;
 	
@@ -103,8 +109,12 @@ public abstract class Figure
 	
 	protected abstract void compute_moves(final Board board, final int x, final int y);
 	
-	private static final class Pawn extends Figure
+	protected static final class Pawn extends Figure
 	{
+		private Pawn()
+		{
+		}
+		
 		private static int possible_enpassant(final Board board)
 		{
 			final var move = board.previous_move(board.turn() - 1);
@@ -210,8 +220,12 @@ public abstract class Figure
 		}
 	}
 	
-	private static final class Rook extends Figure
+	protected static final class Rook extends Figure
 	{
+		private Rook()
+		{
+		}
+		
 		@Override protected void compute_moves(
 			final Board board,
 			final int x,
@@ -277,8 +291,12 @@ public abstract class Figure
 		}
 	}
 	
-	private static final class Knight extends Figure
+	protected static final class Knight extends Figure
 	{
+		private Knight()
+		{
+		}
+		
 		@Override protected void compute_moves(
 			final Board board,
 			final int x,
@@ -376,8 +394,12 @@ public abstract class Figure
 		}
 	}
 		
-	private static final class Bishop extends Figure
+	protected static final class Bishop extends Figure
 	{
+		private Bishop()
+		{
+		}
+		
 		@Override protected void compute_moves(
 			final Board board,
 			final int x,
@@ -447,8 +469,12 @@ public abstract class Figure
 		}
 	}
 	
-	private static final class Queen extends Figure
+	protected static final class Queen extends Figure
 	{
+		private Queen()
+		{
+		}
+		
 		@Override protected void compute_moves(
 			final Board board,
 			final int x,
@@ -459,8 +485,12 @@ public abstract class Figure
 		}
 	}
 	
-	private static final class King extends Figure
+	protected static final class King extends Figure
 	{
+		private King()
+		{
+		}
+		
 		@Override protected void compute_moves(
 			final Board board,
 			final int x,
