@@ -8,30 +8,30 @@
 package pmchess.logic;
 
 public sealed abstract class Figure permits
-	Figure.Pawn,
-	Figure.Rook,
-	Figure.Knight,
-	Figure.Bishop,
-	Figure.Queen,
-	Figure.King
+	  Figure.Pawn
+	, Figure.Rook
+	, Figure.Knight
+	, Figure.Bishop
+	, Figure.Queen
+	, Figure.King
 {
 	private static int key_count = 1;
 	
 	protected static final Figure[] figures =
 		{
-			null,
-			new Pawn(),
-			new Rook(),
-			new Knight(),
-			new Bishop(),
-			new Queen(),
-			new King(),
-			new Pawn(),
-			new Rook(),
-			new Knight(),
-			new Bishop(),
-			new Queen(),
-			new King()
+			  null
+			, new Pawn()
+			, new Rook()
+			, new Knight()
+			, new Bishop()
+			, new Queen()
+			, new King()
+			, new Pawn()
+			, new Rook()
+			, new Knight()
+			, new Bishop()
+			, new Queen()
+			, new King()
 		};
 	
 	public static final Figure pawn(final boolean player)
@@ -134,11 +134,11 @@ public sealed abstract class Figure permits
 		}
 		
 		private void moves_add(
-			final Board board,
-			final int x,
-			final int y,
-			final int X,
-			final int Y)
+			  final Board board
+			, final int x
+			, final int y
+			, final int X
+			, final int Y)
 		{
 			if (Y == 0 | Y == 7)
 			{ // Pawn promotions:
@@ -152,9 +152,9 @@ public sealed abstract class Figure permits
 		}
 		
 		@Override protected void compute_moves(
-			final Board board,
-			final int x,
-			final int y)
+			  final Board board
+			, final int x
+			, final int y)
 		{
 			Figure f;
 			final var xm1 = x - 1;
@@ -227,9 +227,9 @@ public sealed abstract class Figure permits
 		}
 		
 		@Override protected void compute_moves(
-			final Board board,
-			final int x,
-			final int y)
+			  final Board board
+			, final int x
+			, final int y)
 		{
 			Figure f;
 			for (var X = x - 1; X >= 0; X--)
@@ -298,9 +298,9 @@ public sealed abstract class Figure permits
 		}
 		
 		@Override protected void compute_moves(
-			final Board board,
-			final int x,
-			final int y)
+			  final Board board
+			, final int x
+			, final int y)
 		{
 			Figure f;
 			final var xm1 = x - 1;
@@ -401,9 +401,9 @@ public sealed abstract class Figure permits
 		}
 		
 		@Override protected void compute_moves(
-			final Board board,
-			final int x,
-			final int y)
+			  final Board board
+			, final int x
+			, final int y)
 		{
 			Figure f;
 			final var xm1 = x - 1;
@@ -476,9 +476,9 @@ public sealed abstract class Figure permits
 		}
 		
 		@Override protected void compute_moves(
-			final Board board,
-			final int x,
-			final int y)
+			  final Board board
+			, final int x
+			, final int y)
 		{
 			Figure.rook(owner).compute_moves(board, x, y);
 			Figure.bishop(owner).compute_moves(board, x, y);
@@ -492,9 +492,9 @@ public sealed abstract class Figure permits
 		}
 		
 		@Override protected void compute_moves(
-			final Board board,
-			final int x,
-			final int y)
+			  final Board board
+			, final int x
+			, final int y)
 		{
 			Figure f;
 			final var xm1 = x - 1;

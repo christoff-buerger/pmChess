@@ -51,23 +51,23 @@ public final class MainPanel extends JPanel
 		// Setup panel size and layout:
 		setOpaque(true);
 		final var panel_dimension = new Dimension(
-			board_panel.panel_size + history_panel.panel_x_size + 2 * border_size,
-			board_panel.panel_size + game_panel.panel_y_size + 2 * border_size);
+			  board_panel.panel_size + history_panel.panel_x_size + 2 * border_size
+			, board_panel.panel_size + game_panel.panel_y_size + 2 * border_size);
 		setMaximumSize(panel_dimension);
 		setMinimumSize(panel_dimension);
 		setPreferredSize(panel_dimension);
 		setBorder(BorderFactory.createEmptyBorder(
-			border_size,
-			border_size,
-			border_size,
-			border_size));
+			  border_size
+			, border_size
+			, border_size
+			, border_size));
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		
 		// Add components:
 		final var dummy_panel = new JPanel();
 		final var dummy_panel_dimension = new Dimension(
-			board_panel.panel_size,
-			board_panel.panel_size + game_panel.panel_y_size);
+			  board_panel.panel_size
+			, board_panel.panel_size + game_panel.panel_y_size);
 		dummy_panel.setMaximumSize(dummy_panel_dimension);
 		dummy_panel.setMinimumSize(dummy_panel_dimension);
 		dummy_panel.setPreferredSize(dummy_panel_dimension);
@@ -132,16 +132,16 @@ public final class MainPanel extends JPanel
 				break;
 			}
 			board.execute(
-				Move.x(move),
-				Move.y(move),
-				Move.X(move),
-				Move.Y(move),
-				Move.figure_placed(move));
+				  Move.x(move)
+				, Move.y(move)
+				, Move.X(move)
+				, Move.Y(move)
+				, Move.figure_placed(move));
 			game_status = board.status();
 			history_panel.history_data.addElement(new PastMove(
-				board.turn() - 1,
-				move,
-				game_status));
+				  board.turn() - 1
+				, move
+				, game_status));
 		}
 		board_panel.repaint();
 		game_panel.repaint();
@@ -177,21 +177,22 @@ public final class MainPanel extends JPanel
 				}
 				else if (selected_figure != null)
 				{
-					final var figure_placed =
-						selected_figure.is_pawn() && (cursor_y == 0 || cursor_y == 7)
-						? game_panel.status_panel.pawn_promotion_list.getSelectedValue().figure
-						: selected_figure;
+					final var figure_placed = (selected_figure.is_pawn()
+						&& (cursor_y == 0 || cursor_y == 7))
+							? game_panel.status_panel.pawn_promotion_list
+								.getSelectedValue().figure
+							: selected_figure;
 					if (board.execute(
-						selected_x,
-						selected_y,
-						cursor_x,
-						cursor_y,
-						figure_placed))
+						  selected_x
+						, selected_y
+						, cursor_x
+						, cursor_y
+						, figure_placed))
 					{
 						history_panel.history_data.addElement(new PastMove(
-							board.turn() - 1,
-							board.previous_move(board.turn() - 1),
-							board.status()));
+							  board.turn() - 1
+							, board.previous_move(board.turn() - 1)
+							, board.status()));
 						selected_figure = null;
 						run_game();
 					}
@@ -257,8 +258,8 @@ public final class MainPanel extends JPanel
 			Resources.font_bold.deriveFont(border_size / 3.0f);
 		private final int cursor_line_width =
 			(int)Math.ceil(tile_size / 10.0f) % 2 == 0
-			? (int)Math.ceil(tile_size / 10.0f)
-			: (int)Math.ceil(tile_size / 10.0f) + 1;
+				? (int)Math.ceil(tile_size / 10.0f)
+				: (int)Math.ceil(tile_size / 10.0f) + 1;
 		private final int panel_size =
 			8 * tile_size + 2 * border_size;
 		private final Font figure_font =
@@ -273,44 +274,45 @@ public final class MainPanel extends JPanel
 			setMinimumSize(panel_dimension);
 			setPreferredSize(panel_dimension);
 			setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder("Chessboard"),
-				BorderFactory.createEmptyBorder(
-					border_size,
-					border_size,
-					border_size,
-					border_size)));
+				  BorderFactory.createTitledBorder("Chessboard")
+				, BorderFactory.createEmptyBorder(
+					  border_size
+					, border_size
+					, border_size
+					, border_size)));
 			
-			addMouseListener(new MouseListener()
+			addMouseListener(
+				new MouseListener()
 				{
 					private void dispatch_key_event(final int key)
 					{
 						MainPanel.this.dispatchEvent(new KeyEvent(
-							MainPanel.this,
-							KeyEvent.KEY_PRESSED,
-							System.currentTimeMillis(),
-							0,//KeyEvent.SHIFT_DOWN_MASK,
-							key,
-							KeyEvent.CHAR_UNDEFINED));
+							  MainPanel.this
+							, KeyEvent.KEY_PRESSED
+							, System.currentTimeMillis()
+							, 0 //KeyEvent.SHIFT_DOWN_MASK
+							, key
+							, KeyEvent.CHAR_UNDEFINED));
 						MainPanel.this.dispatchEvent(new KeyEvent(
-							MainPanel.this,
-							KeyEvent.KEY_RELEASED,
-							System.currentTimeMillis(),
-							0,//KeyEvent.SHIFT_DOWN_MASK,
-							key,
-							KeyEvent.CHAR_UNDEFINED));
+							  MainPanel.this
+							, KeyEvent.KEY_RELEASED
+							, System.currentTimeMillis()
+							, 0 //KeyEvent.SHIFT_DOWN_MASK
+							, key
+							, KeyEvent.CHAR_UNDEFINED));
 					}
 					
 					@Override public void mouseClicked(final MouseEvent e)
 					{
 						// Compute selected tile:
-						final var x = e.getX() > border_size
-							&& e.getX() < 8 * tile_size + border_size
-							? (e.getX() - border_size) / tile_size
-							: -1;
-						final var y = e.getY() > border_size
-							&& e.getY() < 8 * tile_size + border_size
-							? Math.abs(((e.getY() - border_size) / tile_size) - 7)
-							: -1;
+						final var x = (e.getX() > border_size
+							&& e.getX() < 8 * tile_size + border_size)
+								? (e.getX() - border_size) / tile_size
+								: -1;
+						final var y = (e.getY() > border_size
+							&& e.getY() < 8 * tile_size + border_size)
+								? Math.abs(((e.getY() - border_size) / tile_size) - 7)
+								: -1;
 						if (x == -1 | y == -1)
 						{
 							return;
@@ -390,9 +392,9 @@ public final class MainPanel extends JPanel
 				final var h_y = h_y_base + i * tile_size;
 				graphic.drawString(h_marking, h_x_base, h_y);
 				graphic.drawString(
-					h_marking,
-					panel_size - h_x_base - h_width,
-					h_y);
+					  h_marking
+					, panel_size - h_x_base - h_width
+					, h_y);
 				final var v_marking = String.valueOf((char)('a' + i));
 				final var v_width = font_metrics.stringWidth(v_marking);
 				final var v_x =
@@ -401,9 +403,9 @@ public final class MainPanel extends JPanel
 					+ (tile_size - v_width) / 2;
 				graphic.drawString(v_marking, v_x, v_y_base);
 				graphic.drawString(
-					v_marking,
-					v_x,
-					panel_size - v_y_base + font_height);
+					  v_marking
+					, v_x
+					, panel_size - v_y_base + font_height);
 			}
 			
 			// Draw tiles:
@@ -447,10 +449,10 @@ public final class MainPanel extends JPanel
 			}
 			graphic.setColor(color);
 			graphic.fillRect(
-				x * tile_size + border_size,
-				y_trans * tile_size + border_size,
-				tile_size,
-				tile_size);
+				  x * tile_size + border_size
+				, y_trans * tile_size + border_size
+				, tile_size
+				, tile_size);
 			
 			// Draw figure:
 			final var figure = board.figure(x, y);
@@ -466,9 +468,9 @@ public final class MainPanel extends JPanel
 					(tile_size + metrics.getAscent() + metrics.getDescent()) / 2
 					- metrics.getDescent();
 				graphic.drawString(
-					text,
-					x * tile_size + border_size + width_fix,
-					y_trans * tile_size + border_size + height_fix);
+					  text
+					, x * tile_size + border_size + width_fix
+					, y_trans * tile_size + border_size + height_fix);
 			}
 			
 			// Draw cursor and figure selection:
@@ -655,8 +657,8 @@ public final class MainPanel extends JPanel
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.bishop(false)));
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.rook(false)));
 				final var pawn_promotion_list_dimension = new Dimension(
-					pawn_promotion_list_x_size,
-					pawn_promotion_list_y_size);
+					  pawn_promotion_list_x_size
+					, pawn_promotion_list_y_size);
 				pawn_promotion_list.setBorder(BorderFactory.createLoweredBevelBorder());
 				pawn_promotion_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				pawn_promotion_list.setLayoutOrientation(JList.VERTICAL);
@@ -728,8 +730,8 @@ public final class MainPanel extends JPanel
 				
 				final var castlings_panel = new JPanel();
 				final var castlings_panel_dimension = new Dimension(
-					castlings_x_size,
-					castlings_y_size);
+					  castlings_x_size
+					, castlings_y_size);
 				castlings_panel.setMaximumSize(castlings_panel_dimension);
 				castlings_panel.setMinimumSize(castlings_panel_dimension);
 				castlings_panel.setPreferredSize(castlings_panel_dimension);
@@ -754,8 +756,8 @@ public final class MainPanel extends JPanel
 				
 				final var right_panel = new JPanel();
 				final var right_panel_dimension = new Dimension(
-					pawn_promotion_x_size,
-					tab_y_size);
+					  pawn_promotion_x_size
+					, tab_y_size);
 				right_panel.setMaximumSize(right_panel_dimension);
 				right_panel.setMinimumSize(right_panel_dimension);
 				right_panel.setPreferredSize(right_panel_dimension);
@@ -830,8 +832,8 @@ public final class MainPanel extends JPanel
 		private final int panel_x_size =
 			(int)Math.ceil(
 				1.6f * Resources.font_italic.getStringBounds(
-					"initial position",
-					new FontRenderContext(new AffineTransform(), true, true))
+					  "initial position"
+					, new FontRenderContext(new AffineTransform(), true, true))
 				.getWidth());
 		private final int panel_y_size =
 			board_panel.panel_size + game_panel.panel_y_size;
@@ -857,8 +859,8 @@ public final class MainPanel extends JPanel
 			history_scroll_pane.setVerticalScrollBarPolicy(
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			final var history_scroll_pane_dimension = new Dimension(
-				panel_x_size - (int)Math.ceil(1.5f * border_size),
-				panel_y_size - (int)Math.ceil(3.5f * border_size));
+				  panel_x_size - (int)Math.ceil(1.5f * border_size)
+				, panel_y_size - (int)Math.ceil(3.5f * border_size));
 			history_scroll_pane.setMaximumSize(history_scroll_pane_dimension);
 			history_scroll_pane.setMinimumSize(history_scroll_pane_dimension);
 			history_scroll_pane.setPreferredSize(history_scroll_pane_dimension);
@@ -893,18 +895,18 @@ public final class MainPanel extends JPanel
 	private static final class HistoryRenderer extends DefaultListCellRenderer
 	{
 		@Override public Component getListCellRendererComponent(
-			final JList<?> list,
-			final Object value,
-			final int index,
-			final boolean is_selected,
-			final boolean cell_has_focus)
+			  final JList<?> list
+			, final Object value
+			, final int index
+			, final boolean is_selected
+			, final boolean cell_has_focus)
 		{
 			super.getListCellRendererComponent(
-				list,
-				"",
-				index,
-				is_selected,
-				cell_has_focus);
+				  list
+				, ""
+				, index
+				, is_selected
+				, cell_has_focus);
 			
 			final var move = (PastMove)value;
 			if (move.move == 0)
@@ -934,8 +936,7 @@ public final class MainPanel extends JPanel
 			}
 			else
 			{
-				final var en_passant =
-					figure_moved.figure.is_pawn()
+				final var en_passant = figure_moved.figure.is_pawn()
 					&& figure_captured == null
 					&& x != X;
 				notation =

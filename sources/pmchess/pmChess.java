@@ -13,8 +13,8 @@ public final class pmChess
 {
 	public static final String version = "2.0.0";
 	public static final String[] about = {
-		"pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com).",
-		"Source code available at https://github.com/christoff-buerger/pmChess."};
+		  "pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com)."
+		, "Source code available at https://github.com/christoff-buerger/pmChess."};
 	
 	// Static => enforce licenses exist:
 	public static final String pmChess_license =
@@ -33,7 +33,8 @@ public final class pmChess
 		System.out.println(about[1]);
 		System.out.println();
 		System.out.println(pmChess_license);
-		java.awt.EventQueue.invokeLater(new Runnable()
+		java.awt.EventQueue.invokeLater(
+			new Runnable()
 			{
 				@Override public void run()
 				{

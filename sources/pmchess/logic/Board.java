@@ -11,31 +11,89 @@ public final class Board
 {
 	public static enum GameStatus {Normal, Stalemate, Check, Checkmate};
 	
-	private final Figure[][] board = {
-		{Figure.rook(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.rook(false)},
-		{Figure.knight(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.knight(false)},
-		{Figure.bishop(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.bishop(false)},
-		{Figure.queen(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.queen(false)},
-		{Figure.king(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.king(false)},
-		{Figure.bishop(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.bishop(false)},
-		{Figure.knight(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.knight(false)},
-		{Figure.rook(true),	Figure.pawn(true),
-			null, null, null, null,
-		 Figure.pawn(false),	Figure.rook(false)}};
+	private final Figure[][] board =
+		{
+		  {
+			  Figure.rook(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.rook(false)
+		  }
+		, {
+			  Figure.knight(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.knight(false)
+		  }
+		, {
+			  Figure.bishop(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.bishop(false)
+		  }
+		, {
+			  Figure.queen(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.queen(false)
+		  }
+		, {
+			  Figure.king(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.king(false)
+		  }
+		, {
+			  Figure.bishop(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.bishop(false)
+		  }
+		, {
+			  Figure.knight(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.knight(false)
+		  }
+		, {
+			  Figure.rook(true)
+			, Figure.pawn(true)
+			, null
+			, null
+			, null
+			, null
+			, Figure.pawn(false)
+			, Figure.rook(false)
+		  }
+		};
 	
 	private int king_x_w = 4;
 	private int king_y_w = 0;
@@ -107,11 +165,11 @@ public final class Board
 		Add a possible move to the current move frame and unset its selected move.
 	*/
 	protected void moves_add(
-		final int x,
-		final int y,
-		final int X,
-		final int Y,
-		final Figure figure_placed)
+		  final int x
+		, final int y
+		, final int X
+		, final int Y
+		, final Figure figure_placed)
 	{
 		final var successor_frame = moves[moves_frame];
 		moves[successor_frame] = Move.encode_move(this, x, y, X, Y, figure_placed);
@@ -156,11 +214,11 @@ public final class Board
 	}
 	
 	public boolean execute(
-		final int x,
-		final int y,
-		final int X,
-		final int Y,
-		final Figure figure_placed)
+		  final int x
+		, final int y
+		, final int X
+		, final int Y
+		, final Figure figure_placed)
 	{
 		final var moves_end = moves[moves_frame];
 		for (var i = moves_frame + 3; i < moves_end; i++)

@@ -117,11 +117,14 @@ public final class AboutFrame extends JFrame
 		
 		final var tab_dimension = new Dimension(tab_x_size, tab_y_size);
 		final var contact_row_dimension = new Dimension(
-			contact_row_x_size, contact_row_y_size);
+			  contact_row_x_size
+			, contact_row_y_size);
 		final var contact_row_label_dimension = new Dimension(
-			(int)Math.floor(0.3f * contact_row_x_size), contact_row_y_size);
+			  (int)Math.floor(0.3f * contact_row_x_size)
+			, contact_row_y_size);
 		final var contact_row_field_dimension = new Dimension(
-			(int)Math.floor(0.7f * contact_row_x_size), contact_row_y_size);
+			  (int)Math.floor(0.7f * contact_row_x_size)
+			, contact_row_y_size);
 		
 		// Header:
 		final var header_1 = new JLabel(pmchess.pmChess.about[0]);
@@ -175,8 +178,8 @@ public final class AboutFrame extends JFrame
 		
 		final var licenses_scroll_pane = new JScrollPane(licenses_text_area);
 		final var license_scroll_pane_dimension = new Dimension(
-			licenses_scroll_pane_x_size,
-			licenses_scroll_pane_y_size);
+			  licenses_scroll_pane_x_size
+			, licenses_scroll_pane_y_size);
 		licenses_scroll_pane.setMaximumSize(license_scroll_pane_dimension);
 		licenses_scroll_pane.setMinimumSize(license_scroll_pane_dimension);
 		licenses_scroll_pane.setPreferredSize(license_scroll_pane_dimension);
@@ -188,7 +191,8 @@ public final class AboutFrame extends JFrame
 		final var licenses_open_sans_button = new JToggleButton("Open Sans", false);
 		final var licenses_chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
-		licenses_pmChess_button.addActionListener(new ActionListener()
+		licenses_pmChess_button.addActionListener(
+			new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
@@ -199,7 +203,8 @@ public final class AboutFrame extends JFrame
 						pmchess.pmChess.pmChess_license);
 				}
 			});
-		licenses_open_sans_button.addActionListener(new ActionListener()
+		licenses_open_sans_button.addActionListener(
+			new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
@@ -210,7 +215,8 @@ public final class AboutFrame extends JFrame
 						pmchess.pmChess.open_sans_license);
 				}
 			});
-		licenses_chess_merida_unicode_button.addActionListener(new ActionListener()
+		licenses_chess_merida_unicode_button.addActionListener(
+			new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
@@ -224,8 +230,8 @@ public final class AboutFrame extends JFrame
 		
 		final var licenses_button_panel = new JPanel();
 		final var licenses_button_panel_dimension = new Dimension(
-			licenses_button_panel_x_size,
-			licenses_button_panel_y_size);
+			  licenses_button_panel_x_size
+			, licenses_button_panel_y_size);
 		licenses_button_panel.setMaximumSize(licenses_button_panel_dimension);
 		licenses_button_panel.setMinimumSize(licenses_button_panel_dimension);
 		licenses_button_panel.setPreferredSize(licenses_button_panel_dimension);
@@ -267,8 +273,8 @@ public final class AboutFrame extends JFrame
 		final var contact_description_scroll_pane =
 			new JScrollPane(contact_description_text_area);
 		final var contact_description_scroll_pane_dimension = new Dimension(
-			contact_description_scroll_pane_x_size,
-			contact_description_scroll_pane_y_size);
+			  contact_description_scroll_pane_x_size
+			, contact_description_scroll_pane_y_size);
 		contact_description_scroll_pane.setMaximumSize(contact_description_scroll_pane_dimension);
 		contact_description_scroll_pane.setMinimumSize(contact_description_scroll_pane_dimension);
 		contact_description_scroll_pane.setPreferredSize(contact_description_scroll_pane_dimension);
@@ -281,13 +287,13 @@ public final class AboutFrame extends JFrame
 		contact_subject_label.setMinimumSize(contact_row_label_dimension);
 		contact_subject_label.setPreferredSize(contact_row_label_dimension);
 		final var contact_subject_combo_box = new JComboBox<>(new String[]{
-			"Please select subject\u2026",
-			"chess logic error (rule violation)",
-			"bug report",
-			"computer player issues (bad play)",
-			"user interface proposal",
-			"enhancement proposal",
-			"general feedback"});
+			  "Please select subject\u2026"
+			, "chess logic error (rule violation)"
+			, "bug report"
+			, "computer player issues (bad play)"
+			, "user interface proposal"
+			, "enhancement proposal"
+			, "general feedback"});
 		contact_subject_combo_box.setMaximumSize(contact_row_field_dimension);
 		contact_subject_combo_box.setMinimumSize(contact_row_field_dimension);
 		contact_subject_combo_box.setPreferredSize(contact_row_field_dimension);
@@ -308,9 +314,9 @@ public final class AboutFrame extends JFrame
 		contact_permission_label.setMinimumSize(contact_row_label_dimension);
 		contact_permission_label.setPreferredSize(contact_row_label_dimension);
 		final var contact_permission_combo_box = new JComboBox<>(new String[]{
-			"Please decide whether you give us quote permission\u2026",
-			"REJECTED (no permission to quote mail)",
-			"GRANTED (mail can be publicly quoted)"});
+			  "Please decide whether you give us quote permission\u2026"
+			, "REJECTED (no permission to quote mail)"
+			, "GRANTED (mail can be publicly quoted)"});
 		contact_permission_combo_box.setMaximumSize(contact_row_field_dimension);
 		contact_permission_combo_box.setMinimumSize(contact_row_field_dimension);
 		contact_permission_combo_box.setPreferredSize(contact_row_field_dimension);
@@ -347,8 +353,8 @@ public final class AboutFrame extends JFrame
 		
 		final var contact_rows_panel = new JPanel();
 		final var contact_rows_dimension = new Dimension(
-			contact_rows_x_size,
-			contact_rows_y_size);
+			  contact_rows_x_size
+			, contact_rows_y_size);
 		contact_rows_panel.setMaximumSize(contact_rows_dimension);
 		contact_rows_panel.setMinimumSize(contact_rows_dimension);
 		contact_rows_panel.setPreferredSize(contact_rows_dimension);
@@ -370,8 +376,8 @@ public final class AboutFrame extends JFrame
 		
 		final var contact_message_scroll_pane = new JScrollPane(contact_message_text_area);
 		final var contact_message_scroll_pane_dimension = new Dimension(
-			contact_message_scroll_pane_x_size,
-			contact_message_scroll_pane_y_size);
+			  contact_message_scroll_pane_x_size
+			, contact_message_scroll_pane_y_size);
 		contact_message_scroll_pane.setMaximumSize(contact_message_scroll_pane_dimension);
 		contact_message_scroll_pane.setMinimumSize(contact_message_scroll_pane_dimension);
 		contact_message_scroll_pane.setPreferredSize(contact_message_scroll_pane_dimension);
@@ -381,13 +387,14 @@ public final class AboutFrame extends JFrame
 		
 		final var contact_send_button = new JButton("send e-mail");
 		final var contact_send_button_dimension = new Dimension(
-			contact_send_button_x_size,
-			contact_send_button_y_size);
+			  contact_send_button_x_size
+			, contact_send_button_y_size);
 		contact_send_button.setMaximumSize(contact_send_button_dimension);
 		contact_send_button.setMinimumSize(contact_send_button_dimension);
 		contact_send_button.setPreferredSize(contact_send_button_dimension);
 		contact_send_button.setAlignmentX(Component.CENTER_ALIGNMENT);
-		contact_send_button.addActionListener(new ActionListener()
+		contact_send_button.addActionListener(
+			new ActionListener()
 			{
 				@Override public void actionPerformed(final ActionEvent event)
 				{
@@ -402,10 +409,10 @@ public final class AboutFrame extends JFrame
 						|| name.length() < 1)
 					{
 						JOptionPane.showMessageDialog(
-							AboutFrame.this,
-							"Please select subject, quote permission and name.",
-							"Sending mail aborted",
-							JOptionPane.ERROR_MESSAGE);
+							  AboutFrame.this
+							, "Please select subject, quote permission and name."
+							, "Sending mail aborted"
+							, JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					final var subject =
@@ -438,10 +445,10 @@ public final class AboutFrame extends JFrame
 						| SecurityException exception)
 					{
 						JOptionPane.showMessageDialog(
-							AboutFrame.this,
-							"Failed to open default e-mail client.",
-							"Sending mail aborted",
-							JOptionPane.ERROR_MESSAGE);
+							  AboutFrame.this
+							, "Failed to open default e-mail client."
+							, "Sending mail aborted"
+							, JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				
@@ -453,15 +460,15 @@ public final class AboutFrame extends JFrame
 			});
 		final var contact_send_button_panel = new JPanel();
 		final var contact_send_button_panel_dimension = new Dimension(
-			contact_send_button_panel_x_size,
-			contact_send_button_panel_y_size);
+			  contact_send_button_panel_x_size
+			, contact_send_button_panel_y_size);
 		contact_send_button_panel.setMaximumSize(contact_send_button_panel_dimension);
 		contact_send_button_panel.setMinimumSize(contact_send_button_panel_dimension);
 		contact_send_button_panel.setPreferredSize(contact_send_button_panel_dimension);
 		contact_send_button_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		contact_send_button_panel.setLayout(new BoxLayout(
-			contact_send_button_panel,
-			BoxLayout.Y_AXIS));
+			  contact_send_button_panel
+			, BoxLayout.Y_AXIS));
 		contact_send_button_panel.add(Box.createVerticalGlue());
 		contact_send_button_panel.add(contact_send_button);
 		
@@ -512,8 +519,8 @@ public final class AboutFrame extends JFrame
 		setResizable(false);
 		final var screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation(
-			(int)Math.ceil((screen_size.width - getSize().width) / 2.0f),
-			(int)Math.ceil((screen_size.height - getSize().height) / 2.0f));
+			  (int)Math.ceil((screen_size.width - getSize().width) / 2.0f)
+			, (int)Math.ceil((screen_size.height - getSize().height) / 2.0f));
 		setVisible(false);
 		
 		// Setup user-input processing:
@@ -521,24 +528,24 @@ public final class AboutFrame extends JFrame
 		final var input_map = root_pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		final var action_map = root_pane.getActionMap();
 		input_map.put(
-			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-			"Close");
+			  KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
+			, "Close");
 		action_map.put(
-			"Close",
-			new AbstractAction()
-			{
+			  "Close"
+			, new AbstractAction()
+			  {
 				@Override public void actionPerformed(ActionEvent event)
 				{
 					AboutFrame.this.setVisible(false);
 				}
-			});
+			  });
 		input_map.put(
-			KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0),
-			"ScrollUp");
+			  KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0)
+			, "ScrollUp");
 		action_map.put(
-			"ScrollUp",
-			new AbstractAction()
-			{
+			  "ScrollUp"
+			, new AbstractAction()
+			 {
 				@Override public void actionPerformed(ActionEvent event)
 				{
 					final JScrollBar bar;
@@ -561,14 +568,14 @@ public final class AboutFrame extends JFrame
 						? bar.getValue() - 42
 						: 0);
 				}
-			});
+			  });
 		input_map.put(
-			KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0),
-			"ScrollDown");
+			  KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0)
+			, "ScrollDown");
 		action_map.put(
-			"ScrollDown",
-			new AbstractAction()
-			{
+			  "ScrollDown"
+			, new AbstractAction()
+			  {
 				@Override public void actionPerformed(ActionEvent event)
 				{
 					final JScrollBar bar;
@@ -591,7 +598,7 @@ public final class AboutFrame extends JFrame
 						? bar.getMaximum()
 						: bar.getValue() + 42);
 				}
-			});
+			  });
 	}
 	
 	@Override public void paint(final Graphics graphics)

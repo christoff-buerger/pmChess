@@ -42,12 +42,12 @@ public final class Move
 		+---------------------------------------+
 	*/
 	public static int encode_move(
-		final Board board,
-		final int x,
-		final int y,
-		final int X,
-		final int Y,
-		final Figure figure_placed)
+		  final Board board
+		, final int x
+		, final int y
+		, final int X
+		, final int Y
+		, final Figure figure_placed)
 	{
 		final var figure_moved = board.figure(x, y);
 		final var figure_destination = board.figure(X, Y);

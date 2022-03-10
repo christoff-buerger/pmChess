@@ -69,8 +69,8 @@ public final class Resources
 		try
 		{
 			final var loaded_font = Font.createFont(
-				Font.TRUETYPE_FONT,
-				Resources.class.getResourceAsStream("fonts/" + font_name));
+				  Font.TRUETYPE_FONT
+				, Resources.class.getResourceAsStream("fonts/" + font_name));
 			final var environment =
 				GraphicsEnvironment.getLocalGraphicsEnvironment();
 			for (final var existing_font : environment.getAllFonts())
@@ -108,26 +108,26 @@ public final class Resources
 		
 		// Setup general and image rendering:
 		g2d.setRenderingHint(
-			RenderingHints.KEY_ANTIALIASING,
-			RenderingHints.VALUE_ANTIALIAS_ON);
+			  RenderingHints.KEY_ANTIALIASING
+			, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setRenderingHint(
-			RenderingHints.KEY_ALPHA_INTERPOLATION,
-			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+			  RenderingHints.KEY_ALPHA_INTERPOLATION
+			, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 		g2d.setRenderingHint(
-			RenderingHints.KEY_COLOR_RENDERING,
-			RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+			  RenderingHints.KEY_COLOR_RENDERING
+			, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		g2d.setRenderingHint(
-			RenderingHints.KEY_DITHERING,
-			RenderingHints.VALUE_DITHER_ENABLE);
+			  RenderingHints.KEY_DITHERING
+			, RenderingHints.VALUE_DITHER_ENABLE);
 		g2d.setRenderingHint(
-			RenderingHints.KEY_INTERPOLATION,
-			RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			  RenderingHints.KEY_INTERPOLATION
+			, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		g2d.setRenderingHint(
-			RenderingHints.KEY_RENDERING,
-			RenderingHints.VALUE_RENDER_QUALITY);
+			  RenderingHints.KEY_RENDERING
+			, RenderingHints.VALUE_RENDER_QUALITY);
 		g2d.setRenderingHint(
-			RenderingHints.KEY_STROKE_CONTROL,
-			RenderingHints.VALUE_STROKE_NORMALIZE);
+			  RenderingHints.KEY_STROKE_CONTROL
+			, RenderingHints.VALUE_STROKE_NORMALIZE);
 		
 		// Setup text font rendering:
 		final var desktophints = (Map<?, ?>)Toolkit.getDefaultToolkit()
@@ -147,29 +147,29 @@ public final class Resources
 	
 	private static final FigurePresentation[] figures =
 		{
-			new FigurePresentation(
-				Figure.pawn(true), "\u2659", ""),
-			new FigurePresentation(
-				Figure.rook(true), "\u2656", "R"),
-			new FigurePresentation(
-				Figure.knight(true), "\u2658", "N"),
-			new FigurePresentation(
-				Figure.bishop(true), "\u2657", "B"),
-			new FigurePresentation(
-				Figure.queen(true), "\u2655", "Q"),
-			new FigurePresentation(
-				Figure.king(true), "\u2654", "K"),
-			new FigurePresentation(
-				Figure.pawn(false), "\u265F", ""),
-			new FigurePresentation(
-				Figure.rook(false), "\u265C", "R"),
-			new FigurePresentation(
-				Figure.knight(false), "\u265E", "N"),
-			new FigurePresentation(
-				Figure.bishop(false), "\u265D", "B"),
-			new FigurePresentation(
-				Figure.queen(false), "\u265B", "Q"),
-			new FigurePresentation(
+			  new FigurePresentation(
+				Figure.pawn(true), "\u2659", "")
+			, new FigurePresentation(
+				Figure.rook(true), "\u2656", "R")
+			, new FigurePresentation(
+				Figure.knight(true), "\u2658", "N")
+			, new FigurePresentation(
+				Figure.bishop(true), "\u2657", "B")
+			, new FigurePresentation(
+				Figure.queen(true), "\u2655", "Q")
+			, new FigurePresentation(
+				Figure.king(true), "\u2654", "K")
+			, new FigurePresentation(
+				Figure.pawn(false), "\u265F", "")
+			, new FigurePresentation(
+				Figure.rook(false), "\u265C", "R")
+			, new FigurePresentation(
+				Figure.knight(false), "\u265E", "N")
+			, new FigurePresentation(
+				Figure.bishop(false), "\u265D", "B")
+			, new FigurePresentation(
+				Figure.queen(false), "\u265B", "Q")
+			, new FigurePresentation(
 				Figure.king(false), "\u265A", "K")
 		};
 	
@@ -181,9 +181,9 @@ public final class Resources
 		protected static final Font font = load_font("Chess-Merida-Unicode.ttf", 1.2f);
 		
 		private FigurePresentation(
-			final Figure figure,
-			final String unicode,
-			final String ascii)
+			  final Figure figure
+			, final String unicode
+			, final String ascii)
 		{
 			this.figure = figure;
 			this.unicode = unicode;

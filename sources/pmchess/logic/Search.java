@@ -25,11 +25,11 @@ public final class Search
 			if (board.execute(move))
 			{
 				final var score = -alpha_beta_nega_max(
-					board,
-					-beta,
-					-alpha,
-					Search.search_depth,
-					evaluator);
+					  board
+					, -beta
+					, -alpha
+					, Search.search_depth
+					, evaluator);
 				if (score > alpha)
 				{
 					alpha = score;
@@ -43,11 +43,11 @@ public final class Search
 	}
 	
 	private int alpha_beta_nega_max(
-		final Board board,
-		int alpha,
-		final int beta,
-		final int depth,
-		final Evaluator evaluator)
+		  final Board board
+		, int alpha
+		, final int beta
+		, final int depth
+		, final Evaluator evaluator)
 	{
 		if (depth == 0)
 		{
@@ -62,11 +62,11 @@ public final class Search
 			if (board.execute(move))
 			{
 				result = -alpha_beta_nega_max(
-					board,
-					-beta,
-					-alpha,
-					depth - 1,
-					evaluator);
+					  board
+					, -beta
+					, -alpha
+					, depth - 1
+					, evaluator);
 				board.undo();
 				any_move_done = true;
 			}
