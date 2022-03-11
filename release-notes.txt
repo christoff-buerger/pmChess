@@ -4,6 +4,8 @@ terms of the MIT license (X11 license) which accompanies this distribution.
 Version 2.0.0 (in development):
   - Added native distributions for macOS and Windows. The distributions are
     self-contained and do not require a locally installed 'Java SE Platform'.
+  - Added mouse support, besides the existing keyboard-based user interface,
+    for selecting and moving figures.
   - Added support for en passant captures.
   - Added support for selecting a figure besides a queen when promoting pawns.
   - Added game history with algebraic notation as specified by FIDE. The history
