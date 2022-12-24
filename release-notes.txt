@@ -21,7 +21,7 @@ Version 2.0.0 (in development):
     bugs and give feedback. The form is also directly reachable via a new
     "Contact and feedback"-entry of the "Help"-menu.
   - Added taskbar icon and application logo.
-  - Portable jar-file distribution now requires the 'Java SE 17 Platform'.
+  - Portable jar-file distribution now requires the 'Java SE 19 Platform'.
 
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a
