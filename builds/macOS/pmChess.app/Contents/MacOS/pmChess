@@ -5,6 +5,6 @@
 # 
 # Author: Christoff Bürger
 
-script_directory="$(cd "$(dirname "$0")"; pwd)"
-cd "$script_directory/../Resources/pmChess/bin"
-./pmChess $@
+script_directory="$( cd "$( dirname "$0" )" || exit; pwd )"
+cd "$script_directory/../Resources/pmChess/bin" || exit
+./pmChess "$@"
