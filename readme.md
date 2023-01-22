@@ -12,10 +12,9 @@ Of course, _pmChess_ cannot compete with professional chess programs; after all,
 
 # Rule limitations
 
-_pmChess_ implements the official rules of [_FIDE_](https://www.fide.com/) (_Fédération Internationale des Échecs_) except for the following draw rules:
- 1. **3- and 5-repetition rules:** The same position occurs 3/5 times (3 times: claimable draw; 5 times: automatic draw).
- 2. **50- and 75-moves rules:** The last 50/75 successive moves made by both players contain no capture or pawn move (50-moves: claimable draw; 75-moves: automatic draw).
- 3. **Insufficient material:** Neither player has a theoretical possibility to checkmate the opponent.
+_pmChess_ implements the official chess rules of the _International Chess Federation_ ([FIDE](https://www.fide.com/), _Fédération Internationale des Échecs_) -- the [_FIDE Laws of Chess taking effect from 1 January 2023_](https://handbook.fide.com/chapter/E012023) -- except for the following rules:
+ 1. **Dead position:** It is not checked if the game is a draw because neither player can mate the opponent’s king with any series of legal moves.
+ 2. **Chessclock:** Any kind of player clocks limiting decision time and/or game length are not supported.
 
 # Graphical user interface
 
@@ -23,11 +22,11 @@ _pmChess_ implements the official rules of [_FIDE_](https://www.fide.com/) (_Fé
 
 Figures are moved on the _Chessboard_ pane using the keyboard or mouse. When using the keyboard, a blue rectangle marks the cursor position. A red rectangle marks the currently selected figure to move. The arrow keys are used to move the cursor. Space is used to select a figure or move the currently selected figure to the cursor's position. When using the mouse, first left-click the figure to move; then left-click the tile to move to. Of course, the respective move must be allowed (otherwise it is just ignored). The last move is highlighted by drawing the involved chessboard tiles green.
 
-The _Game status_ tab summarizes the current player (background color of the status message), turn number, game status (checkmate, check, draw, stalemate, capitulation or normal move) and castling possibilities considering previous moves (checkboxes for left and right castling of each player). The castling summary shows only whether left or right castling are impossible due to previous king or rook movements; if checked, previous movements are not prohibiting castling. The promotion-list is used to select the figure to promote to in case of pawn promotion. A bulb icon at the end of the status message signals that the computer is busy deciding its move.
+The _Game status_ tab summarizes the current player (background color of the status message), turn number, game status (checkmate, check, draw, stalemate, resign or normal move), castling possibilities considering previous moves (checkboxes for queenside and kingside castling of each player) and how close the game is to a claimable or automatic draw. The castling summary shows only whether queenside or kingside castling are impossible due to previous king or rook movements; if checked, previous movements are not prohibiting castling. The promotion-list is used to select the figure to promote to in case of pawn promotion. The _Claim draw_ button enables to claim a draw (either because the threefold repetition or 50-move rule are satisfied at the beginning of a player's turn or because they will be with his move). A bulb icon at the end of the status message signals that the computer is busy deciding its move.
 
-The _Game history_ pane to the right can be used to undo moves. It is written according to the algebraic notation specified by FIDE (cf. the [_FIDE Laws of Chess taking effect from 1 January 2018_](https://handbook.fide.com/chapter/E012018), _Appendix C. Algebraic notation_). To reset the game to a previous position, select a move using the up- and down-keys or mouse and press space. The game will be reset to the state resulting after executing the selected move.
+The _Game history_ pane to the right can be used to undo moves. It is written according to the algebraic notation specified by FIDE (cf. the [_FIDE Laws of Chess taking effect from 1 January 2023_](https://handbook.fide.com/chapter/E012023), _Appendix C. Algebraic notation_). To reset the game to a previous position, select a move using the up- and down-keys or mouse and press space. The game will be reset to the state resulting after executing the selected move.
 
-The tab-key is used to switch between _Chessboard_, _Game status_ and its promotion-list and _Game history_.
+The tab-key is used to switch between _Chessboard_, _Game status_ and its promotion-list and _Claim draw_ button and _Game history_.
 
 # Releases
 

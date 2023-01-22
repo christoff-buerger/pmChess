@@ -15,14 +15,15 @@ public final class Move
 		
 	/*
 		+---------------------------------------+
-		| 28 bit move encoding                  |
+		| 29 bit move encoding                  |
 		+---------------------------------------+
-		| 32 - 29 | unused                      |
+		| 32 - 30 | unused                      |
+		| 29      | draw claim                  |
 		| 28 - 25 | castling permission changes |
-		|         | black: 28 - 27              |
-		|         | white: 26 - 25              |
-		|         | right: 28 & 26              |
-		|         | left:  27 & 25              |
+		|         | Black: 28 - 27              |
+		|         | White: 26 - 25              |
+		|         | kingside: 28 & 26           |
+		|         | queenside:  27 & 25         |
 		| 24 - 21 | figure placed               |
 		|         | (needed for pawn promotion) |
 		| 20 - 17 | figure at destination       |
@@ -33,15 +34,15 @@ public final class Move
 		|  3 -  1 | x-coordinate origin         |
 		+---------------------------------------+
 		| Castling: King moves with |X - x| > 1 |
-		|           right if X - x = 2          |
-		|           left  if x - X = 2          |
+		|           kingside  if X - x = 2      |
+		|           queenside if x - X = 2      |
 		+---------------------------------------+
 		| En passant: pawn capture (X != x)     |
 		|           without a figure at the     |
 		|           destination                 |
 		+---------------------------------------+
 	*/
-	public static int encode_move(
+	protected static int encode_move(
 		  final Board board
 		, final int x
 		, final int y
@@ -115,6 +116,27 @@ public final class Move
 		return encoded_move;
 	}
 	
+	/*
+		Set 'draw claim' bit of given move.
+	*/
+	protected static int encode_draw_claim(final int move)
+	{
+		return move | 0x20000000;
+	}
+	
+	/*
+		Draw claim without moving any piece (i.e., for current position).
+	*/
+	protected static int encode_moveless_draw_claim()
+	{
+		return 0xFFFFFFFF;
+	}
+	
+	public static boolean is_moveless_draw_claim(final int move)
+	{
+		return move == 0xFFFFFFFF;
+	}
+	
 	public static int x(final int move)
 	{
 		return move & 0x7;
@@ -151,10 +173,15 @@ public final class Move
 	}
 	
 	/*
-		Return 4 bits representing castling changes (cf. encodeMove).
+		Return 4 bits representing castling changes (cf. 'encode_move').
 	*/
 	public static int castling_changes(final int move)
 	{
-		return (move >> 24); // Castling bits are highest of encoding => just shift.
+		return (move >> 24) & 0xF;
+	}
+	
+	public static boolean draw_claim(final int move)
+	{
+		return (move & 0x20000000) != 0;
 	}
 }

@@ -9,7 +9,20 @@ package pmchess.logic;
 
 public final class Board
 {
-	public static enum GameStatus {Normal, Stalemate, Check, Checkmate};
+	public static enum GameStatus {
+		  Normal
+		, Check
+		, Checkmate
+		, Stalemate
+		, Draw
+	};
+	public static enum DrawStatus {
+		  NoDrawPotential
+		, AutomaticRepetition
+		, AutomaticMoveRule
+		, ClaimedRepetition
+		, ClaimedMoveRule
+	};
 	
 	private final Figure[][] board =
 		{
@@ -123,12 +136,15 @@ public final class Board
 		| (single array element)| frame is the first), otherwise index pointing to the    |
 		|			| beginning of the previous frame.                        |
 		+-----------------------+---------------------------------------------------------+
-		| Move selected		| 0, if no move is selected (i.e., the frame is the last),|
-		| (single array element)| otherwise index pointing to one of the frame's possible |
-		|			| moves.                                                  |
+		| Move selected		| 0, if no move is selected (i.e., the frame is the last).|
+		| (single array element)| Otherwise one of the frame's possible moves, potentially|
+		|			| with its 'draw claim' bit set, or                       |
+		|                       | 'Move.encode_moveless_draw_claim()' denoting a draw     |
+                |                       | claim for the current position without moving any piece.|
 		+-----------------------+---------------------------------------------------------+
 		| Possible moves	| Arbitrary many. The end is denoted by the successor     |
-		| (many array elements)	| frame index.                                            |
+		| (many array elements)	| frame index. IMPORTANT: Just the moves as such are      |
+		|                       | stored; their 'draw claim' bit is never set             |
 		+-----------------------+---------------------------------------------------------+
 		
 		The beginning of the current frame is indexed by the 'moves_frame' field.
@@ -162,7 +178,7 @@ public final class Board
 	}
 	
 	/*
-		Add a possible move to the current move frame and unset its selected move.
+		Add a possible move to the current move frame.
 	*/
 	protected void moves_add(
 		  final int x
@@ -174,7 +190,6 @@ public final class Board
 		final var successor_frame = moves[moves_frame];
 		moves[successor_frame] = Move.encode_move(this, x, y, X, Y, figure_placed);
 		moves[moves_frame] = successor_frame + 1;
-//		moves[moves_frame + 2] = 0;
 	}
 	
 	protected void moves_add(final int x, final int y, final int X, final int Y)
@@ -183,7 +198,7 @@ public final class Board
 	}
 	
 	/*
-		Return the index of the move selected for execution or 0 if no move is selected.
+		Return the move selected for execution or 0 if no move is selected.
 		The selected move of the current move frame is automatically set whenever one of
 		its possible moves is SUCCESSFULLY executed via the 'execute' function; it is unset
 		by 'undo'.
@@ -213,95 +228,128 @@ public final class Board
 		return index < moves[moves_frame] & index > moves_frame + 2 ? moves[index] : 0;
 	}
 	
+	/*
+		Execute given move if, and only if, it is valid and the game is not already finished.
+		Execution function for the GUI.
+	*/
 	public boolean execute(
 		  final int x
 		, final int y
 		, final int X
 		, final int Y
-		, final Figure figure_placed)
+		, final Figure figure_placed
+		, final boolean draw_claim)
 	{
-		final var moves_end = moves[moves_frame];
-		for (var i = moves_frame + 3; i < moves_end; i++)
+		final var game_status = status();
+		if (game_status == GameStatus.Normal || game_status == GameStatus.Check)
 		{
-			final var move = moves[i];
-			if (Move.x(move) == x && Move.y(move) == y
-				&& Move.X(move) == X && Move.Y(move) == Y
-				&& Move.figure_placed(move) == figure_placed)
+			final var moves_end = moves[moves_frame];
+			for (var i = moves_frame + 3; i < moves_end; i++)
 			{
-				return execute(move);
+				final var move = moves[i];
+				if (Move.x(move) == x && Move.y(move) == y
+					&& Move.X(move) == X && Move.Y(move) == Y
+					&& Move.figure_placed(move) == figure_placed)
+				{
+					return execute(draw_claim
+						? Move.encode_draw_claim(move)
+						: move);
+				}
 			}
 		}
 		return false;
 	}
 	
+	/*
+		Claim a draw without moving any piece if, and only if, such claim is valid.
+		Execution function for GUI.
+	*/
+	public boolean execute_moveless_draw_claim()
+	{
+		final var game_status = status();
+		return (game_status == GameStatus.Normal || game_status == GameStatus.Check)
+			&& (draw_move_rules_status() >= 50 || draw_repetition_status() >= 3)
+			&& execute(Move.encode_moveless_draw_claim());
+	}
+	
+	/*
+		Execute the given encoded move if, and only if, it does not threaten the own king.
+		The current game status is NOT checked to avoid the high costs of its computation;
+		hence, moves are executed even if the game is already drawn and draw claims are
+		not checked for validity.
+		For internal use by game logic only (e.g., 'Search'), never the GUI.
+	*/
 	protected boolean execute(final int move)
 	{
 		// Update cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
-		final var x = Move.x(move);
-		final var y = Move.y(move);
-		final var X = Move.X(move);
-		final var Y = Move.Y(move);
-		final var figure_placed = Move.figure_placed(move);
-		board[x][y] = null;
-		board[X][Y] = figure_placed;
-		if (figure_placed.is_king())
+		if (!Move.is_moveless_draw_claim(move))
 		{
-			if (player)
+			final var x = Move.x(move);
+			final var y = Move.y(move);
+			final var X = Move.X(move);
+			final var Y = Move.Y(move);
+			final var figure_placed = Move.figure_placed(move);
+			board[x][y] = null;
+			board[X][Y] = figure_placed;
+			if (figure_placed.is_king())
 			{
-				king_x_w = X;
-				king_y_w = Y;
-			}
-			else
-			{
-				king_x_b = X;
-				king_y_b = Y;
-			}
-			if (X == x - 2)
-			{ // Castling left:
-				board[3][Y] = board[0][Y];
-				board[0][Y] = null;
-				if (figure_placed.owner)
+				if (player)
 				{
-					castling_done_w = true;
+					king_x_w = X;
+					king_y_w = Y;
 				}
 				else
 				{
-					castling_done_b = true;
+					king_x_b = X;
+					king_y_b = Y;
+				}
+				if (X == x - 2)
+				{ // Castling queenside:
+					board[3][Y] = board[0][Y];
+					board[0][Y] = null;
+					if (figure_placed.owner)
+					{
+						castling_done_w = true;
+					}
+					else
+					{
+						castling_done_b = true;
+					}
+				}
+				else if (X == x + 2)
+				{ // Castling kingside:
+					board[5][Y] = board[7][Y];
+					board[7][Y] = null;
+					if (figure_placed.owner)
+					{
+						castling_done_w = true;
+					}
+					else
+					{
+						castling_done_b = true;
+					}
 				}
 			}
-			else if (X == x + 2)
-			{ // Castling right:
-				board[5][Y] = board[7][Y];
-				board[7][Y] = null;
-				if (figure_placed.owner)
-				{
-					castling_done_w = true;
-				}
-				else
-				{
-					castling_done_b = true;
-				}
+			else if (figure_placed.is_pawn()
+				&& X != x
+				&& Move.figure_destination(move) == null)
+			{
+				board[X][y] = null; // perform en passant capture
 			}
+			castlings_allowed ^= Move.castling_changes(move);
 		}
-		else if (figure_placed.is_pawn()
-			&& X != x
-			&& Move.figure_destination(move) == null)
-		{
-			board[X][y] = null; // perform en passant capture
-		}
-		castlings_allowed ^= Move.castling_changes(move);
 		player = !player;
 		turn++;
 		// Update game history (push new current moves frame and compute possible moves):
-		moves[moves_frame + 2] = move; // TODO: push move INDEX, not the move, as selected.
+		moves[moves_frame + 2] = move;
 		final var successor_frame = moves[moves_frame];
 		moves[successor_frame] = successor_frame + 3;
 		moves[successor_frame + 1] = moves_frame;
 		moves[successor_frame + 2] = 0;
 		moves_frame = successor_frame;
-		if (check(!player))
-		{ // Undo all changes if move was invalid (threatens own king):
+		if (!Move.is_moveless_draw_claim(move) && check(!player))
+		{ // Undo all changes if move threatens own king:
 			undo();
 			return false;
 		}
@@ -317,65 +365,83 @@ public final class Board
 		}
 		// Restore game history (pop current moves frame and reset selected move):
 		moves_frame = moves[moves_frame + 1];
-		final var move = moves[moves_frame + 2];// TODO: fix when moves_selected contains index not move
+		final var move = moves[moves_frame + 2];
 		moves[moves_frame + 2] = 0;
 		// Restore cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
-		final var x = Move.x(move);
-		final var y = Move.y(move);
-		final var X = Move.X(move);
-		final var Y = Move.Y(move);
-		final var figure_moved = Move.figure_moved(move);
-		final var figure_destination = Move.figure_destination(move);
-		board[x][y] = figure_moved;
-		board[X][Y] = figure_destination;
-		if (figure_moved.is_king())
+		if (!Move.is_moveless_draw_claim(move))
 		{
-			if (player)
+			final var x = Move.x(move);
+			final var y = Move.y(move);
+			final var X = Move.X(move);
+			final var Y = Move.Y(move);
+			final var figure_moved = Move.figure_moved(move);
+			final var figure_destination = Move.figure_destination(move);
+			board[x][y] = figure_moved;
+			board[X][Y] = figure_destination;
+			if (figure_moved.is_king())
 			{
-				king_x_b = x;
-				king_y_b = y;
-			}
-			else
-			{
-				king_x_w = x;
-				king_y_w = y;
-			}
-			if (X == x - 2)
-			{ // Castling left:
-				board[0][Y] = board[3][Y];
-				board[3][Y] = null;
-				if (figure_moved.owner)
+				if (player)
 				{
-					castling_done_w = false;
+					king_x_b = x;
+					king_y_b = y;
 				}
 				else
 				{
-					castling_done_b = false;
+					king_x_w = x;
+					king_y_w = y;
+				}
+				if (X == x - 2)
+				{ // Castling queenside:
+					board[0][Y] = board[3][Y];
+					board[3][Y] = null;
+					if (figure_moved.owner)
+					{
+						castling_done_w = false;
+					}
+					else
+					{
+						castling_done_b = false;
+					}
+				}
+				else if (X == x + 2)
+				{ // Castling kingside:
+					board[7][Y] = board[5][Y];
+					board[5][Y] = null;
+					if (figure_moved.owner)
+					{
+						castling_done_w = false;
+					}
+					else
+					{
+						castling_done_b = false;
+					}
 				}
 			}
-			else if (X == x + 2)
-			{ // Castling right:
-				board[7][Y] = board[5][Y];
-				board[5][Y] = null;
-				if (figure_moved.owner)
-				{
-					castling_done_w = false;
-				}
-				else
-				{
-					castling_done_b = false;
-				}
+			else if (figure_moved.is_pawn() && X != x && figure_destination == null)
+			{ // Undo en passant capture:
+				board[X][y] = Figure.pawn(!figure_moved.owner);
 			}
+			castlings_allowed ^= Move.castling_changes(move);
 		}
-		else if (figure_moved.is_pawn() && X != x && figure_destination == null)
-		{ // Undo en passant capture:
-			board[X][y] = Figure.pawn(!figure_moved.owner);
-		}
-		castlings_allowed ^= Move.castling_changes(move);
 		player = !player;
 		turn--;
 		return move;
+	}
+	
+	public int previous_move(final int turn)
+	{
+		if (turn < 1 | turn >= this.turn)
+		{
+			return 0;
+		}
+		var previous_frame = moves_frame;
+		for (var i = this.turn - turn;
+			i-- > 0;
+			previous_frame = moves[previous_frame + 1])
+		{
+		}
+		return moves[previous_frame + 2];
 	}
 	
 	public Figure figure(final int x, final int y)
@@ -383,9 +449,9 @@ public final class Board
 		return board[x][y];
 	}
 	
-	public boolean castling_allowed(final boolean left, final boolean player)
+	public boolean castling_allowed(final boolean queenside, final boolean player)
 	{
-		return ((castlings_allowed >> ((left ? 0 : 1) + (player ? 0 : 2))) & 0x1) != 0;
+		return ((castlings_allowed >> ((queenside ? 0 : 1) + (player ? 0 : 2))) & 0x1) != 0;
 	}
 	
 	public boolean castling_done(final boolean player)
@@ -422,19 +488,51 @@ public final class Board
 		return turn % 2 == 0 ? turn / 2 : (turn / 2) + 1;
 	}
 	
-	public int previous_move(final int turn)
+	/*
+		Number of repeating game positions so far (including current position):
+	*/
+	public int draw_repetition_status()
 	{
-		if (turn < 1 | turn >= this.turn)
+		return 0; // TODO
+	}
+	
+	/*
+		Number of preceding turns without capture or pawn moves (excluding current turn):
+	*/
+	public int draw_move_rules_status()
+	{
+		return 0; // TODO
+	}
+	
+	/*
+		Type and reason for draw, IF the position is a draw; it might still be a checkmate.
+		Only 'status()' does all checks to conclude if the situation indeed is a draw.
+		Hence, this method is only reliable in its answer if 'status() == GameStatus.Draw'.
+	*/
+	public DrawStatus draw_status()
+	{
+		final var moves = draw_move_rules_status();
+		if (moves == 75)
 		{
-			return 0;
+			return DrawStatus.AutomaticMoveRule;
 		}
-		var previous_frame = moves_frame;
-		for (var i = this.turn - turn;
-			i-- > 0;
-			previous_frame = moves[previous_frame + 1])
+		final var repetitions = draw_repetition_status();
+		if (repetitions == 5)
 		{
+			return DrawStatus.AutomaticRepetition;
 		}
-		return moves[previous_frame + 2];
+		if (Move.draw_claim(previous_move(turn - 1)))
+		{
+			if (moves >= 50)
+			{
+				return DrawStatus.ClaimedMoveRule;
+			}
+			if (repetitions >= 3)
+			{
+				return DrawStatus.ClaimedRepetition;
+			}
+		}
+		return DrawStatus.NoDrawPotential;
 	}
 	
 	public GameStatus status()
@@ -442,9 +540,13 @@ public final class Board
 		final var moves_end = moves[moves_frame];
 		for (var i = moves_frame + 3; i < moves_end; i++)
 		{
-			if (execute(/*TODO: just i when move index*/moves[i]))
+			if (execute(moves[i]))
 			{
 				undo();
+				if (draw_status() != DrawStatus.NoDrawPotential)
+				{
+					return GameStatus.Draw;
+				}
 				return check(player) ? GameStatus.Check : GameStatus.Normal;
 			}
 		}
@@ -773,5 +875,5 @@ public final class Board
 		}
 		
 		return false;
-	}	
+	}
 }

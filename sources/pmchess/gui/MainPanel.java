@@ -31,7 +31,7 @@ public final class MainPanel extends JPanel
 	private final Search search = new Search();
 	private final Evaluator evaluator = new Evaluator();
 	
-	private boolean capitulation = false;
+	private boolean player_resigned = false;
 	
 	private boolean computer_w = false;
 	private boolean computer_b = false;
@@ -45,6 +45,8 @@ public final class MainPanel extends JPanel
 	private final BoardPanel board_panel = new BoardPanel();
 	private final GamePanel game_panel = new GamePanel();
 	private final HistoryPanel history_panel = new HistoryPanel();
+	
+	private int invalid_computer_move = 0;
 	
 	protected MainPanel()
 	{
@@ -108,10 +110,7 @@ public final class MainPanel extends JPanel
 		{
 			history_panel.history_data.removeElementAt(
 				history_panel.history_data.size() - 1);
-			selected_figure = null;
-			capitulation = false;
-			board_panel.repaint();
-			game_panel.repaint();
+			player_resigned = false;
 			return true;
 		}
 		return false;
@@ -119,32 +118,57 @@ public final class MainPanel extends JPanel
 	
 	private void run_game()
 	{
+		invalid_computer_move = 0;
+		
+		// Reset all GUI selections of human players:
+		selected_figure = null;
+		game_panel.status_panel.pawn_promotion_list.setSelectedIndex(0);
+		game_panel.status_panel.draw_claim_button.setSelected(false);
+		history_panel.history_list.setSelectedIndex(history_panel.history_data.size() - 1);
+		
+		// Execute computer moves:
 		var game_status = board.status();
 		while (computer_turn()
 			&& (game_status == Board.GameStatus.Normal
 				|| game_status == Board.GameStatus.Check))
 		{
+			// Update GUI:
 			paintImmediately(0, 0, getWidth(), getHeight());
+			// Select and execute move:
 			final var move = search.select_move(board, evaluator);
-			capitulation = move == 0;
-			if (capitulation)
+			player_resigned = move == 0;
+			if (player_resigned)
 			{
 				break;
 			}
-			board.execute(
-				  Move.x(move)
-				, Move.y(move)
-				, Move.X(move)
-				, Move.Y(move)
-				, Move.figure_placed(move));
+			if (!(Move.is_moveless_draw_claim(move)
+				? board.execute_moveless_draw_claim()
+				: board.execute(
+					  Move.x(move)
+					, Move.y(move)
+					, Move.X(move)
+					, Move.Y(move)
+					, Move.figure_placed(move)
+					, Move.draw_claim(move))))
+			{
+				invalid_computer_move = move;
+				computer_w = false;
+				computer_b = false;
+				break;
+			}
 			game_status = board.status();
 			history_panel.history_data.addElement(new PastMove(
 				  board.turn() - 1
 				, move
 				, game_status));
+			// Reset all GUI selections that can be influenced by computer moves:
+			history_panel.history_list.setSelectedIndex(history_panel.history_data.size() - 1);
 		}
+		
+		// Update GUI:
 		board_panel.repaint();
 		game_panel.repaint();
+		history_panel.repaint();
 	}
 	
 	private boolean computer_turn()
@@ -187,13 +211,13 @@ public final class MainPanel extends JPanel
 						, selected_y
 						, cursor_x
 						, cursor_y
-						, figure_placed))
+						, figure_placed
+						, game_panel.status_panel.draw_claim_button.isSelected()))
 					{
 						history_panel.history_data.addElement(new PastMove(
 							  board.turn() - 1
 							, board.previous_move(board.turn() - 1)
 							, board.status()));
-						selected_figure = null;
 						run_game();
 					}
 				}
@@ -229,9 +253,11 @@ public final class MainPanel extends JPanel
 		@Override public void keyPressed(final KeyEvent event)
 		{
 			final var game_status = board.status();
-			if (computer_turn() && !capitulation
+			if (computer_turn()
+				&& !player_resigned
 				&& game_status != Board.GameStatus.Checkmate
-				&& game_status != Board.GameStatus.Stalemate)
+				&& game_status != Board.GameStatus.Stalemate
+				&& game_status != Board.GameStatus.Draw)
 			{
 				return;
 			}
@@ -523,19 +549,25 @@ public final class MainPanel extends JPanel
 			(int)Math.floor(0.5f * castlings_x_size);
 		private final int status_x_size =
 			castlings_x_size;
+		
 		private final int status_y_size =
 			text_height + 2 * border_size;
 		private final int castling_y_size =
-			(int)(2 * text_height + 3.5f * border_size);
+			(int)(text_height + pawn_promotion_text_heigth + 3.5f * border_size);
 		private final int castlings_y_size =
 			castling_y_size;
 		private final int pawn_promotion_y_size =
 			4 * pawn_promotion_text_heigth
-			+ 2 * border_size;
+			+ (int)(1.5f * border_size);
 		private final int pawn_promotion_list_y_size =
 			pawn_promotion_y_size;
+		private final int top_y_size =
+			Math.max(status_y_size + castling_y_size, pawn_promotion_y_size);
+		private final int draw_y_size =
+			(int)(3 * text_height + 3.5f * border_size);
 		private final int tab_y_size =
-			Math.max(status_y_size + castling_y_size, pawn_promotion_y_size)
+			top_y_size
+			+ draw_y_size
 			+ 2 * border_size;
 		private final int tabs_y_size =
 			tab_y_size + text_height + border_size;
@@ -591,25 +623,90 @@ public final class MainPanel extends JPanel
 						final var bulb_y =
 							(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
 						if (computer_turn()
-							&& !capitulation
+							&& !player_resigned
 							&& game_status != Board.GameStatus.Checkmate
-							&& game_status != Board.GameStatus.Stalemate)
+							&& game_status != Board.GameStatus.Stalemate
+							&& game_status != Board.GameStatus.Draw)
 						{
 							graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
 						}
 					}
 				};
 			
-			private final JCheckBox castling_l_w = new JCheckBox("left");
-			private final JCheckBox castling_r_w = new JCheckBox("right");
-			private final JCheckBox castling_l_b = new JCheckBox("left");
-			private final JCheckBox castling_r_b = new JCheckBox("right");
+			private final JCheckBox castling_qs_w = new JCheckBox(
+				FigurePresentation.get(Figure.queen(true)).unicode); // queenside
+			private final JCheckBox castling_ks_w = new JCheckBox(
+				FigurePresentation.get(Figure.king(true)).unicode); // kingside
+			private final JCheckBox castling_qs_b = new JCheckBox(
+				FigurePresentation.get(Figure.queen(false)).unicode); // queenside
+			private final JCheckBox castling_ks_b = new JCheckBox(
+				FigurePresentation.get(Figure.king(false)).unicode); // kingside
 			
 			private final DefaultListModel<FigurePresentation> pawn_promotion_w =
 				new DefaultListModel<>();
 			private final DefaultListModel<FigurePresentation> pawn_promotion_b =
 				new DefaultListModel<>();
 			private final JList<FigurePresentation> pawn_promotion_list = new JList<>();
+			
+			private final JToggleButton draw_claim_button = new JToggleButton("Claim draw", false)
+				// Static initialize with listener checking for moveless draw claim:
+				{{ addItemListener((final ItemEvent e) -> {
+					if (computer_turn()
+						|| e.getStateChange() != ItemEvent.SELECTED)
+					{
+						return;
+					}
+					if (board.execute_moveless_draw_claim())
+					{
+						history_panel.history_data.addElement(new PastMove(
+							  board.turn() - 1
+							, board.previous_move(board.turn() - 1)
+							, board.status()));
+						run_game();
+					}
+				});}};
+			private final JLabel draw_repetition_status = new JLabel(
+					  String.valueOf(0)
+					, SwingConstants.CENTER)
+				{
+					@Override public void setText(final String text)
+					{
+						super.setText("<html><center>"
+					  		+ "<span style=\"font-family:"
+					  		+ Resources.font_bold.getFontName()
+					  		+ ";\">Repetition</span>"
+					  		+ "<br>"
+					  		+ "<span style=\"font-family:"
+					  		+ Resources.font_regular.getFontName()
+					  		+ ";\">"
+							+ text
+							+ "</span>"
+					  		+ "<span style=\"font-family:"
+					  		+ Resources.font_italic.getFontName()
+					  		+ ";\"> of 3/5</span></center></html>");
+					}
+				};
+			private final JLabel draw_move_rules_status = new JLabel(
+					  String.valueOf(0)
+					, SwingConstants.CENTER)
+				{
+					@Override public void setText(final String text)
+					{
+						super.setText("<html><center>"
+							+ "<span style=\"font-family:"
+							+ Resources.font_bold.getFontName()
+							+ ";\">Move rules</span>"
+							+ "<br>"
+							+ "<span style=\"font-family:"
+							+ Resources.font_regular.getFontName()
+							+ ";\">"
+							+ text
+							+ "</span>"
+							+ "<span style=\"font-family:"
+							+ Resources.font_italic.getFontName()
+							+ ";\"> of 50/75</span></center></html>");
+					}
+				};
 			
 			private StatusPanel()
 			{
@@ -628,24 +725,28 @@ public final class MainPanel extends JPanel
 				// Allowed castlings information:
 				final var castling_dimension =
 					new Dimension(castling_x_size, castling_y_size);
-				castling_l_w.setEnabled(false);
-				castling_r_w.setEnabled(false);
-				castling_l_b.setEnabled(false);
-				castling_r_b.setEnabled(false);
+				castling_qs_w.setFont(pawn_promotion_font);
+				castling_ks_w.setFont(pawn_promotion_font);
+				castling_qs_b.setFont(pawn_promotion_font);
+				castling_ks_b.setFont(pawn_promotion_font);
+				castling_qs_w.setEnabled(false);
+				castling_ks_w.setEnabled(false);
+				castling_qs_b.setEnabled(false);
+				castling_ks_b.setEnabled(false);
 				final var castling_w = new JPanel();
 				castling_w.setBorder(BorderFactory.createTitledBorder("White castling"));
 				castling_w.setMaximumSize(castling_dimension);
 				castling_w.setMinimumSize(castling_dimension);
 				castling_w.setPreferredSize(castling_dimension);
-				castling_w.add(castling_l_w);
-				castling_w.add(castling_r_w);
+				castling_w.add(castling_qs_w);
+				castling_w.add(castling_ks_w);
 				final var castling_b = new JPanel();
 				castling_b.setBorder(BorderFactory.createTitledBorder("Black castling"));
 				castling_b.setMaximumSize(castling_dimension);
 				castling_b.setMinimumSize(castling_dimension);
 				castling_b.setPreferredSize(castling_dimension);
-				castling_b.add(castling_l_b);
-				castling_b.add(castling_r_b);
+				castling_b.add(castling_qs_b);
+				castling_b.add(castling_ks_b);
 				
 				// Pawn promotion selection:
 				pawn_promotion_w.addElement(FigurePresentation.get(Figure.queen(true)));
@@ -659,6 +760,7 @@ public final class MainPanel extends JPanel
 				final var pawn_promotion_list_dimension = new Dimension(
 					  pawn_promotion_list_x_size
 					, pawn_promotion_list_y_size);
+				pawn_promotion_list.setFont(pawn_promotion_font);
 				pawn_promotion_list.setBorder(BorderFactory.createLoweredBevelBorder());
 				pawn_promotion_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				pawn_promotion_list.setLayoutOrientation(JList.VERTICAL);
@@ -728,6 +830,42 @@ public final class MainPanel extends JPanel
 						}
 					};
 				
+				// Draw status:
+				final var draw_panel = new JPanel();
+				final var draw_panel_dimension = new Dimension(
+					  tab_x_size
+					, draw_y_size);
+				draw_panel.setBorder(BorderFactory.createTitledBorder("Draw status"));
+				draw_panel.setMaximumSize(draw_panel_dimension);
+				draw_panel.setMinimumSize(draw_panel_dimension);
+				draw_panel.setPreferredSize(draw_panel_dimension);				
+				draw_panel.setLayout(new BoxLayout(draw_panel, BoxLayout.X_AXIS));
+				final var draw_status_dimension = new Dimension(
+					  (int)(0.28f * draw_panel_dimension.getWidth())
+					, text_height + 2 * border_size);
+				draw_repetition_status.setMaximumSize(draw_status_dimension);
+				draw_repetition_status.setMinimumSize(draw_status_dimension);
+				draw_repetition_status.setPreferredSize(draw_status_dimension);
+				final var draw_claim_button_dimension = new Dimension(
+					  (int)(0.40f * draw_panel_dimension.getWidth())
+					, 2 * text_height + 2 * border_size);
+				draw_claim_button.setMaximumSize(draw_claim_button_dimension);
+				draw_claim_button.setMinimumSize(draw_claim_button_dimension);
+				draw_claim_button.setPreferredSize(draw_claim_button_dimension);				
+				draw_move_rules_status.setMaximumSize(draw_status_dimension);
+				draw_move_rules_status.setMinimumSize(draw_status_dimension);
+				draw_move_rules_status.setPreferredSize(draw_status_dimension);
+				draw_panel.add(Box.createHorizontalGlue());
+				draw_panel.add(draw_repetition_status);
+				draw_panel.add(Box.createHorizontalGlue());
+				draw_panel.add(draw_claim_button);
+				draw_panel.add(Box.createHorizontalGlue());
+				draw_panel.add(draw_move_rules_status);
+				draw_panel.add(Box.createHorizontalGlue());
+
+				// Compose everything (status message, allowed castlings information,
+				// pawn promotion selection and draw status):
+				
 				final var castlings_panel = new JPanel();
 				final var castlings_panel_dimension = new Dimension(
 					  castlings_x_size
@@ -743,7 +881,7 @@ public final class MainPanel extends JPanel
 				castlings_panel.add(Box.createHorizontalGlue());
 				
 				final var left_panel = new JPanel();
-				final var left_panel_dimension = new Dimension(castlings_x_size, tab_y_size);
+				final var left_panel_dimension = new Dimension(castlings_x_size, top_y_size);
 				left_panel.setMaximumSize(left_panel_dimension);
 				left_panel.setMinimumSize(left_panel_dimension);
 				left_panel.setPreferredSize(left_panel_dimension);
@@ -757,7 +895,7 @@ public final class MainPanel extends JPanel
 				final var right_panel = new JPanel();
 				final var right_panel_dimension = new Dimension(
 					  pawn_promotion_x_size
-					, tab_y_size);
+					, top_y_size);
 				right_panel.setMaximumSize(right_panel_dimension);
 				right_panel.setMinimumSize(right_panel_dimension);
 				right_panel.setPreferredSize(right_panel_dimension);
@@ -767,12 +905,26 @@ public final class MainPanel extends JPanel
 				right_panel.add(pawn_promotion_label);
 				right_panel.add(Box.createHorizontalGlue());
 				
-				setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-				add(Box.createHorizontalGlue());
-				add(left_panel);
-				add(Box.createHorizontalGlue());
-				add(right_panel);
-				add(Box.createHorizontalGlue());
+				final var top_panel = new JPanel();
+				final var top_panel_dimension = new Dimension(
+					  tab_x_size
+					, top_y_size);
+				top_panel.setMaximumSize(top_panel_dimension);
+				top_panel.setMinimumSize(top_panel_dimension);
+				top_panel.setPreferredSize(top_panel_dimension);
+				top_panel.setLayout(new BoxLayout(top_panel, BoxLayout.X_AXIS));
+				top_panel.add(Box.createHorizontalGlue());
+				top_panel.add(left_panel);
+				top_panel.add(Box.createHorizontalGlue());
+				top_panel.add(right_panel);
+				top_panel.add(Box.createHorizontalGlue());
+				
+				setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+				add(Box.createVerticalGlue());
+				add(top_panel);
+				add(Box.createVerticalGlue());
+				add(draw_panel);
+				add(Box.createVerticalGlue());
 			}
 			
 			@Override public void paintComponent(final Graphics graphic)
@@ -783,46 +935,73 @@ public final class MainPanel extends JPanel
 				// Update status message:
 				final var now = board.player() ? "White" : "Black";
 				final var next = board.player() ? "Black" : "White";
-				final var game_status = board.status();
 				final String message;
-				if (capitulation)
+				if (invalid_computer_move != 0)
 				{
-					message = now + " capitulates. " + next + " wins.";
+					message = "!INTERNAL ERROR ("
+						+ String.valueOf(invalid_computer_move)
+						+ ")!";
+				}
+				else if (player_resigned)
+				{
+					message = now + " resigns. " + next + " wins.";
 				}
 				else
 				{
-					switch (game_status)
+					switch (board.status())
 					{
-					case Checkmate:
-						message = now + " checkmate. " + next + " wins.";
-						break;
 					case Check:
 						message = now + " in check. " + now + "'s turn.";
 						break;
-					case Stalemate:
-						message = "Stalemate. " + now + " cannot move.";
+					case Checkmate:
+						message = now + " checkmate. " + next + " wins.";
 						break;
-					default:
+					case Stalemate:
+						message = "Draw (stalemate). " + now + " cannot move.";
+						break;
+					case Draw:
+						switch (board.draw_status())
+						{
+						case AutomaticMoveRule:
+							message = "Draw (automatic). 75-move rule.";
+							break;
+						case AutomaticRepetition:
+							message = "Draw (automatic). Repetition.";
+							break;
+						case ClaimedMoveRule:
+							message = "Draw (" + next + " claim). 50-move rule.";
+							break;
+						default: // 'ClaimedRepetition' since 'status()' is 'Draw'.
+							message = "Draw (" + next + " claim). Repetition.";
+							break;
+						}
+						break;
+					default: // 'Normal'
 						message = now + "'s turn.";
 					}
 				}
 				status.setBackground(board.player() ? Color.white : Color.black);
 				status.setForeground(board.player() ? Color.black : Color.white);
-				status.setText("  " + Integer.toString(board.move()) + ": " + message);
+				status.setText("  " + String.valueOf(board.move()) + ": " + message);
 				
 				// Update allowed castlings:
-				castling_l_w.setSelected(board.castling_allowed(true, true));
-				castling_r_w.setSelected(board.castling_allowed(false, true));
-				castling_l_b.setSelected(board.castling_allowed(true, false));
-				castling_r_b.setSelected(board.castling_allowed(false, false));
+				castling_qs_w.setSelected(board.castling_allowed(true, true));
+				castling_ks_w.setSelected(board.castling_allowed(false, true));
+				castling_qs_b.setSelected(board.castling_allowed(true, false));
+				castling_ks_b.setSelected(board.castling_allowed(false, false));
 				
 				// Update pawn promotion selector list:
 				final var current_selection = pawn_promotion_list.getSelectedIndex();
-				pawn_promotion_list.setFont(pawn_promotion_font);
 				pawn_promotion_list.setModel(board.player()
 					? pawn_promotion_w
 					: pawn_promotion_b);
 				pawn_promotion_list.setSelectedIndex(current_selection);
+				
+				// Update draw status:
+				draw_repetition_status.setText(String.valueOf(
+					board.draw_repetition_status()));
+				draw_move_rules_status.setText(String.valueOf(
+					board.draw_move_rules_status()));
 			}
 		}
 	}
@@ -909,55 +1088,72 @@ public final class MainPanel extends JPanel
 				, cell_has_focus);
 			
 			final var move = (PastMove)value;
-			if (move.move == 0)
+			if (move.turn == 0)
 			{
 				setText("initial position");
 				return this;
 			}
 			
-			final var x = Move.x(move.move);
-			final var y = Move.y(move.move);
-			final var X = Move.X(move.move);
-			final var Y = Move.Y(move.move);
-			final var figure_moved =
-				FigurePresentation.get(Move.figure_moved(move.move));
-			final var figure_placed =
-				FigurePresentation.get(Move.figure_placed(move.move));
-			final var figure_captured = Move.figure_destination(move.move);
+			String notation = ""; // algebraic notation according to FIDE
 			
-			final String notation; // algebraic notation according to FIDE
-			if (figure_moved.figure.is_king() && X - x == 2)
+			if (!Move.is_moveless_draw_claim(move.move))
 			{
-				notation = move("0-0");
+				final var x = Move.x(move.move);
+				final var y = Move.y(move.move);
+				final var X = Move.X(move.move);
+				final var Y = Move.Y(move.move);
+				final var figure_moved =
+					FigurePresentation.get(Move.figure_moved(move.move));
+				final var figure_placed =
+					FigurePresentation.get(Move.figure_placed(move.move));
+				final var figure_captured = Move.figure_destination(move.move);
+				
+				if (figure_moved.figure.is_king() && X - x == 2)
+				{
+					notation = move("0-0");
+				}
+				else if (figure_moved.figure.is_king() && x - X == 2)
+				{
+					notation = move("0-0-0");
+				}
+				else
+				{
+					final var en_passant = figure_moved.figure.is_pawn()
+						&& figure_captured == null
+						&& x != X;
+					notation =
+						(figure_moved.figure.is_pawn()
+							? ""
+							: figure(figure_moved))
+						+ move(file(x) + rank(y))
+						+ (figure_captured == null && !en_passant
+							? ""
+							: info("x"))
+						+ move(file(X) + rank(Y))
+						+ (figure_moved.figure == figure_placed.figure
+							? ""
+							: figure(figure_placed))
+						+ (en_passant ? info("e.p.") : "");
+				}
+				
+				if (move.status == Board.GameStatus.Check)
+				{
+					notation += info("+");
+				}
+				else if (move.status == Board.GameStatus.Checkmate)
+				{
+					notation += info("++");
+				}
 			}
-			else if (figure_moved.figure.is_king() && x - X == 2)
+			
+			if (move.status == Board.GameStatus.Draw)
 			{
-				notation = move("0-0-0");
+				notation += (notation.isEmpty() ? "" : " ") + info("(=)");
 			}
-			else
-			{
-				final var en_passant = figure_moved.figure.is_pawn()
-					&& figure_captured == null
-					&& x != X;
-				notation =
-					(figure_moved.figure.is_pawn()
-						? ""
-						: figure(figure_moved))
-					+ move(file(x) + rank(y))
-					+ (figure_captured == null && !en_passant
-						? ""
-						: info("x"))
-					+ move(file(X) + rank(Y))
-					+ (figure_moved.figure == figure_placed.figure
-						? ""
-						: figure(figure_placed))
-					+ (en_passant ? info("e.p.") : "");
-			}
+			
 			setText(Board.move(move.turn)
 				+ (move.turn % 2 == 0 ? "\u2026 " : ". ")
-				+ notation
-				+ (move.status == Board.GameStatus.Check ? info("+") : "")
-				+ (move.status == Board.GameStatus.Checkmate ? info("++") : ""));
+				+ notation);
 			
 			return this;
 		}

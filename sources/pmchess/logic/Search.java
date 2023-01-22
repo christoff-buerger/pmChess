@@ -116,7 +116,11 @@ public final class Search
 				}
 				board.undo();
 				--depth;
-				move_index = board.moves_selected() + 1;
+				move_index = board.moves_selected(
+					/*
+						Requires method to return index of selected move,
+						not selected move.
+					*/) + 1;
 				move = board.moves_possible(move_index);
 				continue;
 			}
@@ -130,7 +134,11 @@ public final class Search
 				// TODO: evaluation
 				board.undo();
 				--depth;
-				move_index = board.moves_selected() + 1;
+				move_index = board.moves_selected(
+					/*
+						Requires method to return index of selected move,
+						not selected move.
+					*/) + 1;
 				move = board.moves_possible(move_index);
 				continue;
 			} // Proceed depth-first-search:

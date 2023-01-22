@@ -190,23 +190,23 @@ public final class Evaluator
 		}
 		
 		// Unmoved pawn penalties:
-		final var base_row = player ? 1 : 6;
-		var f = board.figure(3, base_row);
+		final var base_rank = player ? 1 : 6;
+		var f = board.figure(3, base_rank);
 		if (f != null && f.is_pawn() && f.owner == player)
 		{
 			development -= 4;
 		}
-		f = board.figure(4, base_row);
+		f = board.figure(4, base_rank);
 		if (f != null && f.is_pawn() && f.owner == player)
 		{
 			development -= 4;
 		}
-		f = board.figure(2, base_row);
+		f = board.figure(2, base_rank);
 		if (f != null && f.is_pawn() && f.owner == player)
 		{
 			development -= 3;
 		}
-		f = board.figure(5, base_row);
+		f = board.figure(5, base_rank);
 		if (f != null && f.is_pawn() && f.owner == player)
 		{
 			development -= 3;

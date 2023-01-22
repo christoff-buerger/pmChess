@@ -46,6 +46,9 @@ public final class GUI extends JFrame
 		{
 			throw new RuntimeException(exception);
 		}
+		
+		// Render text of disabled check boxes normal (e.g., do not dim such):
+		UIManager.put("CheckBox.disabledText", UIManager.get("CheckBox.foreground"));
 	}
 	
 	private final JMenuItem white_computer;

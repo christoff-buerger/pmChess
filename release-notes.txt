@@ -2,12 +2,16 @@ This program and the accompanying materials are made available under the
 terms of the MIT license (X11 license) which accompanies this distribution.
 
 Version 2.0.0 (in development):
+  - Added support for en passant captures.
+  - Added support for selecting a figure besides a queen when promoting pawns.
+  - Added draw rules (claimable and automatic) for repetition and 50/75-move
+    rules. The current draw status, i.e., how close to a claimable or automatic
+    draw the game is, is summarized in the graphical user interface, which
+    provides a "Claim draw"-button to claim draws.
   - Added native distributions for macOS and Windows. The distributions are
     self-contained and do not require a locally installed 'Java SE Platform'.
   - Added mouse support, besides the existing keyboard-based user interface,
     for selecting and moving figures.
-  - Added support for en passant captures.
-  - Added support for selecting a figure besides a queen when promoting pawns.
   - Added game history with algebraic notation as specified by FIDE. The history
     can be used to undo moves. To reset the game to a previous position, select
     a move using the up- and down-keys and press space. The game will be reset
@@ -21,7 +25,7 @@ Version 2.0.0 (in development):
     bugs and give feedback. The form is also directly reachable via a new
     "Contact and feedback"-entry of the "Help"-menu.
   - Added taskbar icon and application logo.
-  - Portable jar-file distribution now requires the 'Java SE 19 Platform'.
+  - The portable jar-file distribution now requires the 'Java SE 19 Platform'.
 
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a
@@ -30,10 +34,10 @@ Version 1.0.0 (10 December 2017):
     Échecs) except for en passant moves and the following draw rules:
       1) Threefold repetition: The same position occurs three times with the
          same player to move.
-      2) Fifty-moves rule: The last fifty successive moves made by both players
+      2) 50-move rule: The last fifty successive moves made by both players
          contain no capture or pawn move.
-      3) Insufficient material: Neither player has a theoretical possibility
-         to checkmate the opponent.
+      3) Dead position: Neither player can mate the opponent’s king with any
+         series of legal moves.
   - Graphical user interface with chessboard, last move highlighting, status
     message, castling overview and keyboard input for figure selection and
     movement.
