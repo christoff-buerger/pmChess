@@ -2,6 +2,8 @@ This program and the accompanying materials are made available under the
 terms of the MIT license (X11 license) which accompanies this distribution.
 
 Version 2.0.0 (in development):
+  - Switched to latest rules, the "FIDE Laws of Chess taking effect from
+    1 January 2023".
   - Added support for en passant captures.
   - Added support for selecting a figure besides a queen when promoting pawns.
   - Added draw rules (claimable and automatic) for repetition and 50/75-move
@@ -30,12 +32,16 @@ Version 2.0.0 (in development):
 Version 1.0.0 (10 December 2017):
   - First public release on GitHub as portable jar-file (requires a
     locally installed 'Java SE 9.0.4 Platform').
-  - Implements the official rules of FIDE (Fédération Internationale des
-    Échecs) except for en passant moves and the following draw rules:
-      1) Threefold repetition: The same position occurs three times with the
-         same player to move.
-      2) 50-move rule: The last fifty successive moves made by both players
-         contain no capture or pawn move.
+  - Implements the official chess rules of the "International Chess Federation"
+    (FIDE, "Fédération Internationale des Échecs") -- the "Laws of Chess: For
+    competitions starting from 1 July 2014 till 30 June 2017" -- except for
+    en passant moves and the following draw rules:
+      1) Three and five repetition rules: The same position occurs at least
+         three times/five times (three times or more: claimable draw; five
+         times: automatic draw).
+      2) 50- and 75-move rules: The last 50/75 successive moves made by both
+         players contain no capture or pawn move (50-move rule: claimable draw;
+         75-move rule: automatic draw).
       3) Dead position: Neither player can mate the opponent’s king with any
          series of legal moves.
   - Graphical user interface with chessboard, last move highlighting, status

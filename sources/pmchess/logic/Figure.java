@@ -71,7 +71,7 @@ public sealed abstract class Figure permits
 	{
 		if (key_count > 12)
 		{
-			throw new RuntimeException("ERROR: invalid figure instantiation.");
+			throw new RuntimeException("ERROR: Invalid figure instantiation.");
 		}
 		owner = key_count < 7;
 		key = key_count++;
