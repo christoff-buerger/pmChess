@@ -493,7 +493,33 @@ public final class Board
 	*/
 	public int draw_repetition_status()
 	{
-		return 0; // TODO
+		/*
+		// TODO: Broken because the other player's moves must be equivalent too!
+		//       And because we need to count ALL repetitions (i.e., consider any
+		//       previous repeated game positions as well).
+		var repetitions_count = 0;
+		final var moves_count = moves[moves_frame] - (moves_frame + 3);
+		for (var previous_frame = moves[moves_frame + 1];
+			previous_frame >= 0;
+			previous_frame = moves[previous_frame + 1])
+		{
+			if (moves[previous_frame] - (previous_frame + 3) != moves_count)
+			{
+				continue;
+			}
+			repetitions_count++;
+			for (var i = moves_count + 2; i > 2; i--)
+			{
+				if (moves[previous_frame + i] != moves[moves_frame + i])
+				{
+					repetitions_count--;
+					break;
+				}
+			}
+		}
+		return repetitions_count;
+		//*/
+		return 0;
 	}
 	
 	/*
@@ -512,15 +538,7 @@ public final class Board
 	public DrawStatus draw_status()
 	{
 		final var moves = draw_move_rules_status();
-		if (moves == 75)
-		{
-			return DrawStatus.AutomaticMoveRule;
-		}
 		final var repetitions = draw_repetition_status();
-		if (repetitions == 5)
-		{
-			return DrawStatus.AutomaticRepetition;
-		}
 		if (Move.draw_claim(previous_move(turn - 1)))
 		{
 			if (moves >= 50)
@@ -531,6 +549,14 @@ public final class Board
 			{
 				return DrawStatus.ClaimedRepetition;
 			}
+		}
+		if (moves == 75)
+		{
+			return DrawStatus.AutomaticMoveRule;
+		}
+		if (repetitions == 5)
+		{
+			return DrawStatus.AutomaticRepetition;
 		}
 		return DrawStatus.NoDrawPotential;
 	}

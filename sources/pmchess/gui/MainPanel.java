@@ -458,7 +458,7 @@ public final class MainPanel extends JPanel
 			// Draw background tile:
 			var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
 			final var last_move = board.previous_move(board.turn() - 1);
-			if (last_move != 0)
+			if (last_move != 0 && !Move.is_moveless_draw_claim(last_move))
 			{
 				final var _x_ = Move.x(last_move);
 				final var _X_ = Move.X(last_move);
