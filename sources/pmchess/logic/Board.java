@@ -15,14 +15,14 @@ public final class Board
 		, Checkmate
 		, Stalemate
 		, Draw
-	};
+	}
 	public static enum DrawStatus {
 		  NoDrawPotential
 		, AutomaticRepetition
 		, AutomaticMoveRule
 		, ClaimedRepetition
 		, ClaimedMoveRule
-	};
+	}
 	
 	private final Figure[][] board =
 		{
@@ -120,12 +120,25 @@ public final class Board
 	private boolean player = true;
 	private int turn = 1;
 	
+	private static final class PositionCache
+	{
+		int move_rules_counter = -1;
+	}
 	/*
-		History of game situations, starting from the beginning to the current
-		constellation. Each game situation is described by a move frame consisting of all
-		moves possible in that situation, the actual move selected for execution and
-		pointers to the previous and successor frame. The layout of individual move frames
-		is (lowest to highest index within array):
+		History of cached position analyses, starting from the beginning of the game to the
+		current position. The first cache is not used to ease indexing by turn numbers
+		(which start by 1 for the first turn, not 0).
+	*/
+	private final PositionCache[] position_caches = new PositionCache[
+		  7 *  8 /* max pawn moves */
+		+ 8 * 75 /* max other moves */];
+	
+	/*
+		History of moves, starting from the beginning of the game to the current position.
+		The moves of each position are described by a move frame consisting of all moves
+		possible in that position, the actual move selected for execution and pointers to
+		the previous and successor frame. The layout of individual move frames is (lowest
+		to highest index within array):
 		
 		+-----------------------+---------------------------------------------------------+
 		| Successor frame	| Index pointing directly after the last possible move of |
@@ -143,8 +156,8 @@ public final class Board
                 |                       | claim for the current position without moving any piece.|
 		+-----------------------+---------------------------------------------------------+
 		| Possible moves	| Arbitrary many. The end is denoted by the successor     |
-		| (many array elements)	| frame index. IMPORTANT: Just the moves as such are      |
-		|                       | stored; their 'draw claim' bit is never set             |
+		| (many array elements)	| frame index. Just the moves as such are stored; their   |
+		|                       | 'draw claim' bit is never set.                          |
 		+-----------------------+---------------------------------------------------------+
 		
 		The beginning of the current frame is indexed by the 'moves_frame' field.
@@ -153,13 +166,19 @@ public final class Board
 	private final int[] moves = new int[16384];
 	
 	/*
-		Initialization of 'moves':
+		Initialization of 'moves' and 'position_caches':
 	*/
 	{
 		moves[0] = 3;
 		moves[1] = -1;
 		moves[2] = 0;
 		moves_compute_possible();
+		position_caches[0] = null;
+		for (var i = position_caches.length - 1; i > 0; i--)
+		{
+			position_caches[i] = new PositionCache();
+		}
+		position_caches[1].move_rules_counter = 0;
 	}
 	
 	private void moves_compute_possible()
@@ -367,6 +386,8 @@ public final class Board
 		moves_frame = moves[moves_frame + 1];
 		final var move = moves[moves_frame + 2];
 		moves[moves_frame + 2] = 0;
+		// Flush cached analyses for current position:
+		position_caches[turn].move_rules_counter = -1;
 		// Restore cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
 		if (!Move.is_moveless_draw_claim(move))
@@ -527,7 +548,26 @@ public final class Board
 	*/
 	public int draw_move_rules_status()
 	{
-		return 0; // TODO
+		// Backtrack to first cache hit:
+		var turn = this.turn;
+		var moves_frame = this.moves_frame;
+		for (; position_caches[turn].move_rules_counter < 0;
+			turn--, moves_frame = moves[moves_frame + 1])
+		{
+		}
+		// Compute caches forward:
+		for (; turn != this.turn;
+			turn++, moves_frame = moves[moves_frame])
+		{
+			final var move = moves[moves_frame + 2];
+			position_caches[turn + 1].move_rules_counter = Move.is_moveless_draw_claim(move)
+				? position_caches[turn].move_rules_counter
+				: (Move.figure_moved(move).is_pawn() || Move.figure_destination(move) != null
+					? 0
+					: position_caches[turn].move_rules_counter + 1);
+		}
+		// Return (newly computed and now) cached result:
+		return position_caches[this.turn].move_rules_counter;
 	}
 	
 	/*
