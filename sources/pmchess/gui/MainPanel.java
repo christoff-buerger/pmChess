@@ -192,12 +192,9 @@ public final class MainPanel extends JPanel
 				final var figure = board.figure(cursor_x, cursor_y);
 				if (figure != null && figure.owner == board.player())
 				{
-					selected_figure = null;
-					board_panel.draw_square(selected_x, selected_y);
 					selected_figure = figure;
 					selected_x = cursor_x;
 					selected_y = cursor_y;
-					board_panel.draw_square(selected_x, selected_y);
 				}
 				else if (selected_figure != null)
 				{
@@ -219,9 +216,9 @@ public final class MainPanel extends JPanel
 							, board.previous_move(board.turn() - 1)
 							, board.status()));
 						run_game();
+						return; // 'run_game()' takes care of repainting.
 					}
 				}
-				return;
 			}
 			else if (key == KeyEvent.VK_UP && cursor_y < 7)
 			{
@@ -243,8 +240,7 @@ public final class MainPanel extends JPanel
 			{ // Unknown key or invalid movement:
 				return;
 			}
-			board_panel.draw_square(old_x, old_y);
-			board_panel.draw_square(cursor_x, cursor_y);
+			board_panel.repaint();
 		}
 	}
 	
@@ -442,11 +438,6 @@ public final class MainPanel extends JPanel
 					draw_square(graphic, x, y);
 				}
 			}
-		}
-		
-		private void draw_square(final int x, final int y)
-		{
-			draw_square(getGraphics(), x, y);
 		}
 		
 		private void draw_square(final Graphics graphic, final int x, final int y)
