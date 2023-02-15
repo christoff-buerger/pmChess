@@ -141,6 +141,7 @@ public final class MainPanel extends JPanel
 			{
 				break;
 			}
+			final var last_repetition_status = board.draw_repetition_status();
 			if (!(Move.is_moveless_draw_claim(move)
 				? board.execute_moveless_draw_claim()
 				: board.execute(
@@ -160,7 +161,8 @@ public final class MainPanel extends JPanel
 			history_panel.history_data.addElement(new PastMove(
 				  board.turn() - 1
 				, move
-				, game_status));
+				, game_status
+				, board.draw_repetition_status() > last_repetition_status));
 			// Reset all GUI selections that can be influenced by computer moves:
 			history_panel.history_list.setSelectedIndex(history_panel.history_data.size() - 1);
 		}
@@ -203,6 +205,7 @@ public final class MainPanel extends JPanel
 							? game_panel.status_panel.pawn_promotion_list
 								.getSelectedValue().figure
 							: selected_figure;
+					final var last_repetition_status = board.draw_repetition_status();
 					if (board.execute(
 						  selected_x
 						, selected_y
@@ -214,7 +217,8 @@ public final class MainPanel extends JPanel
 						history_panel.history_data.addElement(new PastMove(
 							  board.turn() - 1
 							, board.previous_move(board.turn() - 1)
-							, board.status()));
+							, board.status()
+							, board.draw_repetition_status() > last_repetition_status));
 						run_game();
 						return; // 'run_game()' takes care of repainting.
 					}
@@ -652,7 +656,8 @@ public final class MainPanel extends JPanel
 						history_panel.history_data.addElement(new PastMove(
 							  board.turn() - 1
 							, board.previous_move(board.turn() - 1)
-							, board.status()));
+							, board.status()
+							, false));
 						run_game();
 					}
 				});}};
@@ -1037,7 +1042,7 @@ public final class MainPanel extends JPanel
 			history_list.addKeyListener(new HistoryListener());
 			history_list.setCellRenderer(new HistoryRenderer());
 			history_list.setSelectedIndex(0);
-			history_data.addElement(new PastMove(0, 0, Board.GameStatus.Normal));
+			history_data.addElement(new PastMove(0, 0, Board.GameStatus.Normal, false));
 			add(history_scroll_pane);
 		}
 		
@@ -1053,12 +1058,18 @@ public final class MainPanel extends JPanel
 		private final int turn;
 		private final int move;
 		private final Board.GameStatus status;
+		private final boolean is_repetition;
 		
-		private PastMove(final int turn, final int move, final Board.GameStatus status)
+		private PastMove(
+			  final int turn
+			, final int move
+			, final Board.GameStatus status
+			, final boolean is_repetition)
 		{
 			this.turn = turn;
 			this.move = move;
 			this.status = status;
+			this.is_repetition = is_repetition;
 		}
 	}
 	
@@ -1142,6 +1153,9 @@ public final class MainPanel extends JPanel
 				notation += (notation.isEmpty() ? "" : " ") + info("(=)");
 			}
 			
+			setBackground(move.is_repetition
+				? Color.lightGray
+				: Color.white);
 			setText(Board.move(move.turn)
 				+ (move.turn % 2 == 0 ? "\u2026 " : ". ")
 				+ notation);

@@ -7,6 +7,8 @@
 
 package pmchess.logic;
 
+import java.util.Arrays;
+
 public final class Board
 {
 	public static enum GameStatus {
@@ -122,7 +124,10 @@ public final class Board
 	
 	private static final class PositionCache
 	{
+		boolean is_cached = false;
 		int move_rules_counter = -1;
+		int repetition_counter = -1;
+		int[] board = {0, 0, 0, 0, 0, 0, 0, 0};
 	}
 	/*
 		History of cached position analyses, starting from the beginning of the game to the
@@ -173,12 +178,55 @@ public final class Board
 		moves[1] = -1;
 		moves[2] = 0;
 		moves_compute_possible();
+		
 		position_caches[0] = null;
 		for (var i = position_caches.length - 1; i > 0; i--)
 		{
 			position_caches[i] = new PositionCache();
 		}
+		position_caches[1].is_cached = true;
 		position_caches[1].move_rules_counter = 0;
+		position_caches[1].repetition_counter = 0;
+		position_caches[1].board[0] =
+			  Figure.rook(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.rook(false).key << 28);
+		position_caches[1].board[1] =
+			  Figure.knight(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.knight(false).key << 28);
+		position_caches[1].board[2] =
+			  Figure.bishop(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.bishop(false).key << 28);
+		position_caches[1].board[3] =
+			  Figure.queen(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.queen(false).key << 28);
+		position_caches[1].board[4] =
+			  Figure.king(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.king(false).key << 28);
+		position_caches[1].board[5] =
+			  Figure.bishop(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.bishop(false).key << 28);
+		position_caches[1].board[6] =
+			  Figure.knight(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.knight(false).key << 28);
+		position_caches[1].board[7] =
+			  Figure.rook(true).key
+			| (Figure.pawn(true).key << 4)
+			| (Figure.pawn(false).key << 24)
+			| (Figure.rook(false).key << 28);
 	}
 	
 	private void moves_compute_possible()
@@ -219,8 +267,7 @@ public final class Board
 	/*
 		Return the move selected for execution or 0 if no move is selected.
 		The selected move of the current move frame is automatically set whenever one of
-		its possible moves is SUCCESSFULLY executed via the 'execute' function; it is unset
-		by 'undo'.
+		its possible moves is SUCCESSFULLY executed via the 'execute' function.
 	*/
 	protected int moves_selected()
 	{
@@ -361,18 +408,27 @@ public final class Board
 		player = !player;
 		turn++;
 		// Update game history (push new current moves frame and compute possible moves):
-		moves[moves_frame + 2] = move;
+		final var is_cached_move = moves[moves_frame + 2] == move;
 		final var successor_frame = moves[moves_frame];
-		moves[successor_frame] = successor_frame + 3;
-		moves[successor_frame + 1] = moves_frame;
-		moves[successor_frame + 2] = 0;
-		moves_frame = successor_frame;
-		if (!Move.is_moveless_draw_claim(move) && check(!player))
-		{ // Undo all changes if move threatens own king:
-			undo();
-			return false;
+		if (is_cached_move)
+		{
+			moves_frame = successor_frame;
 		}
-		moves_compute_possible();
+		else
+		{
+			moves[moves_frame + 2] = move;
+			position_caches[turn].is_cached = false;
+			moves[successor_frame] = successor_frame + 3;
+			moves[successor_frame + 1] = moves_frame;
+			moves[successor_frame + 2] = 0;
+			moves_frame = successor_frame;
+			if (!Move.is_moveless_draw_claim(move) && check(!player))
+			{ // Undo all changes if move threatens own king:
+				undo();
+				return false;
+			}
+			moves_compute_possible();
+		}
 		return true;
 	}
 	
@@ -382,12 +438,9 @@ public final class Board
 		{
 			return 0;
 		}
-		// Restore game history (pop current moves frame and reset selected move):
+		// Restore game history (pop current moves frame):
 		moves_frame = moves[moves_frame + 1];
 		final var move = moves[moves_frame + 2];
-		moves[moves_frame + 2] = 0;
-		// Flush cached analyses for current position:
-		position_caches[turn].move_rules_counter = -1;
 		// Restore cached current game situation (figure constellation, king positions,
 		//	castlings, active player and turn number):
 		if (!Move.is_moveless_draw_claim(move))
@@ -509,38 +562,86 @@ public final class Board
 		return turn % 2 == 0 ? turn / 2 : (turn / 2) + 1;
 	}
 	
+	private void compute_position_caches()
+	{
+		final var original_turn = turn;
+		
+		// Backtrack to first cache hit:
+		while (!position_caches[turn].is_cached)
+		{
+			undo();
+		}
+		
+		// Compute caches forward (reconstructing original position):
+		while (turn != original_turn)
+		{
+			final var previous_turn = turn;
+			final var move = moves[moves_frame + 2];
+			execute(move);
+			
+			// Compute move rules:
+			position_caches[turn].move_rules_counter = Move.is_moveless_draw_claim(move)
+				? position_caches[previous_turn].move_rules_counter
+				: (Move.figure_moved(move).is_pawn() || Move.figure_destination(move) != null
+					? 0
+					: position_caches[previous_turn].move_rules_counter + 1);
+			
+			// Compute chessboard cache (needed for repetition tests):
+			for (var x = 0; x < 8; x++)
+			{
+				position_caches[turn].board[x] = 0;
+				for (var y = 0; y < 8; y++)
+				{
+					final var f = board[x][y];
+					position_caches[turn].board[x] |= (f == null
+						? 0
+						: f.key << (y * 4));
+				}
+			}
+			
+			// Compute repetition:
+			final var moves_count = moves[moves_frame] - (moves_frame + 3);
+			var repetition_increase = 0;
+			for (int t = 1, m = 0;
+				t < turn;
+				t++, m = moves[m])
+			{
+				if (!Move.is_moveless_draw_claim(move)
+					&& position_caches[turn].move_rules_counter != 0
+					&& moves[m] - (m + 3) == moves_count
+					&& Arrays.equals(
+						  position_caches[t].board
+						, position_caches[turn].board))
+				{
+					repetition_increase++;
+					for (var i = moves_count + 2; i > 2; i--)
+					{
+						if (moves[m + i] != moves[moves_frame + i])
+						{
+							repetition_increase--;
+							break;
+						}
+					}
+					if (repetition_increase > 0)
+					{
+						break;
+					}
+				}
+			}
+			position_caches[turn].repetition_counter =
+				position_caches[previous_turn].repetition_counter + repetition_increase;
+			
+			position_caches[turn].is_cached = true;
+		}
+	}
+	
 	/*
 		Number of repeating game positions so far (including current position):
 	*/
 	public int draw_repetition_status()
 	{
-		/*
-		// TODO: Broken because the other player's moves must be equivalent too!
-		//       And because we need to count ALL repetitions (i.e., consider any
-		//       previous repeated game positions as well).
-		var repetitions_count = 0;
-		final var moves_count = moves[moves_frame] - (moves_frame + 3);
-		for (var previous_frame = moves[moves_frame + 1];
-			previous_frame >= 0;
-			previous_frame = moves[previous_frame + 1])
-		{
-			if (moves[previous_frame] - (previous_frame + 3) != moves_count)
-			{
-				continue;
-			}
-			repetitions_count++;
-			for (var i = moves_count + 2; i > 2; i--)
-			{
-				if (moves[previous_frame + i] != moves[moves_frame + i])
-				{
-					repetitions_count--;
-					break;
-				}
-			}
-		}
-		return repetitions_count;
-		//*/
-		return 0;
+		compute_position_caches();
+		return position_caches[turn].repetition_counter;
 	}
 	
 	/*
@@ -548,32 +649,14 @@ public final class Board
 	*/
 	public int draw_move_rules_status()
 	{
-		// Backtrack to first cache hit:
-		var turn = this.turn;
-		var moves_frame = this.moves_frame;
-		for (; position_caches[turn].move_rules_counter < 0;
-			turn--, moves_frame = moves[moves_frame + 1])
-		{
-		}
-		// Compute caches forward:
-		for (; turn != this.turn;
-			turn++, moves_frame = moves[moves_frame])
-		{
-			final var move = moves[moves_frame + 2];
-			position_caches[turn + 1].move_rules_counter = Move.is_moveless_draw_claim(move)
-				? position_caches[turn].move_rules_counter
-				: (Move.figure_moved(move).is_pawn() || Move.figure_destination(move) != null
-					? 0
-					: position_caches[turn].move_rules_counter + 1);
-		}
-		// Return (newly computed and now) cached result:
-		return position_caches[this.turn].move_rules_counter;
+		compute_position_caches();
+		return position_caches[turn].move_rules_counter;
 	}
 	
 	/*
 		Type and reason for draw, IF the position is a draw; it might still be a checkmate.
 		Only 'status()' does all checks to conclude if the situation indeed is a draw.
-		Hence, this method is only reliable in its answer if 'status() == GameStatus.Draw'.
+		Hence, the result of this method is only reliable if 'status() == GameStatus.Draw'.
 	*/
 	public DrawStatus draw_status()
 	{
