@@ -23,6 +23,8 @@ public final class pmChess
 		Resources.load_text("fonts/Open-Sans-license.txt");
 	public static final String chess_merida_unicode_license =
 		Resources.load_text("fonts/Chess-Merida-Unicode-license.txt");
+	public static final String dseg_license =
+		Resources.load_text("fonts/DSEG-license.txt");
 	
 	/*
 		Print license and start GUI. No command line arguments supported.

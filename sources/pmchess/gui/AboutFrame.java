@@ -191,6 +191,7 @@ public final class AboutFrame extends JFrame
 		final var licenses_open_sans_button = new JToggleButton("Open Sans", false);
 		final var licenses_chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
+		final var licenses_dseg_button = new JToggleButton("DSEG", false);
 		licenses_pmChess_button.addActionListener(
 			new ActionListener()
 			{
@@ -199,6 +200,7 @@ public final class AboutFrame extends JFrame
 					licenses_pmChess_button.setSelected(true);
 					licenses_open_sans_button.setSelected(false);
 					licenses_chess_merida_unicode_button.setSelected(false);
+					licenses_dseg_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.pmChess_license);
 				}
@@ -211,6 +213,7 @@ public final class AboutFrame extends JFrame
 					licenses_pmChess_button.setSelected(false);
 					licenses_open_sans_button.setSelected(true);
 					licenses_chess_merida_unicode_button.setSelected(false);
+					licenses_dseg_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.open_sans_license);
 				}
@@ -223,8 +226,22 @@ public final class AboutFrame extends JFrame
 					licenses_pmChess_button.setSelected(false);
 					licenses_open_sans_button.setSelected(false);
 					licenses_chess_merida_unicode_button.setSelected(true);
+					licenses_dseg_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.chess_merida_unicode_license);
+				}
+			});
+		licenses_dseg_button.addActionListener(
+			new ActionListener()
+			{
+				@Override public void actionPerformed(final ActionEvent event)
+				{
+					licenses_pmChess_button.setSelected(false);
+					licenses_open_sans_button.setSelected(false);
+					licenses_chess_merida_unicode_button.setSelected(false);
+					licenses_dseg_button.setSelected(true);
+					licenses_text_area.setText(
+						pmchess.pmChess.dseg_license);
 				}
 			});
 		
@@ -243,6 +260,8 @@ public final class AboutFrame extends JFrame
 		licenses_button_panel.add(licenses_open_sans_button);
 		licenses_button_panel.add(Box.createHorizontalGlue());
 		licenses_button_panel.add(licenses_chess_merida_unicode_button);
+		licenses_button_panel.add(Box.createHorizontalGlue());
+		licenses_button_panel.add(licenses_dseg_button);
 		licenses_button_panel.add(Box.createHorizontalGlue());
 		
 		final var licenses_panel = new JPanel();

@@ -143,6 +143,8 @@ public final class Resources
 	protected static final Font font_bold = load_font("Open-Sans-Bold.ttf");
 	protected static final Font font_bold_italic = load_font("Open-Sans-BoldItalic.ttf");
 	
+	protected static final Font font_chessclock = load_font("DSEG-7-Classic-BoldItalic.ttf");
+	
 	protected static final Image pmChess_icon = Resources.load_image("icons/pmChess.png");
 	
 	private static final FigurePresentation[] figures =
