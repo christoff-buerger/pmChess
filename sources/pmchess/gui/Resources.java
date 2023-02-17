@@ -7,11 +7,14 @@
 
 package pmchess.gui;
 
+import java.lang.*;
+
 import java.util.*;
 
 import java.io.*;
 
 import java.nio.charset.*;
+import java.nio.file.*;
 
 import java.awt.*;
 
@@ -57,7 +60,38 @@ public final class Resources
 	}
 	
 	// Default font size all GUI-layout is derived from:
-	private static final float base_scale = 14f;
+	private static final float base_scale = read_base_scale_configuration();
+	
+	public static float read_base_scale_configuration()
+	{
+		try
+		{
+			final var scale = Integer.valueOf(
+				Files.readString(Paths.get("base-scale.txt")));
+			return (float)(scale < 50 ? 50 : (scale > 200 ? 200 : scale)) * 0.14f;
+		}
+		catch (final Exception e)
+		{
+			return 14f;
+		}
+	}
+	
+	public static void write_base_scale_configuration(final int scale)
+	{
+		try
+		{
+			Files.writeString(
+				  Paths.get("base-scale.txt")
+				, String.valueOf(scale)
+				, StandardOpenOption.CREATE
+				, StandardOpenOption.WRITE
+				, StandardOpenOption.TRUNCATE_EXISTING
+				, StandardOpenOption.SYNC);
+		}
+		catch (final Exception e)
+		{
+		}
+	}
 	
 	private static Font load_font(final String font_name)
 	{

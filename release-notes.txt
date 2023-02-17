@@ -2,6 +2,12 @@ This program and the accompanying materials are made available under the
 terms of the MIT license (X11 license) which accompanies this distribution.
 
 Version 2.0.0 (in development):
+  - Added a command line option to scale the graphical user interface by a
+    given percentage. The command line option is '--scale n', with 'n'
+    the % to scale, e.g., '--scale 110' to increase to 110% or '--scale 75'
+    to decrease all sizes to 75%. Native pmChess distributions ship with
+    a script for calling pmChess with command line arguments. For example,
+    on macOS the new 'pmChess.sh' script can be used.
   - Switched to latest rules, the "FIDE Laws of Chess taking effect from
     1 January 2023".
   - Added support for en passant captures.

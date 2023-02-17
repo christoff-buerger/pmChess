@@ -127,8 +127,7 @@
 			<arg value="--strip-debug"/>
 			<arg value="--no-header-files"/>
 			<arg value="--no-man-pages"/>
-			<arg value="--compress"/>
-			<arg value="0"/>
+			<arg value="--compress=0"/>
 		</exec>
 	</target>
 	
