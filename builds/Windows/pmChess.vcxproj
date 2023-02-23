@@ -224,6 +224,7 @@
 		<Exec Command="mt.exe /nologo /manifest &quot;pmChess.exe.manifest&quot; /outputresource:&quot;pmChess\temp\pmChess.exe;#1&quot;"/>
 		<Copy SourceFiles="pmChess\temp\pmChess.exe" DestinationFolder="pmChess"/>
 		<RemoveDir Directories="pmChess\temp\"/>
+		<Copy SourceFiles="pmChess.bat" DestinationFolder="pmChess"/>
 		<Exec Command="cd .. &amp; ant -silent windows-bundle"/>
 	</Target>
 </Project>
