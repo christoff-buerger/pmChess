@@ -151,7 +151,7 @@ int WINAPI wWinMain(
 				CHAR buffer[4096];
 				HANDLE parent_stdout = GetStdHandle(STD_OUTPUT_HANDLE);
 				
-				while (ReadFile(output_reader, buffer, 4096, &read, NULL)
+				while (ReadFile(output_reader, buffer, sizeof(buffer), &read, NULL)
 						&& 0 != read
 						&& WriteFile(parent_stdout, buffer, read, &written, NULL))
 				{
