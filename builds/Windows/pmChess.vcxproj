@@ -7,7 +7,7 @@
 -->
 <Project
 	DefaultTargets="PrepareBuild;Build;FinishBuild"
-	ToolsVersion="15.0"
+	ToolsVersion="17.0"
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	
 	<!-- ================================ Default  elements ================================ -->
@@ -31,9 +31,9 @@
 	<PropertyGroup Label="Globals">
 		<!-- Visual Studio configuration -->
 		<SchemaVersion>2.0</SchemaVersion>
-		<VisualStudioVersion>15.5</VisualStudioVersion>
-		<PlatformToolset>v141</PlatformToolset>
-		<TargetFramework>net48</TargetFramework>
+		<VisualStudioVersion>17.0</VisualStudioVersion>
+		<PlatformToolset>v143</PlatformToolset>
+		<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
 		<BuildProjectReferences>true</BuildProjectReferences>
 		<!-- Name-space and version configuration -->
 		<RootNamespace>pmChess</RootNamespace>

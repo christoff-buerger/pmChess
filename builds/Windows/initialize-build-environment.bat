@@ -55,26 +55,16 @@ if ERRORLEVEL 1 (
 rem Initialize Microsoft build environment:
 call where msbuild >nul 2>nul
 if ERRORLEVEL 1 (
-	for %%y in ( "2019" "2017" ) do (
+	for %%y in ( "2022" ) do (
 		for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
-			if exist "C:\Program Files (x86)\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
-				call "C:\Program Files (x86)\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
+			if exist "C:\Program Files\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
+				call "C:\Program Files\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
 				if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
 					set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
 					call :ERROR
 				)
 				goto :VISUAL_STUDIO_INITIALIZED
 			)
-		)
-	)
-	for %%v in ( "14.0" "12.0" "11.0" "10.0" ) do (
-		if exist "C:\Program Files (x86)\Microsoft Visual Studio %%v\VC\vcvarsall.bat" (
-			call "C:\Program Files (x86)\Microsoft Visual Studio %%v\VC\vcvarsall.bat" x64
-			if ERRORLEVEL 1 (
-				set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio v%%v)"
-				call :ERROR
-			)
-			goto :VISUAL_STUDIO_INITIALIZED
 		)
 	)
 	set "EMESSAGE=no Microsoft Visual Studio installation found"
