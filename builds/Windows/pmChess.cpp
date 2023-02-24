@@ -130,7 +130,7 @@ int WINAPI wWinMain(
 			, NULL // Process handle of created process is not inheritable.
 			, NULL // Thread handle of created process is not inheritable.
 			, pCmdLine_length > 0 // Inherite handles of current process iff cmd call.
-			, CREATE_NO_WINDOW | INHERIT_PARENT_AFFINITY
+			, CREATE_NO_WINDOW | INHERIT_PARENT_AFFINITY | CREATE_UNICODE_ENVIRONMENT
 			, NULL // Use environment of current process.
 			, current_directory
 			, &startup_information
@@ -147,19 +147,31 @@ int WINAPI wWinMain(
 		{
 			if (pCmdLine_length > 0)
 			{
+				CloseHandle(output_writer);
+				
+				/*
+				COMMTIMEOUTS cto;
+				GetCommTimeouts(output_reader, &cto);
+				cto.ReadIntervalTimeout = 10;
+				cto.ReadTotalTimeoutConstant = 0;
+				cto.ReadTotalTimeoutMultiplier = 0;
+				SetCommTimeouts(output_reader, &cto);
+				*/
+				
 				DWORD read, written;
-				CHAR buffer[4096];
+				CHAR /* Always byte-wise write/read. */ buffer[4096];
 				HANDLE parent_stdout = GetStdHandle(STD_OUTPUT_HANDLE);
 				
 				while (ReadFile(output_reader, buffer, sizeof(buffer), &read, NULL)
-						&& 0 != read
-						&& WriteFile(parent_stdout, buffer, read, &written, NULL))
+					&& 0 != read
+					&& WriteFile(parent_stdout, buffer, read, &written, NULL))
 				{
 				}
 			}
 			
-			DWORD exit_code;
 			WaitForSingleObject(process_information.hProcess, INFINITE);
+			
+			DWORD exit_code;
 			if (GetExitCodeProcess(process_information.hProcess, &exit_code))
 			{
 				return_code = static_cast<int>(exit_code);
@@ -186,7 +198,7 @@ int WINAPI wWinMain(
 	
 	CloseHandle(process_information.hProcess);
 	CloseHandle(process_information.hThread);
-	//CloseHandle(output_reader);
+	CloseHandle(output_reader);
 	CloseHandle(output_writer);
 	
 	SecureZeroMemory(&startup_information, sizeof(startup_information));
