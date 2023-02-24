@@ -7,6 +7,10 @@
 
 package pmchess;
 
+import java.lang.*;
+
+import java.util.function.*;
+
 import pmchess.gui.*;
 
 public final class pmChess
@@ -31,15 +35,19 @@ public final class pmChess
 	*/
 	public static void main(final String[] args)
 	{
-		if (args.length > 2)
-		{
-			System.out.println(" !!! ERROR: Too many command line arguments !!!");
-			System.exit(1);
-		}
+		final IntConsumer to_many_arguments = (limit) -> {
+			if (args.length > limit)
+			{
+				System.out.println(" !!! ERROR: Too many command line arguments !!!");
+				System.exit(1);
+			}		
+		};
+		
 		if (args.length >= 1)
 		switch (args[0])
 		{
 		case "--help":
+			to_many_arguments.accept(1);
 			System.out.println("""
 				Usage:
 				  No arguments: Start pmChess.
@@ -49,19 +57,21 @@ public final class pmChess
 				                n must be a positive integer.""");
 			System.exit(0);
 		case "--version":
+			to_many_arguments.accept(1);
 			System.out.println(about[0]);
 			System.out.println(about[1]);
 			System.out.println();
 			System.out.println(pmChess_license);
 			System.exit(0);
 		case "--scale":
+			to_many_arguments.accept(2);
 			try
 			{
 				Resources.write_base_scale_configuration(Integer.valueOf(args[1]));
 			}
 			catch (final Exception e)
 			{
-				System.out.println(" !!! ERROR: Invalid scale !!!");
+				System.out.println(" !!! ERROR: Invalid or missing scale !!!");
 				System.exit(1);
 			}
 			System.out.println(
@@ -69,7 +79,6 @@ public final class pmChess
 				+ (int)(Resources.read_base_scale_configuration() / 0.14f)
 				+ "%.");
 			System.exit(0);
-			break;
 		default:
 			System.out.println(" !!! ERROR: Unknown command line arguments !!!");
 			System.exit(1);
