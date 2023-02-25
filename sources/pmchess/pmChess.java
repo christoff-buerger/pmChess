@@ -89,7 +89,16 @@ public final class pmChess
 			{
 				@Override public void run()
 				{
-					new GUI();
+					final GUI gui = new GUI();
+					gui.load_game(Resources.adjourned_game_file);
+					Runtime.getRuntime().addShutdownHook(
+						new Thread()
+						{
+							@Override public void run()
+							{
+								gui.save_game(Resources.adjourned_game_file);
+							}
+						});
 				}
 			});
 	}

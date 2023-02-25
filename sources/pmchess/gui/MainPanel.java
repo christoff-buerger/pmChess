@@ -7,6 +7,10 @@
 
 package pmchess.gui;
 
+import java.util.Arrays;
+
+import java.io.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.FontRenderContext;
@@ -46,7 +50,7 @@ public final class MainPanel extends JPanel
 	private final GamePanel game_panel = new GamePanel();
 	private final HistoryPanel history_panel = new HistoryPanel();
 	
-	private int invalid_computer_move = 0;
+	private int invalid_internal_move = 0;
 	
 	protected MainPanel()
 	{
@@ -85,7 +89,7 @@ public final class MainPanel extends JPanel
 		addKeyListener(new BoardListener());
 		
 		// Initialize and start game:
-		initialize(false, false);
+		initialize(false, false, new int[]{});
 	}
 	
 	@Override public void paintComponent(final Graphics graphics)
@@ -94,13 +98,64 @@ public final class MainPanel extends JPanel
 		Resources.configure_rendering(graphics);
 	}
 	
-	protected void initialize(final boolean computer_w, final boolean computer_b)
+	protected void serialize_game(final ObjectOutputStream os)
+		throws IOException
+	{
+		final var game = new int[1 + board.turn()];
+		game[0] = computer_w ? 1 : 0;
+		game[1] = computer_b ? 1 : 0;
+		for (var t = board.turn() - 1; t > 0; t--)
+		{
+			game[t + 1] = board.previous_move(t);
+		}
+		os.writeObject(game);
+	}
+	
+	protected void deserialize_game(final ObjectInputStream is)
+		throws IOException, ClassNotFoundException
+	{
+		final var game = (int[])(is.readObject());
+		initialize(
+			  game[0] != 0
+			, game[1] != 0
+			, Arrays.copyOfRange(game, 2, game.length));
+	}
+	
+	protected void initialize(
+		  final boolean computer_w
+		, final boolean computer_b
+		, final int[] moves)
 	{
 		while (undo())
 		{
 		}
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
+		invalid_internal_move = 0;
+		for (final var move : moves)
+		{
+			final var last_repetition_status = board.draw_repetition_status();
+			if (!(Move.is_moveless_draw_claim(move)
+				? board.execute_moveless_draw_claim()
+				: board.execute(
+					  Move.x(move)
+					, Move.y(move)
+					, Move.X(move)
+					, Move.Y(move)
+					, Move.figure_placed(move)
+					, Move.draw_claim(move))))
+			{
+				invalid_internal_move = move;
+				this.computer_w = false;
+				this.computer_b = false;
+				break;
+			}
+			history_panel.history_data.addElement(new PastMove(
+				  board.turn() - 1
+				, move
+				, board.status()
+				, board.draw_repetition_status() > last_repetition_status));
+		}
 		run_game();
 	}
 	
@@ -118,8 +173,6 @@ public final class MainPanel extends JPanel
 	
 	private void run_game()
 	{
-		invalid_computer_move = 0;
-		
 		// Reset all GUI selections of human players:
 		selected_figure = null;
 		game_panel.status_panel.pawn_promotion_list.setSelectedIndex(0);
@@ -152,7 +205,7 @@ public final class MainPanel extends JPanel
 					, Move.figure_placed(move)
 					, Move.draw_claim(move))))
 			{
-				invalid_computer_move = move;
+				invalid_internal_move = move;
 				computer_w = false;
 				computer_b = false;
 				break;
@@ -163,8 +216,9 @@ public final class MainPanel extends JPanel
 				, move
 				, game_status
 				, board.draw_repetition_status() > last_repetition_status));
-			// Reset all GUI selections that can be influenced by computer moves:
-			history_panel.history_list.setSelectedIndex(history_panel.history_data.size() - 1);
+			// Reset all GUI selections influenced by computer moves:
+			history_panel.history_list.setSelectedIndex(
+				history_panel.history_data.size() - 1);
 		}
 		
 		// Update GUI:
@@ -932,10 +986,10 @@ public final class MainPanel extends JPanel
 				final var now = board.player() ? "White" : "Black";
 				final var next = board.player() ? "Black" : "White";
 				final String message;
-				if (invalid_computer_move != 0)
+				if (invalid_internal_move != 0)
 				{
 					message = "!INTERNAL ERROR ("
-						+ String.valueOf(invalid_computer_move)
+						+ String.valueOf(invalid_internal_move)
 						+ ")!";
 				}
 				else if (player_resigned)

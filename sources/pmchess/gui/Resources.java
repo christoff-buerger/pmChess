@@ -28,30 +28,26 @@ public final class Resources
 	
 	protected static final String text_encoding = StandardCharsets.UTF_8.name();
 	
+	public static final String adjourned_game_file = "adjourned-game.data";
+	
 	public static String load_text(final String file)
 	{
-		try
+		try (final var stream = Resources.class.getResourceAsStream(file))
 		{
-			final var stream = Resources.class.getResourceAsStream(file);
 			if (stream == null)
 			{
 				throw new IOException();
 			}
-			final var result = new ByteArrayOutputStream();
 			final var buffer = new byte[1024];
-			try
+			try (final var result = new ByteArrayOutputStream())
 			{
 				int character;
 				while ((character = stream.read(buffer)) != -1)
 				{
 					result.write(buffer, 0, character);
 				}
+				return result.toString(text_encoding);
 			}
-			finally
-			{
-				stream.close();
-			}
-			return result.toString(text_encoding);
 		}
 		catch (IOException exception)
 		{

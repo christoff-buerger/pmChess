@@ -7,9 +7,9 @@
 
 package pmchess.gui;
 
-import java.util.*;
-
 import java.io.*;
+
+import java.nio.file.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -126,6 +126,41 @@ public final class GUI extends JFrame
 		setVisible(true);
 	}
 	
+	public void save_game(final String game_file)
+	{
+		try (final var os = new ObjectOutputStream(
+			new FileOutputStream(game_file, false)))
+		{
+			main_panel.serialize_game(os);
+		}
+		catch (final Exception e1)
+		{
+			try
+			{
+				Files.deleteIfExists(Paths.get(game_file));
+			}
+			catch (final Exception e2)
+			{
+			}
+		}
+	}
+	
+	public void load_game(final String game_file)
+	{
+		try {
+			if (Files.exists(Paths.get(game_file)))
+			try (final var is = new ObjectInputStream(
+				new FileInputStream(game_file)))
+			{
+				main_panel.deserialize_game(is);
+			}
+		}
+		catch (final Exception e)
+		{
+			main_panel.initialize(false, false, new int[]{});
+		}
+	}
+	
 	@Override public void paint(final Graphics graphics)
 	{
 		super.paint(graphics);
@@ -144,8 +179,9 @@ public final class GUI extends JFrame
 		@Override public void actionPerformed(final ActionEvent event)
 		{
 			main_panel.initialize(
-				white_computer.isSelected(),
-				black_computer.isSelected());
+				  white_computer.isSelected()
+				, black_computer.isSelected()
+				, new int[]{});
 		}
 	}
 	
