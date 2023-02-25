@@ -7,9 +7,12 @@ Version 2.0.0 (in development):
     the % to scale, e.g., '--scale 110' to increase to 110% or '--scale 75'
     to decrease all sizes to 75%. Native pmChess distributions ship with
     a script to ease calling pmChess with command line arguments. For example,
-    on macOS calling .app distributions for command line processing is very
-    awkward/user unfriendly, but the new 'pmChess.sh' script can be used
+    on macOS calling '*.app' distributions for command line processing is
+    very awkward/user unfriendly, but the new 'pmChess.sh' script can be used
     instead.
+  - Added support for automatic saving and restoring of the current game when
+    terminating/starting pmChess. In terms of the official laws of chess,
+    pmChess now supports adjourned games.
   - Switched to latest rules, the "FIDE Laws of Chess taking effect from
     1 January 2023".
   - Added support for en passant captures.
