@@ -8,6 +8,7 @@
 package pmchess.gui;
 
 import java.util.Arrays;
+import java.util.concurrent.locks.ReentrantLock;
 
 import java.io.*;
 
@@ -31,14 +32,20 @@ public final class MainPanel extends JPanel
 	
 	private static final Image bulb = Resources.load_image("icons/bulb.png");
 	
-	private final Board board = new Board();
+	/*
+		All variables except 'board', 'computer_w' and 'computer_b' are read and written
+		by THE thread creating the GUI only => locking only required for these three:
+	*/
+	private final ReentrantLock board_lock = new ReentrantLock(true);
+	
+	private final Board board = new Board(); // Any access must be locked.
 	private final Search search = new Search();
 	private final Evaluator evaluator = new Evaluator();
 	
-	private boolean player_resigned = false;
-	
-	private boolean computer_w = false;
-	private boolean computer_b = false;
+	private boolean computer_w = false; // Any access must be locked.
+	private boolean computer_b = false; // Any access must be locked.
+	private boolean computer_resigned = false;
+	private boolean is_in_search = false;
 	
 	private int cursor_x = 0;
 	private int cursor_y = 0;
@@ -46,11 +53,13 @@ public final class MainPanel extends JPanel
 	private int selected_y = 0;
 	private Figure selected_figure = null;
 	
+	private int invalid_internal_move = 0;
+	
 	private final BoardPanel board_panel = new BoardPanel();
 	private final GamePanel game_panel = new GamePanel();
 	private final HistoryPanel history_panel = new HistoryPanel();
 	
-	private int invalid_internal_move = 0;
+	private final BoardListener board_listener = new BoardListener();
 	
 	protected MainPanel()
 	{
@@ -86,7 +95,7 @@ public final class MainPanel extends JPanel
 		// Add listener for cursor movement and figure selection:
 		setFocusable(true);
 		requestFocusInWindow();
-		addKeyListener(new BoardListener());
+		addKeyListener(board_listener);
 		
 		// Initialize and start game:
 		initialize(false, false, new int[]{});
@@ -100,7 +109,7 @@ public final class MainPanel extends JPanel
 	
 	protected void serialize_game(final ObjectOutputStream os)
 		throws IOException
-	{
+	{ board_lock.lock(); try {
 		final var game = new int[1 + board.turn()];
 		game[0] = computer_w ? 1 : 0;
 		game[1] = computer_b ? 1 : 0;
@@ -109,7 +118,7 @@ public final class MainPanel extends JPanel
 			game[t + 1] = board.previous_move(t);
 		}
 		os.writeObject(game);
-	}
+	} finally { board_lock.unlock(); }}
 	
 	protected void deserialize_game(final ObjectInputStream is)
 		throws IOException, ClassNotFoundException
@@ -125,7 +134,7 @@ public final class MainPanel extends JPanel
 		  final boolean computer_w
 		, final boolean computer_b
 		, final int[] moves)
-	{
+	{ board_lock.lock(); try {
 		while (undo())
 		{
 		}
@@ -157,22 +166,22 @@ public final class MainPanel extends JPanel
 				, board.draw_repetition_status() > last_repetition_status));
 		}
 		run_game();
-	}
+	} finally { board_lock.unlock(); }}
 	
 	private boolean undo()
-	{
+	{ board_lock.lock(); try {
 		if (board.undo() != 0)
 		{
 			history_panel.history_data.removeElementAt(
 				history_panel.history_data.size() - 1);
-			player_resigned = false;
+			computer_resigned = false;
 			return true;
 		}
 		return false;
-	}
+	} finally { board_lock.unlock(); }}
 	
 	private void run_game()
-	{
+	{ board_lock.lock(); try {
 		// Reset all GUI selections of human players:
 		selected_figure = null;
 		game_panel.status_panel.pawn_promotion_list.setSelectedIndex(0);
@@ -181,16 +190,19 @@ public final class MainPanel extends JPanel
 		
 		// Execute computer moves:
 		var game_status = board.status();
-		while (computer_turn()
+		while ((board.player() ? computer_w : computer_b)
+			&& !computer_resigned /* Once resigned stay resigned in THAT position. */
 			&& (game_status == Board.GameStatus.Normal
 				|| game_status == Board.GameStatus.Check))
 		{
+			is_in_search = true;
+			
 			// Update GUI:
 			paintImmediately(0, 0, getWidth(), getHeight());
 			// Select and execute move:
 			final var move = search.select_move(board, evaluator);
-			player_resigned = move == 0;
-			if (player_resigned)
+			computer_resigned = move == 0;
+			if (computer_resigned)
 			{
 				break;
 			}
@@ -220,37 +232,35 @@ public final class MainPanel extends JPanel
 			history_panel.history_list.setSelectedIndex(
 				history_panel.history_data.size() - 1);
 		}
+		is_in_search = false;
 		
 		// Update GUI:
 		board_panel.repaint();
 		game_panel.repaint();
 		history_panel.repaint();
-	}
-	
-	private boolean computer_turn()
-	{
-		return board.player() ? computer_w : computer_b;
-	}
+	} finally { board_lock.unlock(); }}
 	
 	private final class BoardListener extends KeyAdapter
 	{
 		@Override public void keyPressed(final KeyEvent event)
 		{
-			if (computer_turn())
-			{
-				return;
-			}
 			final var old_x = cursor_x;
 			final var old_y = cursor_y;
 			final var key = event.getKeyCode();
+			
 			if (key == KeyEvent.VK_SPACE)
-			{
+			{ if (board_lock.tryLock() /* Only try; ignore selection/move iff busy. */) try {
 				final var figure = board.figure(cursor_x, cursor_y);
 				if (figure != null && figure.owner == board.player())
 				{
 					selected_figure = figure;
 					selected_x = cursor_x;
 					selected_y = cursor_y;
+				}
+				else if (is_in_search
+					|| (board.player() ? computer_w : computer_b))
+				{
+					return;
 				}
 				else if (selected_figure != null)
 				{
@@ -277,7 +287,7 @@ public final class MainPanel extends JPanel
 						return; // 'run_game()' takes care of repainting.
 					}
 				}
-			}
+			} finally { board_lock.unlock(); } else { return; }}
 			else if (key == KeyEvent.VK_UP && cursor_y < 7)
 			{
 				cursor_y++;
@@ -295,9 +305,10 @@ public final class MainPanel extends JPanel
 				cursor_x++;
 			}
 			else
-			{ // Unknown key or invalid movement:
+			{ // Unknown key or invalid cursor movement:
 				return;
 			}
+			
 			board_panel.repaint();
 		}
 	}
@@ -306,24 +317,29 @@ public final class MainPanel extends JPanel
 	{
 		@Override public void keyPressed(final KeyEvent event)
 		{
-			final var game_status = board.status();
-			if (computer_turn()
-				&& !player_resigned
-				&& game_status != Board.GameStatus.Checkmate
-				&& game_status != Board.GameStatus.Stalemate
-				&& game_status != Board.GameStatus.Draw)
+			if (event.getKeyCode() != KeyEvent.VK_SPACE)
 			{
 				return;
 			}
-			final var key = event.getKeyCode();
-			if (key == KeyEvent.VK_SPACE)
-			{
+			if (board_lock.tryLock() /* Only try; ignore undo iff busy. */) try {
+				final var game_status = board.status();
+				if (is_in_search
+					|| ((board.player() ? computer_w : computer_b)
+						&& !computer_resigned
+						&& game_status != Board.GameStatus.Checkmate
+						&& game_status != Board.GameStatus.Stalemate
+						&& game_status != Board.GameStatus.Draw))
+				{
+					return;
+				}
 				final var selected = history_panel.history_list.getSelectedIndex();
 				for (var i = board.turn() - selected - 1; i > 0; i--)
 				{
 					undo();
 				}
 				run_game();
+			} finally {
+				board_lock.unlock();
 			}
 		}
 	}
@@ -366,14 +382,14 @@ public final class MainPanel extends JPanel
 				{
 					private void dispatch_key_event(final int key)
 					{
-						MainPanel.this.dispatchEvent(new KeyEvent(
+						board_listener.keyPressed(new KeyEvent(
 							  MainPanel.this
 							, KeyEvent.KEY_PRESSED
 							, System.currentTimeMillis()
 							, 0 //KeyEvent.SHIFT_DOWN_MASK
 							, key
 							, KeyEvent.CHAR_UNDEFINED));
-						MainPanel.this.dispatchEvent(new KeyEvent(
+						board_listener.keyReleased(new KeyEvent(
 							  MainPanel.this
 							, KeyEvent.KEY_RELEASED
 							, System.currentTimeMillis()
@@ -489,89 +505,86 @@ public final class MainPanel extends JPanel
 			}
 			
 			// Draw tiles:
-			for (var x = 7; x >= 0; x--)
-			{
-				for (var y = 7; y >= 0; y--)
-				{
-					draw_square(graphic, x, y);
-				}
-			}
+			draw_tiles(graphic);
 		}
 		
-		private void draw_square(final Graphics graphic, final int x, final int y)
-		{
+		private void draw_tiles(final Graphics graphic)
+		{ board_lock.lock(); try {
 			Resources.configure_rendering(graphic);
 			
-			final var y_trans = 7 - y;
-			
-			// Draw background tile:
-			var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
-			final var last_move = board.previous_move(board.turn() - 1);
-			if (last_move != 0 && !Move.is_moveless_draw_claim(last_move))
+			for (var x = 7; x >= 0; x--) for (var y = 7; y >= 0; y--)
 			{
-				final var _x_ = Move.x(last_move);
-				final var _X_ = Move.X(last_move);
-				if ((x == _x_ && y == Move.y(last_move))
-					|| (y == Move.Y(last_move)
-						&& (x == _X_
-							// Check for rook positions of recent castling:
-							|| (Move.figure_moved(last_move).is_king()
-								&& ((_X_ == _x_ - 2 && (x == 0 || x == 3))
-									|| (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
+				final var y_trans = 7 - y;
+				
+				// Draw background tile:
+				var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
+				final var last_move = board.previous_move(board.turn() - 1);
+				if (last_move != 0 && !Move.is_moveless_draw_claim(last_move))
 				{
-					color = new Color(77, 164, 77);
+					final var _x_ = Move.x(last_move);
+					final var _X_ = Move.X(last_move);
+					if ((x == _x_ && y == Move.y(last_move))
+						|| (y == Move.Y(last_move)
+							&& (x == _X_
+								// Check for rook positions of recent castling:
+								|| (Move.figure_moved(last_move).is_king()
+									&& ((_X_ == _x_ - 2 && (x == 0 || x == 3))
+										|| (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
+					{
+						color = new Color(77, 164, 77);
+					}
 				}
+				graphic.setColor(color);
+				graphic.fillRect(
+					  x * tile_size + border_size
+					, y_trans * tile_size + border_size
+					, tile_size
+					, tile_size);
+				
+				// Draw figure:
+				final var figure = board.figure(x, y);
+				if (figure != null)
+				{
+					graphic.setColor(Color.black);
+					graphic.setFont(figure_font);
+					final var text = FigurePresentation.get(figure).unicode;
+					final var metrics = graphic.getFontMetrics();
+					final var width_fix =
+						(tile_size - metrics.stringWidth(text)) / 2;
+					final var height_fix =
+						(tile_size + metrics.getAscent() + metrics.getDescent()) / 2
+						- metrics.getDescent();
+					graphic.drawString(
+						  text
+						, x * tile_size + border_size + width_fix
+						, y_trans * tile_size + border_size + height_fix);
+				}
+				
+				// Draw cursor and figure selection:
+				final var old_stroke = ((Graphics2D)graphic).getStroke();
+				((Graphics2D)graphic).setStroke(new BasicStroke(cursor_line_width));
+				final var x_pos = x * tile_size
+					+ border_size
+					+ (cursor_line_width / 2)
+					+ 1;
+				final var y_pos = y_trans * tile_size
+					+ border_size
+					+ (cursor_line_width / 2)
+					+ 1;
+				final var distance = tile_size - cursor_line_width - 2;
+				if (x == cursor_x && y == cursor_y)
+				{
+					graphic.setColor(Color.blue);
+					graphic.drawRect(x_pos, y_pos, distance, distance);
+				}
+				if (selected_figure != null && x == selected_x && y == selected_y)
+				{
+					graphic.setColor(Color.red);
+					graphic.drawRect(x_pos, y_pos, distance, distance);
+				}
+				((Graphics2D)graphic).setStroke(old_stroke);
 			}
-			graphic.setColor(color);
-			graphic.fillRect(
-				  x * tile_size + border_size
-				, y_trans * tile_size + border_size
-				, tile_size
-				, tile_size);
-			
-			// Draw figure:
-			final var figure = board.figure(x, y);
-			if (figure != null)
-			{
-				graphic.setColor(Color.black);
-				graphic.setFont(figure_font);
-				final var text = FigurePresentation.get(figure).unicode;
-				final var metrics = graphic.getFontMetrics();
-				final var width_fix =
-					(tile_size - metrics.stringWidth(text)) / 2;
-				final var height_fix =
-					(tile_size + metrics.getAscent() + metrics.getDescent()) / 2
-					- metrics.getDescent();
-				graphic.drawString(
-					  text
-					, x * tile_size + border_size + width_fix
-					, y_trans * tile_size + border_size + height_fix);
-			}
-			
-			// Draw cursor and figure selection:
-			final var old_stroke = ((Graphics2D)graphic).getStroke();
-			((Graphics2D)graphic).setStroke(new BasicStroke(cursor_line_width));
-			final var x_pos = x * tile_size
-				+ border_size
-				+ (cursor_line_width / 2)
-				+ 1;
-			final var y_pos = y_trans * tile_size
-				+ border_size
-				+ (cursor_line_width / 2)
-				+ 1;
-			final var distance = tile_size - cursor_line_width - 2;
-			if (x == cursor_x && y == cursor_y)
-			{
-				graphic.setColor(Color.blue);
-				graphic.drawRect(x_pos, y_pos, distance, distance);
-			}
-			if (selected_figure != null && x == selected_x && y == selected_y)
-			{
-				graphic.setColor(Color.red);
-				graphic.drawRect(x_pos, y_pos, distance, distance);
-			}
-			((Graphics2D)graphic).setStroke(old_stroke);
-		}
+		} finally { board_lock.unlock(); }}
 	}
 	
 	private final class GamePanel extends JPanel
@@ -666,16 +679,11 @@ public final class MainPanel extends JPanel
 						super.paintComponent(graphic);
 						Resources.configure_rendering(graphic);
 						
-						final var game_status = board.status();
 						final var bulb_x =
 							status_x_size - bulb.getWidth(StatusPanel.this);
 						final var bulb_y =
 							(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
-						if (computer_turn()
-							&& !player_resigned
-							&& game_status != Board.GameStatus.Checkmate
-							&& game_status != Board.GameStatus.Stalemate
-							&& game_status != Board.GameStatus.Draw)
+						if (is_in_search /* safe asynchronous access */)
 						{
 							graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
 						}
@@ -700,20 +708,30 @@ public final class MainPanel extends JPanel
 			private final JToggleButton draw_claim_button = new JToggleButton("Claim draw", false)
 				// Static initialize with listener checking for moveless draw claim:
 				{{ addItemListener((final ItemEvent e) -> {
-					if (computer_turn()
-						|| e.getStateChange() != ItemEvent.SELECTED)
+					if (e.getStateChange() != ItemEvent.SELECTED)
 					{
 						return;
 					}
-					if (board.execute_moveless_draw_claim())
-					{
-						history_panel.history_data.addElement(new PastMove(
-							  board.turn() - 1
-							, board.previous_move(board.turn() - 1)
-							, board.status()
-							, false));
-						run_game();
-					}
+					if (board_lock.tryLock() /* Only try: ignore draw claim iff busy. */)
+					{ try {
+						if (is_in_search
+							|| (board.player() ? computer_w : computer_b))
+						{
+							setSelected(false);
+							return;
+						}
+						if (board.execute_moveless_draw_claim())
+						{
+							history_panel.history_data.addElement(new PastMove(
+								  board.turn() - 1
+								, board.previous_move(board.turn() - 1)
+								, board.status()
+								, false));
+							run_game();
+						}
+						return;
+					} finally { board_lock.unlock(); }}
+					setSelected(false);
 				});}};
 			private final JLabel draw_repetition_status = new JLabel(
 					  String.valueOf(0)
@@ -816,7 +834,7 @@ public final class MainPanel extends JPanel
 				pawn_promotion_list.setLayoutOrientation(JList.VERTICAL);
 				pawn_promotion_list.setVisibleRowCount(pawn_promotion_w.getSize());
 				pawn_promotion_list.setCellRenderer(new DefaultListCellRenderer());
-				pawn_promotion_list.setModel(board.player()
+				pawn_promotion_list.setModel(board.player() /* safe asynchronous access */
 					? pawn_promotion_w
 					: pawn_promotion_b);
 				pawn_promotion_list.setSelectedIndex(0);
@@ -978,7 +996,7 @@ public final class MainPanel extends JPanel
 			}
 			
 			@Override public void paintComponent(final Graphics graphic)
-			{
+			{ board_lock.lock(); try {
 				super.paintComponent(graphic);
 				Resources.configure_rendering(graphic);
 				
@@ -992,7 +1010,7 @@ public final class MainPanel extends JPanel
 						+ String.valueOf(invalid_internal_move)
 						+ ")!";
 				}
-				else if (player_resigned)
+				else if (computer_resigned)
 				{
 					message = now + " resigns. " + next + " wins.";
 				}
@@ -1052,7 +1070,7 @@ public final class MainPanel extends JPanel
 					board.draw_repetition_status()));
 				draw_move_rules_status.setText(String.valueOf(
 					board.draw_move_rules_status()));
-			}
+			} finally { board_lock.unlock(); }}
 		}
 	}
 	
