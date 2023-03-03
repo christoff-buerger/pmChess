@@ -322,13 +322,16 @@ public final class MainPanel extends JPanel
 				return;
 			}
 			if (board_lock.tryLock() /* Only try; ignore undo iff busy. */) try {
+				if (is_in_search)
+				{
+					return;
+				}
 				final var game_status = board.status();
-				if (is_in_search
-					|| ((board.player() ? computer_w : computer_b)
-						&& !computer_resigned
-						&& game_status != Board.GameStatus.Checkmate
-						&& game_status != Board.GameStatus.Stalemate
-						&& game_status != Board.GameStatus.Draw))
+				if (((board.player() ? computer_w : computer_b)
+					&& !computer_resigned
+					&& game_status != Board.GameStatus.Checkmate
+					&& game_status != Board.GameStatus.Stalemate
+					&& game_status != Board.GameStatus.Draw))
 				{
 					return;
 				}
