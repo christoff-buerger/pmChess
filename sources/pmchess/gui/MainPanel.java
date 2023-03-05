@@ -120,7 +120,7 @@ public final class MainPanel extends JPanel
 		os.writeObject(game);
 	} finally { board_lock.unlock(); }}
 	
-	protected void deserialize_game(final ObjectInputStream is)
+	protected synchronized void deserialize_game(final ObjectInputStream is)
 		throws IOException, ClassNotFoundException
 	{
 		final var game = (int[])(is.readObject());
@@ -134,10 +134,21 @@ public final class MainPanel extends JPanel
 		  final boolean computer_w
 		, final boolean computer_b
 		, final int[] moves)
-	{ board_lock.lock(); try {
-		while (undo())
+	{ if (board_lock.tryLock() /* Only try; ignore reinitialization iff busy. */) try {
+		if (is_in_search)
+		{
+			return;
+		}
+		while (board.undo() != 0)
 		{
 		}
+		if (history_panel.history_data.size() > 1)
+		{
+			history_panel.history_data.removeRange(
+				  1
+				, history_panel.history_data.size() - 1);
+		}
+		computer_resigned = false;			
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
 		invalid_internal_move = 0;
@@ -166,18 +177,6 @@ public final class MainPanel extends JPanel
 				, board.draw_repetition_status() > last_repetition_status));
 		}
 		run_game();
-	} finally { board_lock.unlock(); }}
-	
-	private boolean undo()
-	{ board_lock.lock(); try {
-		if (board.undo() != 0)
-		{
-			history_panel.history_data.removeElementAt(
-				history_panel.history_data.size() - 1);
-			computer_resigned = false;
-			return true;
-		}
-		return false;
 	} finally { board_lock.unlock(); }}
 	
 	private void run_game()
@@ -338,7 +337,14 @@ public final class MainPanel extends JPanel
 				final var selected = history_panel.history_list.getSelectedIndex();
 				for (var i = board.turn() - selected - 1; i > 0; i--)
 				{
-					undo();
+					board.undo();
+				}
+				if (history_panel.history_data.size() > selected)
+				{
+					history_panel.history_data.removeRange(
+						  selected + 1
+						, history_panel.history_data.size() - 1);
+					computer_resigned = false;
 				}
 				run_game();
 			} finally {
