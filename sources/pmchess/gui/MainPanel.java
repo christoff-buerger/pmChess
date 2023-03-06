@@ -9,7 +9,6 @@ package pmchess.gui;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BooleanSupplier;
 
 import java.io.*;
 
