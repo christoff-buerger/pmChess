@@ -126,12 +126,13 @@ public final class GUI extends JFrame
 		setVisible(true);
 	}
 	
-	public void save_game(final String game_file)
+	public boolean save_game(final String game_file)
 	{
 		try (final var os = new ObjectOutputStream(
 			new FileOutputStream(game_file, false)))
 		{
 			main_panel.serialize_game(os);
+			return true;
 		}
 		catch (final Exception e1)
 		{
@@ -142,6 +143,7 @@ public final class GUI extends JFrame
 			catch (final Exception e2)
 			{
 			}
+			return false;
 		}
 	}
 	

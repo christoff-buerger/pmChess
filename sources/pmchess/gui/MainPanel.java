@@ -9,6 +9,7 @@ package pmchess.gui;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 
 import java.io.*;
 
@@ -110,6 +111,16 @@ public final class MainPanel extends JPanel
 	protected void serialize_game(final ObjectOutputStream os)
 		throws IOException
 	{ board_lock.lock(); try {
+		while (is_in_search) try
+		{
+			Thread.sleep(100);
+		}
+		catch (final InterruptedException e)
+		{
+			throw new IOException(
+				"Serialization interrupted while waiting for computer move.");
+		}
+		
 		final var game = new int[1 + board.turn()];
 		game[0] = computer_w ? 1 : 0;
 		game[1] = computer_b ? 1 : 0;
@@ -120,7 +131,7 @@ public final class MainPanel extends JPanel
 		os.writeObject(game);
 	} finally { board_lock.unlock(); }}
 	
-	protected synchronized void deserialize_game(final ObjectInputStream is)
+	protected void deserialize_game(final ObjectInputStream is)
 		throws IOException, ClassNotFoundException
 	{
 		final var game = (int[])(is.readObject());
