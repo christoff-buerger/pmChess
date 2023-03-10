@@ -45,7 +45,8 @@ public final class MainPanel extends JPanel
 	private boolean computer_w = false; // Any access must be locked.
 	private boolean computer_b = false; // Any access must be locked.
 	private boolean computer_resigned = false;
-	private boolean is_in_search = false;
+	/* Turn for which a computer search is in progress, 0 otherwise: */
+	private int is_in_search = 0;
 	
 	private int cursor_x = 0;
 	private int cursor_y = 0;
@@ -110,20 +111,11 @@ public final class MainPanel extends JPanel
 	protected void serialize_game(final ObjectOutputStream os)
 		throws IOException
 	{ board_lock.lock(); try {
-		while (is_in_search) try
-		{
-			Thread.sleep(100);
-		}
-		catch (final InterruptedException e)
-		{
-			throw new IOException(
-				"Serialization interrupted while waiting for computer move.");
-		}
-		
-		final var game = new int[1 + board.turn()];
+		final var turn_to_serialize = (is_in_search > 0 ? is_in_search : board.turn()) - 1;
+		final var game = new int[2 + turn_to_serialize];
 		game[0] = computer_w ? 1 : 0;
 		game[1] = computer_b ? 1 : 0;
-		for (var t = board.turn() - 1; t > 0; t--)
+		for (var t = turn_to_serialize; t > 0; t--)
 		{
 			game[t + 1] = board.previous_move(t);
 		}
@@ -145,7 +137,7 @@ public final class MainPanel extends JPanel
 		, final boolean computer_b
 		, final int[] moves)
 	{ if (board_lock.tryLock() /* Only try; ignore reinitialization iff busy. */) try {
-		if (is_in_search)
+		if (is_in_search > 0)
 		{
 			return;
 		}
@@ -204,7 +196,7 @@ public final class MainPanel extends JPanel
 			&& (game_status == Board.GameStatus.Normal
 				|| game_status == Board.GameStatus.Check))
 		{
-			is_in_search = true;
+			is_in_search = board.turn();
 			
 			// Update GUI:
 			paintImmediately(0, 0, getWidth(), getHeight());
@@ -241,7 +233,7 @@ public final class MainPanel extends JPanel
 			history_panel.history_list.setSelectedIndex(
 				history_panel.history_data.size() - 1);
 		}
-		is_in_search = false;
+		is_in_search = 0;
 		
 		// Update GUI:
 		board_panel.repaint();
@@ -266,7 +258,7 @@ public final class MainPanel extends JPanel
 					selected_x = cursor_x;
 					selected_y = cursor_y;
 				}
-				else if (is_in_search
+				else if (is_in_search > 0
 					|| (board.player() ? computer_w : computer_b))
 				{
 					return;
@@ -331,7 +323,7 @@ public final class MainPanel extends JPanel
 				return;
 			}
 			if (board_lock.tryLock() /* Only try; ignore undo iff busy. */) try {
-				if (is_in_search)
+				if (is_in_search > 0)
 				{
 					return;
 				}
@@ -702,7 +694,7 @@ public final class MainPanel extends JPanel
 							status_x_size - bulb.getWidth(StatusPanel.this);
 						final var bulb_y =
 							(status_y_size - bulb.getHeight(StatusPanel.this)) / 2;
-						if (is_in_search /* safe asynchronous access */)
+						if (is_in_search > 0 /* safe asynchronous access */)
 						{
 							graphic.drawImage(bulb, bulb_x, bulb_y, StatusPanel.this);
 						}
@@ -733,7 +725,7 @@ public final class MainPanel extends JPanel
 					}
 					if (board_lock.tryLock() /* Only try: ignore draw claim iff busy. */)
 					{ try {
-						if (is_in_search
+						if (is_in_search > 0
 							|| (board.player() ? computer_w : computer_b))
 						{
 							setSelected(false);
@@ -800,6 +792,7 @@ public final class MainPanel extends JPanel
 				super();
 				
 				// Status message:
+				
 				final var status_dimension =
 					new Dimension(status_x_size, status_y_size);
 				status.setOpaque(true);
@@ -810,6 +803,7 @@ public final class MainPanel extends JPanel
 				status.setAlignmentX(Component.CENTER_ALIGNMENT);
 				
 				// Allowed castlings information:
+				
 				final var castling_dimension =
 					new Dimension(castling_x_size, castling_y_size);
 				castling_qs_w.setFont(pawn_promotion_font);
@@ -820,6 +814,7 @@ public final class MainPanel extends JPanel
 				castling_ks_w.setEnabled(false);
 				castling_qs_b.setEnabled(false);
 				castling_ks_b.setEnabled(false);
+				
 				final var castling_w = new JPanel();
 				castling_w.setBorder(BorderFactory.createTitledBorder("White castling"));
 				castling_w.setMaximumSize(castling_dimension);
@@ -827,6 +822,7 @@ public final class MainPanel extends JPanel
 				castling_w.setPreferredSize(castling_dimension);
 				castling_w.add(castling_qs_w);
 				castling_w.add(castling_ks_w);
+				
 				final var castling_b = new JPanel();
 				castling_b.setBorder(BorderFactory.createTitledBorder("Black castling"));
 				castling_b.setMaximumSize(castling_dimension);
@@ -836,6 +832,7 @@ public final class MainPanel extends JPanel
 				castling_b.add(castling_ks_b);
 				
 				// Pawn promotion selection:
+				
 				pawn_promotion_w.addElement(FigurePresentation.get(Figure.queen(true)));
 				pawn_promotion_w.addElement(FigurePresentation.get(Figure.knight(true)));
 				pawn_promotion_w.addElement(FigurePresentation.get(Figure.bishop(true)));
@@ -844,6 +841,7 @@ public final class MainPanel extends JPanel
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.knight(false)));
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.bishop(false)));
 				pawn_promotion_b.addElement(FigurePresentation.get(Figure.rook(false)));
+				
 				final var pawn_promotion_list_dimension = new Dimension(
 					  pawn_promotion_list_x_size
 					, pawn_promotion_list_y_size);
@@ -860,6 +858,7 @@ public final class MainPanel extends JPanel
 				pawn_promotion_list.setMaximumSize(pawn_promotion_list_dimension);
 				pawn_promotion_list.setMinimumSize(pawn_promotion_list_dimension);
 				pawn_promotion_list.setPreferredSize(pawn_promotion_list_dimension);
+				
 				final var pawn_promotion_label = new JLabel("Promotion")
 					{
 						private boolean painting = false;
@@ -918,6 +917,7 @@ public final class MainPanel extends JPanel
 					};
 				
 				// Draw status:
+				
 				final var draw_panel = new JPanel();
 				final var draw_panel_dimension = new Dimension(
 					  tab_x_size
@@ -927,21 +927,25 @@ public final class MainPanel extends JPanel
 				draw_panel.setMinimumSize(draw_panel_dimension);
 				draw_panel.setPreferredSize(draw_panel_dimension);				
 				draw_panel.setLayout(new BoxLayout(draw_panel, BoxLayout.X_AXIS));
+				
 				final var draw_status_dimension = new Dimension(
 					  (int)(0.28f * draw_panel_dimension.getWidth())
 					, text_height + 2 * border_size);
 				draw_repetition_status.setMaximumSize(draw_status_dimension);
 				draw_repetition_status.setMinimumSize(draw_status_dimension);
 				draw_repetition_status.setPreferredSize(draw_status_dimension);
+				
 				final var draw_claim_button_dimension = new Dimension(
 					  (int)(0.40f * draw_panel_dimension.getWidth())
 					, 2 * text_height + 2 * border_size);
 				draw_claim_button.setMaximumSize(draw_claim_button_dimension);
 				draw_claim_button.setMinimumSize(draw_claim_button_dimension);
-				draw_claim_button.setPreferredSize(draw_claim_button_dimension);				
+				draw_claim_button.setPreferredSize(draw_claim_button_dimension);
+				
 				draw_move_rules_status.setMaximumSize(draw_status_dimension);
 				draw_move_rules_status.setMinimumSize(draw_status_dimension);
 				draw_move_rules_status.setPreferredSize(draw_status_dimension);
+				
 				draw_panel.add(Box.createHorizontalGlue());
 				draw_panel.add(draw_repetition_status);
 				draw_panel.add(Box.createHorizontalGlue());
