@@ -198,7 +198,7 @@
 	-->
 	<ItemGroup>
 		<ClCompile Include="pmChess.cpp"/>
-		<Link Include="pmChess\temp\pmChess.ico.res"/>
+		<Link Include="pmChess\temp\pmChess.rc.res"/>
 	</ItemGroup>
 	
 	<!--
@@ -216,12 +216,12 @@
 	<Target Name="PrepareBuild" BeforeTargets="Build">
 		<Exec Command="cd .. &amp; ant"/>
 		<MakeDir Directories = "pmChess\temp" Condition = "!Exists('pmChess\temp')"/>
-		<Exec Command="rc /nologo /fo pmChess\temp\pmChess.ico.res pmChess.ico.rc"/>
-		<Exec Command="cvtres /nologo /machine:ix86 /out:pmChess\temp\pmChess.ico.obj pmChess\temp\pmChess.ico.res"/>
+		<Exec Command="rc /nologo /fo pmChess\temp\pmChess.rc.res pmChess.rc"/>
+		<Exec Command="cvtres /nologo /machine:X64 /out:pmChess\temp\pmChess.rc.obj pmChess\temp\pmChess.rc.res"/>
 	</Target>
 	
 	<Target Name="FinishBuild" AfterTargets="Build">
-		<Exec Command="mt.exe /nologo /manifest &quot;pmChess.exe.manifest&quot; /outputresource:&quot;pmChess\temp\pmChess.exe;#1&quot;"/>
+		<Exec Command="mt.exe /nologo /manifest &quot;pmChess.manifest&quot; /outputresource:&quot;pmChess\temp\pmChess.exe;#1&quot;"/>
 		<Copy SourceFiles="pmChess\temp\pmChess.exe" DestinationFolder="pmChess"/>
 		<RemoveDir Directories="pmChess\temp\"/>
 		<Copy SourceFiles="pmChess.bat" DestinationFolder="pmChess"/>

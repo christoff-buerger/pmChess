@@ -1,0 +1,41 @@
+/*
+	This program and the accompanying materials are made available under the
+	terms of the MIT license (X11 license) which accompanies this distribution.
+	
+	Author: Christoff Bürger
+*/
+
+/* Use UTF-8: */
+#pragma code_page(65001)
+
+/* VOS_NT, VFT_APP: */
+#include "Windows.h"
+
+pmChess_icon	ICON	"pmChess.ico"
+
+1 VERSIONINFO
+FILEVERSION 2,0,0,0
+PRODUCTVERSION 2,0,0,0
+FILEOS VOS_NT
+FILETYPE VFT_APP
+{
+	BLOCK "StringFileInfo"
+	{
+		BLOCK "040904B0"
+		{
+			VALUE "CompanyName", "Christoff Bürger"
+			VALUE "FileDescription", "A poor man's chess: lightweight, comprehensible and fun to prevail. For documentation, releases and source code cf. https://github.com/christoff-buerger/pmChess."
+			VALUE "FileVersion", "2.0.0"
+			VALUE "InternalName", "pmChess"
+			VALUE "LegalCopyright", "© 2006-2023 Christoff Bürger, This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution."
+			VALUE "OriginalFilename", "pmChess.exe"
+			VALUE "ProductName", "pmChess"
+			VALUE "ProductVersion", "2.0.0"
+		}
+	}
+
+	BLOCK "VarFileInfo"
+	{
+		VALUE "Translation", 0x0409 0x04B0
+	}
+}
