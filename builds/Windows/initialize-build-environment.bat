@@ -57,8 +57,8 @@ call where msbuild >nul 2>nul
 if ERRORLEVEL 1 (
 	for %%y in ( "2022" ) do (
 		for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
-			if exist "C:\Program Files\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
-				call "C:\Program Files\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
+			if exist "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
+				call "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
 				if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
 					set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
 					call :ERROR
