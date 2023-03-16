@@ -40,7 +40,7 @@ if not "%SelfWrapped%"=="%~0" (
 rem Initialize Java:
 call where javac >nul 2>nul
 if ERRORLEVEL 1 (
-	for /d %%j in ( "C:\Program Files\Java\jdk-19" "C:\Program Files\Java\jdk-19.*" ) do (
+	for /d %%j in ( "%ProgramFiles%\Java\jdk-19" "%ProgramFiles%\Java\jdk-19.*" ) do (
 		if exist "%%j" (
 			set "JAVA_HOME=%%~fj"
 			set "PATH=!JAVA_HOME!\bin;!PATH!"
