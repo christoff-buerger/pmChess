@@ -229,6 +229,43 @@ public final class Board
 			| (Figure.rook(false).key << 28);
 	}
 	
+	public Board fork()
+	{
+		final var forked_board = new Board();
+		
+		for (var x = 0; x <= 7; x++)
+		{
+			for (var y = 0; y <= 7; y++)
+			{
+				forked_board.board[x][y] = board[x][y];
+			}
+		}
+		
+		forked_board.moves[2] = moves[2];
+		for (var i = forked_board.moves[forked_board.moves_frame];
+			i < moves[moves_frame];
+			i++)
+		{
+			forked_board.moves[i] = moves[i];
+		}
+		forked_board.moves[moves_frame + 2] = 0;
+		forked_board.moves_frame = moves_frame;
+		
+		forked_board.king_x_w = king_x_w;
+		forked_board.king_y_w = king_y_w;
+		forked_board.king_x_b = king_x_b;
+		forked_board.king_y_b = king_y_b;
+		
+		forked_board.castlings_allowed = castlings_allowed;
+		forked_board.castling_done_w = castling_done_w;
+		forked_board.castling_done_b = castling_done_b;
+		
+		forked_board.player = player;
+		forked_board.turn = turn;
+		
+		return forked_board;
+	}
+	
 	private void moves_compute_possible()
 	{
 		for (var x = 0; x <= 7; x++)

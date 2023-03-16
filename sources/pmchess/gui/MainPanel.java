@@ -189,51 +189,61 @@ public final class MainPanel extends JPanel
 		game_panel.status_panel.draw_claim_button.setSelected(false);
 		history_panel.history_list.setSelectedIndex(history_panel.history_data.size() - 1);
 		
-		// Execute computer moves:
-		var game_status = board.status();
-		while ((board.player() ? computer_w : computer_b)
+		// Execute computer move:
+		final var game_status = board.status();
+		if (is_in_search == 0
+			&& (board.player() ? computer_w : computer_b)
 			&& !computer_resigned /* Once resigned stay resigned in THAT position. */
 			&& (game_status == Board.GameStatus.Normal
 				|| game_status == Board.GameStatus.Check))
 		{
 			is_in_search = board.turn();
-			
-			// Update GUI:
-			paintImmediately(0, 0, getWidth(), getHeight());
-			// Select and execute move:
-			final var move = search.select_move(board, evaluator);
-			computer_resigned = move == 0;
-			if (computer_resigned)
+			final var forked_board = board.fork();
+			final var search_coroutine = new Thread()
 			{
-				break;
-			}
-			final var last_repetition_status = board.draw_repetition_status();
-			if (!(Move.is_moveless_draw_claim(move)
-				? board.execute_moveless_draw_claim()
-				: board.execute(
-					  Move.x(move)
-					, Move.y(move)
-					, Move.X(move)
-					, Move.Y(move)
-					, Move.figure_placed(move)
-					, Move.draw_claim(move))))
-			{
-				invalid_internal_move = move;
-				computer_w = false;
-				computer_b = false;
-				break;
-			}
-			game_status = board.status();
-			history_panel.history_data.addElement(new PastMove(
-				  board.turn() - 1
-				, move
-				, game_status
-				, board.draw_repetition_status() > last_repetition_status));
-			// Reset all GUI selections influenced by computer moves:
-			history_panel.history_list.setSelectedIndex(
-				history_panel.history_data.size() - 1);
+				@Override public void run()
+				{
+					final int move = search.select_move(forked_board, evaluator);
+					java.awt.EventQueue.invokeLater(
+						new Runnable()
+						{
+							@Override public void run()
+							{ board_lock.lock(); try {
+								computer_resigned = move == 0;
+								if (computer_resigned)
+								{
+									return;
+								}
+								final var last_repetition_status = board.draw_repetition_status();
+								if (!(Move.is_moveless_draw_claim(move)
+									? board.execute_moveless_draw_claim()
+									: board.execute(
+										Move.x(move)
+										, Move.y(move)
+										, Move.X(move)
+										, Move.Y(move)
+										, Move.figure_placed(move)
+										, Move.draw_claim(move))))
+								{
+									invalid_internal_move = move;
+									computer_w = false;
+									computer_b = false;
+									return;
+								}
+								history_panel.history_data.addElement(new PastMove(
+									  board.turn() - 1
+									, move
+									, board.status()
+									, board.draw_repetition_status() > last_repetition_status));
+								// Reset all GUI selections influenced by computer move:
+								history_panel.history_list.setSelectedIndex(
+									history_panel.history_data.size() - 1);
+							} finally { is_in_search = 0; board_lock.unlock(); run_game(); }}
+						});
+				}
+			};
+			search_coroutine.start();
 		}
-		is_in_search = 0;
 		
 		// Update GUI:
 		board_panel.repaint();
