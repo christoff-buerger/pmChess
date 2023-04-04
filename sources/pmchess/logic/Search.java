@@ -9,15 +9,51 @@ package pmchess.logic;
 
 public final class Search
 {
-	static final int search_depth = 4;
-	static final int max_score =  999999;
-	static final int min_score = -999999;
+	private static final int max_score = 999999;
+	private static final int min_score = -999999;
+	private static final long search_budget = 15000000000l; // 15s
+	private static final int search_depth_min = 4;
+	
+	private Object state_lock = new Object(); // Support asynchronous use => protect state.
+	private long search_duration = -1l;
+	private int search_depth = search_depth_min;
+	
+	public int get_search_depth()
+	{
+		synchronized (state_lock)
+		{
+			return search_depth;
+		}
+	}
+	
+	public void set_search_depth(final int search_depth)
+	{
+		synchronized (state_lock)
+		{
+			this.search_depth = search_depth < search_depth_min
+				? search_depth_min
+				: search_depth;
+		}
+	}
 	
 	public int select_move(final Board board, final Evaluator evaluator)
 	{
+		final int search_depth;
+		synchronized (state_lock)
+		{
+			search_depth = search_duration > search_budget
+				&& this.search_depth > search_depth_min
+				? this.search_depth - 1
+				: (0.5 * search_duration * board.moves_possible_count() < search_budget
+					? this.search_depth + 1
+					: this.search_depth);
+		}
+		
+		final var start_time = System.nanoTime();
+		
 		var best_move = 0;
 		var alpha = Search.min_score;
-		var beta = 2 * Search.max_score;
+		final var beta = 2 * Search.max_score;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
@@ -28,7 +64,7 @@ public final class Search
 					  board
 					, -beta
 					, -alpha
-					, Search.search_depth
+					, search_depth
 					, evaluator);
 				if (score > alpha)
 				{
@@ -39,6 +75,15 @@ public final class Search
 			}
 			// Pruning doesn't make any sense at the root.
 		}
+		
+		final var end_time = System.nanoTime();
+		
+		synchronized (state_lock)
+		{
+			search_duration = end_time - start_time;
+			this.search_depth = search_depth;
+		}
+		
 		return best_move;
 	}
 	

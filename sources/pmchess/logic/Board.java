@@ -174,6 +174,7 @@ public final class Board
 		Initialization of 'moves' and 'position_caches':
 	*/
 	{
+		Arrays.fill(moves, 0);
 		moves[0] = 3;
 		moves[1] = -1;
 		moves[2] = 0;
@@ -329,6 +330,14 @@ public final class Board
 	protected int moves_possible(final int index)
 	{
 		return index < moves[moves_frame] & index > moves_frame + 2 ? moves[index] : 0;
+	}
+	
+	/*
+		Number of possible moves of the current move frame:
+	*/
+	protected int moves_possible_count()
+	{
+		return moves[moves_frame] - (moves_frame + 3);
 	}
 	
 	/*
@@ -637,7 +646,7 @@ public final class Board
 			}
 			
 			// Compute repetition:
-			final var moves_count = moves[moves_frame] - (moves_frame + 3);
+			final var moves_count = moves_possible_count();
 			var repetition_increase = 0;
 			for (int t = 1, m = 0;
 				t < turn;

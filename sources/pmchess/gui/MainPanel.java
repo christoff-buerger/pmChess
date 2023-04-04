@@ -112,12 +112,13 @@ public final class MainPanel extends JPanel
 		throws IOException
 	{ board_lock.lock(); try {
 		final var turn_to_serialize = (is_in_search > 0 ? is_in_search : board.turn()) - 1;
-		final var game = new int[2 + turn_to_serialize];
-		game[0] = computer_w ? 1 : 0;
-		game[1] = computer_b ? 1 : 0;
+		final var game = new int[3 + turn_to_serialize];
+		game[0] = search.get_search_depth();
+		game[1] = computer_w ? 1 : 0;
+		game[2] = computer_b ? 1 : 0;
 		for (var t = turn_to_serialize; t > 0; t--)
 		{
-			game[t + 1] = board.previous_move(t);
+			game[t + 2] = board.previous_move(t);
 		}
 		os.writeObject(game);
 	} finally { board_lock.unlock(); }}
@@ -126,10 +127,11 @@ public final class MainPanel extends JPanel
 		throws IOException, ClassNotFoundException
 	{
 		final var game = (int[])(is.readObject());
+		search.set_search_depth(game[0]);
 		initialize(
-			  game[0] != 0
-			, game[1] != 0
-			, Arrays.copyOfRange(game, 2, game.length));
+			  game[1] != 0
+			, game[2] != 0
+			, Arrays.copyOfRange(game, 3, game.length));
 	}
 	
 	protected void initialize(
@@ -150,7 +152,7 @@ public final class MainPanel extends JPanel
 				  1
 				, history_panel.history_data.size() - 1);
 		}
-		computer_resigned = false;			
+		computer_resigned = false;
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
 		invalid_internal_move = 0;
