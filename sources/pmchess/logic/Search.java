@@ -15,7 +15,7 @@ public final class Search
 	private static final int search_depth_min = 4;
 	
 	private Object state_lock = new Object(); // Support asynchronous use => protect state.
-	private long search_duration = -1l;
+	private long search_duration = search_budget;
 	private int search_depth = search_depth_min;
 	
 	public int get_search_depth()
@@ -33,6 +33,7 @@ public final class Search
 			this.search_depth = search_depth < search_depth_min
 				? search_depth_min
 				: search_depth;
+			search_duration = search_budget;
 		}
 	}
 	
@@ -41,12 +42,10 @@ public final class Search
 		final int search_depth;
 		synchronized (state_lock)
 		{
-			search_depth = search_duration > search_budget
-				&& this.search_depth > search_depth_min
-				? this.search_depth - 1
-				: (0.5 * search_duration * board.moves_possible_count() < search_budget
-					? this.search_depth + 1
-					: this.search_depth);
+			search_depth = (0.5 * search_duration * board.moves_possible_count())
+				< search_budget
+				? this.search_depth + 1
+				: this.search_depth;
 		}
 		
 		final var start_time = System.nanoTime();
@@ -81,7 +80,25 @@ public final class Search
 		synchronized (state_lock)
 		{
 			search_duration = end_time - start_time;
-			this.search_depth = search_depth;
+			if (search_duration > search_budget)
+			{
+				this.search_depth -= (search_duration / search_budget);
+			}
+			else
+			{
+				this.search_depth = search_depth;
+			}
+			if (best_move != 0
+				&& !Move.is_moveless_draw_claim(best_move)
+				&& Move.figure_moved(best_move).is_pawn()
+				&& !Move.figure_placed(best_move).is_pawn())
+			{ // Pawn promotion adds many NEW moves in high search-depth late games:
+				this.search_depth--;
+			}
+			if (this.search_depth < search_depth_min)
+			{
+				this.search_depth = search_depth_min;
+			}
 		}
 		
 		return best_move;

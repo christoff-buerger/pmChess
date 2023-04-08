@@ -159,7 +159,7 @@ public final class GUI extends JFrame
 		}
 		catch (final Exception e)
 		{
-			main_panel.initialize(false, false, new int[]{});
+			main_panel.initialize(false, false, new MainPanel.InitializationStep[]{});
 		}
 	}
 	
@@ -183,7 +183,7 @@ public final class GUI extends JFrame
 			main_panel.initialize(
 				  white_computer.isSelected()
 				, black_computer.isSelected()
-				, new int[]{});
+				, new MainPanel.InitializationStep[]{});
 		}
 	}
 	

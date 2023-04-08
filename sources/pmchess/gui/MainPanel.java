@@ -7,7 +7,6 @@
 
 package pmchess.gui;
 
-import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
 
 import java.io.*;
@@ -99,7 +98,7 @@ public final class MainPanel extends JPanel
 		addKeyListener(board_listener);
 		
 		// Initialize and start game:
-		initialize(false, false, new int[]{});
+		initialize(false, false, new InitializationStep[]{});
 	}
 	
 	@Override public void paintComponent(final Graphics graphics)
@@ -111,14 +110,14 @@ public final class MainPanel extends JPanel
 	protected void serialize_game(final ObjectOutputStream os)
 		throws IOException
 	{ board_lock.lock(); try {
-		final var turn_to_serialize = (is_in_search > 0 ? is_in_search : board.turn()) - 1;
-		final var game = new int[3 + turn_to_serialize];
-		game[0] = search.get_search_depth();
-		game[1] = computer_w ? 1 : 0;
-		game[2] = computer_b ? 1 : 0;
-		for (var t = turn_to_serialize; t > 0; t--)
+		final var turns_to_serialize = (is_in_search > 0 ? is_in_search : board.turn()) - 1;
+		final var game = new int[2 + 2 * turns_to_serialize];
+		game[0] = computer_w ? 1 : 0;
+		game[1] = computer_b ? 1 : 0;
+		for (var t = turns_to_serialize; t > 0; t--)
 		{
-			game[t + 2] = board.previous_move(t);
+			game[2 * t] = board.previous_move(t);
+			game[2 * t + 1] = history_panel.history_data.get(t).search_depth;
 		}
 		os.writeObject(game);
 	} finally { board_lock.unlock(); }}
@@ -127,17 +126,34 @@ public final class MainPanel extends JPanel
 		throws IOException, ClassNotFoundException
 	{
 		final var game = (int[])(is.readObject());
-		search.set_search_depth(game[0]);
+		final var turns_to_serialize = (game.length - 2) / 2;
+		final InitializationStep[] initialization_steps = new InitializationStep[turns_to_serialize];
+		for (int i = 0, j = 2; i < turns_to_serialize; i++)
+		{
+			initialization_steps[i] = new InitializationStep(game[j++], game[j++]);
+		}
 		initialize(
-			  game[1] != 0
-			, game[2] != 0
-			, Arrays.copyOfRange(game, 3, game.length));
+			  game[0] != 0
+			, game[1] != 0
+			, initialization_steps);
+	}
+	
+	protected final class InitializationStep
+	{
+		private InitializationStep(final int move, final int search_depth)
+		{
+			this.move = move;
+			this.search_depth = search_depth;
+		}
+		
+		private final int move;
+		private final int search_depth;
 	}
 	
 	protected void initialize(
 		  final boolean computer_w
 		, final boolean computer_b
-		, final int[] moves)
+		, final InitializationStep[] initialization_steps)
 	{ if (board_lock.tryLock() /* Only try; ignore reinitialization iff busy. */) try {
 		if (is_in_search > 0)
 		{
@@ -156,30 +172,33 @@ public final class MainPanel extends JPanel
 		this.computer_w = computer_w;
 		this.computer_b = computer_b;
 		invalid_internal_move = 0;
-		for (final var move : moves)
+		for (final var step : initialization_steps)
 		{
 			final var last_repetition_status = board.draw_repetition_status();
-			if (!(Move.is_moveless_draw_claim(move)
+			if (!(Move.is_moveless_draw_claim(step.move)
 				? board.execute_moveless_draw_claim()
 				: board.execute(
-					  Move.x(move)
-					, Move.y(move)
-					, Move.X(move)
-					, Move.Y(move)
-					, Move.figure_placed(move)
-					, Move.draw_claim(move))))
+					  Move.x(step.move)
+					, Move.y(step.move)
+					, Move.X(step.move)
+					, Move.Y(step.move)
+					, Move.figure_placed(step.move)
+					, Move.draw_claim(step.move))))
 			{
-				invalid_internal_move = move;
+				invalid_internal_move = step.move;
 				this.computer_w = false;
 				this.computer_b = false;
 				break;
 			}
 			history_panel.history_data.addElement(new PastMove(
 				  board.turn() - 1
-				, move
+				, step.move
 				, board.status()
-				, board.draw_repetition_status() > last_repetition_status));
+				, board.draw_repetition_status() > last_repetition_status
+				, step.search_depth));
 		}
+		search.set_search_depth(
+			history_panel.history_data.lastElement().search_depth);
 		run_game();
 	} finally { board_lock.unlock(); }}
 	
@@ -220,7 +239,7 @@ public final class MainPanel extends JPanel
 								if (!(Move.is_moveless_draw_claim(move)
 									? board.execute_moveless_draw_claim()
 									: board.execute(
-										Move.x(move)
+										  Move.x(move)
 										, Move.y(move)
 										, Move.X(move)
 										, Move.Y(move)
@@ -236,7 +255,8 @@ public final class MainPanel extends JPanel
 									  board.turn() - 1
 									, move
 									, board.status()
-									, board.draw_repetition_status() > last_repetition_status));
+									, board.draw_repetition_status() > last_repetition_status
+									, search.get_search_depth()));
 								// Reset all GUI selections influenced by computer move:
 								history_panel.history_list.setSelectedIndex(
 									history_panel.history_data.size() - 1);
@@ -295,7 +315,8 @@ public final class MainPanel extends JPanel
 							  board.turn() - 1
 							, board.previous_move(board.turn() - 1)
 							, board.status()
-							, board.draw_repetition_status() > last_repetition_status));
+							, board.draw_repetition_status() > last_repetition_status
+							, search.get_search_depth()));
 						run_game();
 						return; // 'run_game()' takes care of repainting.
 					}
@@ -349,17 +370,20 @@ public final class MainPanel extends JPanel
 					return;
 				}
 				final var selected = history_panel.history_list.getSelectedIndex();
+				if (history_panel.history_data.size() - 1 == selected)
+				{
+					return;
+				}
 				for (var i = board.turn() - selected - 1; i > 0; i--)
 				{
 					board.undo();
 				}
-				if (history_panel.history_data.size() > selected)
-				{
-					history_panel.history_data.removeRange(
-						  selected + 1
-						, history_panel.history_data.size() - 1);
-					computer_resigned = false;
-				}
+				history_panel.history_data.removeRange(
+					  selected + 1
+					, history_panel.history_data.size() - 1);
+				search.set_search_depth(
+					history_panel.history_data.lastElement().search_depth);
+				computer_resigned = false;
 				run_game();
 			} finally {
 				board_lock.unlock();
@@ -749,7 +773,8 @@ public final class MainPanel extends JPanel
 								  board.turn() - 1
 								, board.previous_move(board.turn() - 1)
 								, board.status()
-								, false));
+								, false
+								, search.get_search_depth()));
 							run_game();
 						}
 						return;
@@ -1149,7 +1174,7 @@ public final class MainPanel extends JPanel
 			history_list.addKeyListener(new HistoryListener());
 			history_list.setCellRenderer(new HistoryRenderer());
 			history_list.setSelectedIndex(0);
-			history_data.addElement(new PastMove(0, 0, Board.GameStatus.Normal, false));
+			history_data.addElement(new PastMove(0, 0, Board.GameStatus.Normal, false, 0));
 			add(history_scroll_pane);
 		}
 		
@@ -1166,17 +1191,20 @@ public final class MainPanel extends JPanel
 		private final int move;
 		private final Board.GameStatus status;
 		private final boolean is_repetition;
+		private final int search_depth;
 		
 		private PastMove(
 			  final int turn
 			, final int move
 			, final Board.GameStatus status
-			, final boolean is_repetition)
+			, final boolean is_repetition
+			, final int search_depth)
 		{
 			this.turn = turn;
 			this.move = move;
 			this.status = status;
 			this.is_repetition = is_repetition;
+			this.search_depth = search_depth;
 		}
 	}
 	
