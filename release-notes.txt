@@ -10,9 +10,17 @@ Version 2.0.0 (in development):
     on macOS calling '*.app' distributions for command line processing is
     very awkward/user unfriendly, but the new 'pmChess.sh' script can be used
     instead.
+  - Added mouse support, besides the existing keyboard-based user interface,
+    for selecting and moving figures.
   - Added support for automatic saving and restoring of the current game when
     terminating/starting pmChess. In terms of the official laws of chess,
     pmChess now supports adjourned games.
+  - Added automatic adjustment of the search depth of computer players.
+    Computer players have a 15s time budget per move. The search depth is
+    increased when they conducted their move much faster and decreased
+    when they are too slow; also the number of possible moves is considered
+    in a simple prediction heuristic to avoid increases that would violate
+    the budget of future turns badly.
   - Switched to latest rules, the "FIDE Laws of Chess taking effect from
     1 January 2023".
   - Added support for en passant captures.
@@ -21,10 +29,6 @@ Version 2.0.0 (in development):
     rules. The current draw status, i.e., how close to a claimable or automatic
     draw the game is, is summarized in the graphical user interface, which
     provides a "Claim draw"-button to claim draws.
-  - Added native distributions for macOS and Windows. The distributions are
-    self-contained and do not require a locally installed 'Java SE Platform'.
-  - Added mouse support, besides the existing keyboard-based user interface,
-    for selecting and moving figures.
   - Added game history with algebraic notation as specified by FIDE. The history
     can be used to undo moves. To reset the game to a previous position, select
     a move using the up- and down-keys and press space. The game will be reset
@@ -38,6 +42,8 @@ Version 2.0.0 (in development):
     bugs and give feedback. The form is also directly reachable via a new
     "Contact and feedback"-entry of the "Help"-menu.
   - Added taskbar icon and application logo.
+  - Added native distributions for macOS and Windows. The distributions are
+    self-contained and do not require a locally installed 'Java SE Platform'.
   - The portable jar-file distribution now requires the 'Java SE 19 Platform'.
 
 Version 1.0.0 (10 December 2017):
