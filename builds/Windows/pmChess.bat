@@ -8,13 +8,11 @@ set "SCRIP_DIR=%~dp0"
 set "SCRIP_DIR=%SCRIP_DIR:~0,-1%"
 
 set "PMCHESS_ERROR=0"
-call "%SCRIP_DIR%\pmChess.exe" %* >"%SCRIP_DIR%\log.txt" 2>&1
+"%SCRIP_DIR%\pmChess.exe" %*
 if ERRORLEVEL 1 (
 	set "PMCHESS_ERROR=1"
 )
-type "%SCRIP_DIR%\log.txt"
 pause
 
 endlocal
-
 exit /b %PMCHESS_ERROR%
