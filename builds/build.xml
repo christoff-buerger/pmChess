@@ -24,6 +24,11 @@
 	<property name="bundle-directory" value="../releases/version-${version}"/>
 	
 	<condition
+		property="isMacBuild"
+		value="true">
+		<os name="Mac OS X"/>
+	</condition>
+	<condition
 		property="isWindowsBuild"
 		value="true">
 		<os family="windows"/>
@@ -210,6 +215,24 @@
 			fallbacktoUTF8="false"
 			zip64Mode="never">
 			<zipfileset dir="${bundle-platform}" includes="pmChess/**,pmChess.app/**"/>
+			<zipfileset
+				if:true="${isMacBuild}"
+				dir="${bundle-platform}"
+				includes="pmChess.app/Contents/MacOS/**"
+				filemode="755"
+			/>
+			<zipfileset
+				if:true="${isMacBuild}"
+				dir="${bundle-platform}"
+				includes="pmChess.app/Contents/Resources/pmChess/bin/**"
+				filemode="755"
+			/>
+			<zipfileset
+				if:true="${isMacBuild}"
+				dir="${bundle-platform}"
+				includes="pmChess.sh"
+				filemode="755"
+			/>
 			<zipfileset dir="../" includes="license.txt"/>
 			<zipfileset dir="../" includes="release-notes.txt"/>
 		</zip>
