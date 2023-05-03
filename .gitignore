@@ -12,4 +12,5 @@
 /builds/portable-jar
 /builds/macOS/pmChess.app/Contents/Resources/pmChess
 /builds/Windows/pmChess
-/builds/Windows/pmChess.zip
+# Ignore generated release-bundles of current in-development version:
+/releases/version-2.0.0/*.zip

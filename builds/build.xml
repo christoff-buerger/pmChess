@@ -7,21 +7,46 @@
 -->
 <project
 	name="pmChess (poor man's chess)"
-	default="distributions"
+	default="bundles"
 	basedir="."
 	xmlns:if="ant:if"
 	xmlns:unless="ant:unless">
 	
+	<!-- Not used; all paths are anyway relative to script in Ant if not absolute: -->
 	<property name="script-path" location="."/>
+	
+	<property name="version" value="2.0.0"/>
+	<property name="repository" value="https://github.com/christoff-buerger/pmChess"/>
+	<property name="copyright" value="© 2006-2023 Christoff Bürger"/>
+	<property name="license" value="This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution."/>
+	
+	<property name="bundle-description" value="pmChess ${version} (${repository}); ${copyright}, ${license}"/>
+	<property name="bundle-directory" value="../releases/version-${version}"/>
+	
+	<condition
+		property="isWindowsBuild"
+		value="true">
+		<os family="windows"/>
+	</condition>
 	<condition
 		property="native-build-directory"
-		value="${script-path}/macOS/pmChess.app/Contents/Resources/pmChess">
+		value="macOS/pmChess.app/Contents/Resources/pmChess">
 		<os name="Mac OS X"/>
 	</condition>
 	<condition
 		property="native-build-directory"
-		value="${script-path}\Windows\pmChess\binaries">
-		<os family="winnt"/>
+		value="Windows/pmChess/binaries">
+		<os family="windows"/>
+	</condition>
+	<condition
+		property="bundle-platform"
+		value="macOS">
+		<os name="Mac OS X"/>
+	</condition>
+	<condition
+		property="bundle-platform"
+		value="Windows">
+		<os family="windows"/>
 	</condition>
 	
 	<target name="clean">
@@ -29,6 +54,8 @@
 		<delete dir="portable-jar"/>
 		<delete dir="macOS/pmChess.app/Contents/Resources/pmChess"/>
 		<delete dir="Windows/pmChess"/>
+		<delete file="${bundle-directory}/pmChess ${version} – portable jar.zip"/>
+		<delete file="${bundle-directory}/pmChess ${version} – ${bundle-platform} ${os.arch}.zip"/>
 	</target>
 	
 	<target name="binaries" depends="clean">
@@ -62,6 +89,7 @@
 	</target>
 	
 	<target name="distributions" depends="binaries">
+		<!-- Portable jar: -->
 		<jar
 			destfile="portable-jar/pmChess.jar"
 			index="false"
@@ -74,29 +102,30 @@
 			zip64Mode="never"
 			strict="warn">
 			<manifest>
-				<attribute
-					name="Created-By"
-					value="https://github.com/christoff-buerger/pmChess"
-				/>
+				<!-- 'Created-By' main attribute set by JDK. -->
 				<attribute
 					name="Built-By"
-					value="https://github.com/christoff-buerger/pmChess"
+					value="${copyright}"
 				/>
 				<attribute
 					name="Implementation-Title"
-					value="stable"
+					value="pmChess"
 				/>
 				<attribute
 					name="Implementation-Version"
-					value="2.0.0"
+					value="${version}"
 				/>
 				<attribute
 					name="Implementation-Vendor"
-					value="https://github.com/christoff-buerger/pmChess"
+					value="${repository}"
 				/>
 				<attribute
 					name="Main-Class"
 					value="pmchess.pmChess"
+				/>
+				<attribute
+					name="Sealed"
+					value="true"
 				/>
 			</manifest>
 			<fileset dir="binaries">
@@ -107,53 +136,82 @@
 				<include name="**/*.txt"/>
 			</fileset>
 		</jar>
-		<echo
+		
+		<!-- Native binaries: -->
+		<jmod
 			if:set="native-build-directory"
-			level="info"
-			message="Building distribution for ${os.name}: ${native-build-directory}"/>
+			destfile="portable-jar/pmChess.jmod"
+			classpath="portable-jar/pmChess.jar"
+			mainclass="pmchess.pmChess"
+			version="${version}"
+			moduleWarnings="deprecated,leaving,incubating"
+			resolveByDefault="false"
+		/>
+		<link
+			if:set="native-build-directory"
+			destDir="${native-build-directory}"
+			modulepath="portable-jar/pmChess.jmod;${java.home}/jmods"
+			modules="pmchess"
+			launchers="pmChess=pmchess/pmchess.pmChess"
+			bindServices="false"
+			includeHeaders="false"
+			includeManPages="false"
+			includeNativeCommands="true"
+			debug="false"
+			compress="0"
+			checkDuplicateLegal="true"
+			vmType="all"
+		/>
+		
+		<!-- Windows executable: -->
 		<exec
-			if:set="native-build-directory"
+			if:true="${isWindowsBuild}"
 			failifexecutionfails="true"
 			failonerror="true"
-			executable="${java.home}/bin/jlink">
-			<arg value="--module-path"/>
-			<arg value="${script-path}${file.separator}portable-jar${file.separator}pmChess.jar${path.separator}${java.home}${file.separator}jmods"/>
-			<arg value="--add-modules"/>
-			<arg value="pmchess"/>
-			<arg value="--launcher"/>
-			<arg value="pmChess=pmchess/pmchess.pmChess"/>
-			<arg value="--output"/>
-			<arg value="${native-build-directory}"/>
-			<arg value="--strip-debug"/>
-			<arg value="--no-header-files"/>
-			<arg value="--no-man-pages"/>
-			<arg value="--compress=0"/>
+			dir="Windows"
+			executable="msbuild">
+			<arg value="/verbosity:quiet"/>
 		</exec>
 	</target>
 	
-	<target name="windows-bundle">
-		<fail
-			message="Bundling failed: Windows distribution must be built first."
-			status="2">
-			<condition>
-				<not>
-					<available file="${script-path}\Windows\pmChess\pmChess.exe"/>
-				</not>
-			</condition>
-		</fail>
-		<delete file="${script-path}\Windows\pmChess.zip"/>
+	<target name="bundles" depends="distributions">
+		<!-- Portable jar bundle: -->
 		<zip
+			destfile="${bundle-directory}/pmChess ${version} – portable jar.zip"
+			comment="${bundle-description}"
+			encoding="UTF-8"
+			useLanguageEncodingFlag="true"
+			createUnicodeExtraFields="always"
 			whenempty="fail"
-			destfile="${script-path}\Windows\pmChess.zip"
-			basedir="${script-path}\Windows"
-			includes="pmChess/**"
 			update="false"
 			compress="true"
 			keepcompression="false"
 			level="9"
-			createUnicodeExtraFields="never"
 			fallbacktoUTF8="false"
-			zip64Mode="never"
-		/>
+			zip64Mode="never">
+			<zipfileset dir="portable-jar" includes="pmChess.jar"/>
+			<zipfileset dir="../" includes="license.txt"/>
+			<zipfileset dir="../" includes="release-notes.txt"/>
+		</zip>
+		
+		<!-- Native bundle: -->
+		<zip
+			if:set="bundle-platform"
+			destfile="${bundle-directory}/pmChess ${version} – ${bundle-platform} ${os.arch}.zip"
+			comment="${bundle-description}"
+			encoding="UTF-8"
+			useLanguageEncodingFlag="true"
+			createUnicodeExtraFields="always"
+			whenempty="fail"
+			update="false"
+			compress="true"
+			keepcompression="false"
+			level="9"
+			fallbacktoUTF8="false"
+			zip64Mode="never">
+			<zipfileset dir="${bundle-platform}" includes="pmChess/**,pmChess.app/**"/>
+			<zipfileset dir="../" includes="license.txt"/>
+			<zipfileset dir="../" includes="release-notes.txt"/>
+		</zip>
 	</target>
 </project>
