@@ -218,19 +218,37 @@
 			<zipfileset
 				if:true="${isMacBuild}"
 				dir="${bundle-platform}"
-				includes="pmChess.app/Contents/MacOS/**"
-				filemode="755"
-			/>
-			<zipfileset
-				if:true="${isMacBuild}"
-				dir="${bundle-platform}"
 				includes="pmChess.app/Contents/Resources/pmChess/bin/**"
 				filemode="755"
 			/>
 			<zipfileset
 				if:true="${isMacBuild}"
 				dir="${bundle-platform}"
+				includes="pmChess.app/Contents/MacOS/**"
+				filemode="755"
+			/>
+			<zipfileset
+				if:true="${isMacBuild}"
+				dir="${bundle-platform}"
 				includes="pmChess.sh"
+				filemode="755"
+			/>
+			<zipfileset
+				if:true="${isWindowsBuild}"
+				dir="${bundle-platform}"
+				includes="pmChess/binaries/bin/*.exe"
+				filemode="755"
+			/>
+			<zipfileset
+				if:true="${isWindowsBuild}"
+				dir="${bundle-platform}"
+				includes="pmChess/pmChess.exe"
+				filemode="755"
+			/>
+			<zipfileset
+				if:true="${isWindowsBuild}"
+				dir="${bundle-platform}"
+				includes="pmChess/pmChess.bat"
 				filemode="755"
 			/>
 			<zipfileset dir="../" includes="license.txt"/>
