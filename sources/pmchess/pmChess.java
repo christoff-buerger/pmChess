@@ -76,7 +76,7 @@ public final class pmChess
 			}
 			System.out.println(
 				  "Graphical user interface now scaled to "
-				+ (int)(Resources.read_base_scale_configuration() / 0.14f)
+				+ Math.round(Resources.read_base_scale_configuration() / 0.14f)
 				+ "%.");
 			System.exit(0);
 		default:
