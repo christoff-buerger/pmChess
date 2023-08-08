@@ -407,6 +407,8 @@ public final class MainPanel extends JPanel
 			8 * tile_size + 2 * border_size;
 		private final Font figure_font =
 			FigurePresentation.font.deriveFont(tile_size - 2.0f * cursor_line_width);
+		private final Font figure_captured_font =
+			FigurePresentation.font.deriveFont(0.5f * tile_size);
 		
 		private BoardPanel()
 		{
@@ -559,26 +561,46 @@ public final class MainPanel extends JPanel
 		{ board_lock.lock(); try {
 			Resources.configure_rendering(graphic);
 			
+			final var last_move = board.previous_move(board.turn() - 1);
 			for (var x = 7; x >= 0; x--) for (var y = 7; y >= 0; y--)
 			{
 				final var y_trans = 7 - y;
+				Figure draw_captured_figure = null;
 				
 				// Draw background tile:
 				var color = ((x + y_trans) % 2) == 0 ? Color.white : Color.lightGray;
-				final var last_move = board.previous_move(board.turn() - 1);
 				if (last_move != 0 && !Move.is_moveless_draw_claim(last_move))
 				{
 					final var _x_ = Move.x(last_move);
 					final var _X_ = Move.X(last_move);
-					if ((x == _x_ && y == Move.y(last_move))
-						|| (y == Move.Y(last_move)
+					final var _y_ = Move.y(last_move);
+					final var _Y_ = Move.Y(last_move);
+					final var _figure_moved_ = Move.figure_moved(last_move);
+					final var _figure_destination_ = Move.figure_destination(last_move);
+					final var _en_passant_ = _figure_moved_.is_pawn()
+						&& _X_ != _x_
+						&& _figure_destination_ == null;
+					
+					if (_en_passant_ && x == _X_ && y == _y_)
+					{ // Colour tile of en passant captured pawn:
+						draw_captured_figure = Figure.pawn(board.player());
+						color = new Color(255, 102, 102);
+					}
+					else if ((x == _x_ && y == _y_)
+						|| (y == _Y_
 							&& (x == _X_
-								// Check for rook positions of recent castling:
-								|| (Move.figure_moved(last_move).is_king()
+								// Colour tile of rook involved in castling:
+								|| (_figure_moved_.is_king()
 									&& ((_X_ == _x_ - 2 && (x == 0 || x == 3))
 										|| (_X_ == _x_ + 2 && (x == 7 || x == 5)))))))
 					{
-						color = new Color(77, 164, 77);
+						if (x == _X_ && y == _Y_)
+						{
+							draw_captured_figure = _figure_destination_;
+						}
+						color = _figure_destination_ != null || _en_passant_
+							? new Color(214, 13, 13)
+							: new Color(77, 164, 77);
 					}
 				}
 				graphic.setColor(color);
@@ -587,6 +609,17 @@ public final class MainPanel extends JPanel
 					, y_trans * tile_size + border_size
 					, tile_size
 					, tile_size);
+				
+				// Draw captured figure:
+				if (draw_captured_figure != null)
+				{
+					graphic.setColor(Color.black);
+					graphic.setFont(figure_captured_font);
+					graphic.drawString(
+						  FigurePresentation.get(draw_captured_figure).unicode
+						, x * tile_size + border_size + (int)(0.65f * tile_size)
+						, y_trans * tile_size + border_size + (int)(0.25f * tile_size));
+				}
 				
 				// Draw figure:
 				final var figure = board.figure(x, y);
