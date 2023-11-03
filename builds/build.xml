@@ -66,9 +66,9 @@
 	<target name="binaries" depends="clean">
 		<mkdir dir="binaries"/>
 		<javac
-			release="19"
-			source="19"
-			target="19"
+			release="21"
+			source="21"
+			target="21"
 			encoding="UTF-8"
 			srcdir="../sources"
 			destdir="binaries"
