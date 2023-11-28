@@ -5,6 +5,7 @@
 	Author: Christoff Bürger
 */
 
-module pmchess {
+module pmchess
+{
 	requires java.desktop;
 }
