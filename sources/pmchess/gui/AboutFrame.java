@@ -79,7 +79,7 @@ public final class AboutFrame extends JFrame
 		final var licenses_button_panel_x_size =
 			tab_x_size;
 		final var licenses_button_panel_y_size =
-			text_height + 3 * border_size;
+			2 * text_height + 5 * border_size;
 		final var licenses_scroll_pane_x_size =
 			tab_x_size;
 		final var licenses_scroll_pane_y_size =
@@ -192,6 +192,7 @@ public final class AboutFrame extends JFrame
 		final var licenses_chess_merida_unicode_button =
 			new JToggleButton("Chess Merida Unicode", false);
 		final var licenses_dseg_button = new JToggleButton("DSEG", false);
+		final var licenses_material_symbols_button = new JToggleButton("Material Symbols", false);
 		licenses_pmChess_button.addActionListener(
 			new ActionListener()
 			{
@@ -201,6 +202,7 @@ public final class AboutFrame extends JFrame
 					licenses_open_sans_button.setSelected(false);
 					licenses_chess_merida_unicode_button.setSelected(false);
 					licenses_dseg_button.setSelected(false);
+					licenses_material_symbols_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.pmChess_license);
 				}
@@ -214,6 +216,7 @@ public final class AboutFrame extends JFrame
 					licenses_open_sans_button.setSelected(true);
 					licenses_chess_merida_unicode_button.setSelected(false);
 					licenses_dseg_button.setSelected(false);
+					licenses_material_symbols_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.open_sans_license);
 				}
@@ -227,6 +230,7 @@ public final class AboutFrame extends JFrame
 					licenses_open_sans_button.setSelected(false);
 					licenses_chess_merida_unicode_button.setSelected(true);
 					licenses_dseg_button.setSelected(false);
+					licenses_material_symbols_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.chess_merida_unicode_license);
 				}
@@ -240,8 +244,23 @@ public final class AboutFrame extends JFrame
 					licenses_open_sans_button.setSelected(false);
 					licenses_chess_merida_unicode_button.setSelected(false);
 					licenses_dseg_button.setSelected(true);
+					licenses_material_symbols_button.setSelected(false);
 					licenses_text_area.setText(
 						pmchess.pmChess.dseg_license);
+				}
+			});
+		licenses_material_symbols_button.addActionListener(
+			new ActionListener()
+			{
+				@Override public void actionPerformed(final ActionEvent event)
+				{
+					licenses_pmChess_button.setSelected(false);
+					licenses_open_sans_button.setSelected(false);
+					licenses_chess_merida_unicode_button.setSelected(false);
+					licenses_dseg_button.setSelected(false);
+					licenses_material_symbols_button.setSelected(true);
+					licenses_text_area.setText(
+						pmchess.pmChess.material_symbols_license);
 				}
 			});
 		
@@ -253,7 +272,10 @@ public final class AboutFrame extends JFrame
 		licenses_button_panel.setMinimumSize(licenses_button_panel_dimension);
 		licenses_button_panel.setPreferredSize(licenses_button_panel_dimension);
 		licenses_button_panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		licenses_button_panel.setLayout(new BoxLayout(licenses_button_panel, BoxLayout.X_AXIS));
+		licenses_button_panel.setLayout(new FlowLayout(
+			  FlowLayout.CENTER
+			, (int)Math.ceil(0.5f * border_size)
+			, (int)Math.ceil(0.5f * border_size)));
 		licenses_button_panel.add(Box.createHorizontalGlue());
 		licenses_button_panel.add(licenses_pmChess_button);
 		licenses_button_panel.add(Box.createHorizontalGlue());
@@ -262,6 +284,8 @@ public final class AboutFrame extends JFrame
 		licenses_button_panel.add(licenses_chess_merida_unicode_button);
 		licenses_button_panel.add(Box.createHorizontalGlue());
 		licenses_button_panel.add(licenses_dseg_button);
+		licenses_button_panel.add(Box.createHorizontalGlue());
+		licenses_button_panel.add(licenses_material_symbols_button);
 		licenses_button_panel.add(Box.createHorizontalGlue());
 		
 		final var licenses_panel = new JPanel();

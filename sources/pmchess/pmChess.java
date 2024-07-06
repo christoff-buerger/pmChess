@@ -29,6 +29,8 @@ public final class pmChess
 		Resources.load_text("fonts/Chess-Merida-Unicode-license.txt");
 	public static final String dseg_license =
 		Resources.load_text("fonts/DSEG-license.txt");
+	public static final String material_symbols_license =
+		Resources.load_text("fonts/Material-Symbols-license.txt");
 	
 	/*
 		Process command line arguments or, in case there are none, start GUI.

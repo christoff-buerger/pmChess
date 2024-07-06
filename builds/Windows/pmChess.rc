@@ -27,7 +27,7 @@ FILETYPE VFT_APP
 			VALUE "FileDescription", "A poor man's chess: lightweight, comprehensible and fun to prevail."
 			VALUE "FileVersion", "2.0.0"
 			VALUE "InternalName", "pmChess"
-			VALUE "LegalCopyright", "© 2006-2023 Christoff Bürger, This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution."
+			VALUE "LegalCopyright", "© 2006-2024 Christoff Bürger, This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution."
 			VALUE "OriginalFilename", "pmChess.exe"
 			VALUE "ProductName", "pmChess"
 			VALUE "ProductVersion", "2.0.0"
