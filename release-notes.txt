@@ -10,38 +10,63 @@ Version 2.0.0 (in development):
     on macOS calling '*.app' distributions for command line processing is
     very awkward/user unfriendly, but the new 'pmChess.sh' script can be used
     instead.
-  - Added mouse support, besides the existing keyboard-based user interface,
-    for selecting and moving figures.
   - Added support for automatic saving and restoring of the current game when
     terminating/starting pmChess. In terms of the official laws of chess,
     pmChess now supports adjourned games.
-  - Added automatic adjustment of the search depth of computer players.
-    Computer players have a 15s time budget per move. The search depth is
-    increased when they conducted their move much faster and decreased
-    when they are too slow; also the number of possible moves is considered
-    in a simple prediction heuristic to avoid increases that would violate
-    the budget of future turns badly.
   - Switched to latest rules, the "FIDE Laws of Chess taking effect from
-    1 January 2023".
-  - Added support for en passant captures.
-  - Added support for selecting a figure besides a queen when promoting pawns.
-  - Added draw rules (claimable and automatic) for repetition and 50/75-move
-    rules. The current draw status, i.e., how close to a claimable or automatic
-    draw the game is, is summarized in the graphical user interface, which
-    provides a "Claim draw"-button to claim draws.
-  - Added game history with algebraic notation as specified by FIDE. The history
-    can be used to undo moves. To reset the game to a previous position, select
-    a move using the up- and down-keys and press space. The game will be reset
-    to the state resulting after executing the selected move. The tab-key is
-    used to switch between chessboard and game history navigation.
-  - Removed "Undo move"-entry of the "Game"-menu; the new game history can
-    be used instead.
+    1 January 2023":
+      1) Added support for en passant captures.
+      2) Added support for selecting a figure besides a queen when promoting
+         pawns.
+      3) Added draw rules (claimable and automatic) for repetition and
+         50/75-move rules. The current draw status, i.e., how close to a
+         claimable or automatic draw the game is, is summarized in the
+         graphical user interface, which provides a "Claim draw"-button to
+         claim draws.
+  - Added mouse support, besides the existing keyboard-based user interface,
+    for selecting and moving figures.
+  - The graphical user interface is now mode based; depending on the current
+    game status, interactive elements like buttons, lists, the cursor etc are
+    active (in case the action is possible, like undoing moves after the
+    computer resigned) or disabled (in case the action is not possible, like
+    claiming a draw while it is the computer's turn). Game modes distinguished
+    are, for example:
+      1) "normal human move" (active cursor to select a move, active pawn
+         promotion selection, active claim draw button, disabled undo and redo
+         buttons)
+      2) "history mode" (active undo and redo buttons and history to go back to
+         certain game situation, but all other elements disabled)
+      3) "normal computer move" (all elements disabled until the computer
+         finishes its move)
+      4) "computer resigned" (only undo, redo and history active)
+  - Added game history with algebraic notation as specified by FIDE.
+    The history can be used to undo moves, but only when the pause button is
+    switched on (i.e., the game is in history mode). To reset the game to a
+    previous position, select a move in the history using the up- and
+    down-keys and press space. The game will be reset to the state resulting
+    after executing the selected move. To continue the game, press the pause
+    button again to switch it off. While in history mode, previous moves
+    that would be discarded if the game continues in the current position are
+    marked red in the game history. As long as the game is not continued
+    (i.e., is in history mode) moves can be arbitrarily undone and redone.
+    You can also undo a single move or redo it with the new undo and redo
+    buttons left and right of the pause button.
+    The tab-key can be used to switch between pause, undo and redo buttons and
+    game history navigation.
+  - Removed "Undo move"-entry of the "Game"-menu; the new game history and
+    undo button can be used instead.
   - Added algebraic notation to the chessboard, marking its files and ranks.
   - Added release notes tab to "About pmChess"-window.
   - Added contact form to "About pmChess"-window which can be used to report
     bugs and give feedback. The form is also directly reachable via a new
     "Contact and feedback"-entry of the "Help"-menu.
   - Added taskbar icon and application logo.
+  - Added automatic adjustment of the search depth of computer players.
+    Computer players have a 15s time budget per move. The search depth is
+    increased when they conducted their move much faster and decreased
+    when they are too slow; also the number of possible moves is considered
+    in a simple prediction heuristic to avoid increases that would violate
+    the budget of future turns badly.
   - Added native distributions for macOS and Windows. The distributions are
     self-contained and do not require a locally installed 'Java SE Platform'.
   - The portable jar-file distribution now requires the 'Java SE 21 Platform'.
