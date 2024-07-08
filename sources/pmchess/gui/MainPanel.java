@@ -408,6 +408,11 @@ public final class MainPanel extends JPanel
 				search.set_search_depth(
 					history_panel.history_data.get(selected).search_depth);
 				computer_resigned = false;
+				// Maintain enabled status of undo and redo buttons:
+				history_panel.history_undo_button.setEnabled(
+					board.turn() > 1);
+				history_panel.history_redo_button.setEnabled(
+					board.turn() < history_panel.history_data.size());
 				// Update GUI:
 				board_panel.repaint();
 				game_panel.repaint();
@@ -1253,65 +1258,73 @@ public final class MainPanel extends JPanel
 			history_redo_button.setPreferredSize(history_button_dimension);
 			
 			history_pause_button.addItemListener((final ItemEvent e) ->
-			{
-				final var selected = e.getStateChange() == ItemEvent.SELECTED;
-				if (board_lock.tryLock() /* Only try; ignore history mode iff busy. */) try
 				{
-					final var computer_move = board.player() ? computer_w : computer_b;
-					history_undo_button.setEnabled(selected);
-					history_redo_button.setEnabled(selected);
-					history_list.setEnabled(selected);
-					game_panel.status_panel.pawn_promotion_list.setEnabled(!computer_move && !selected);
-					game_panel.status_panel.draw_claim_button.setEnabled(!computer_move && !selected);
-					(selected ? history_list : MainPanel.this /* i.e., the board_listener */)
-						.requestFocusInWindow();
-					if (selected)
+					final var selected = e.getStateChange() == ItemEvent.SELECTED;
+					if (board_lock.tryLock() /* Only try; ignore iff busy. */) try
 					{
-						// Update GUI:
-						board_panel.repaint();
-						game_panel.repaint();
-						history_panel.repaint();
-					}
-					else
-					{
-						if (board.turn() < history_panel.history_data.size())
+						final var computer_move = board.player()
+							? computer_w
+							: computer_b;
+						history_undo_button.setEnabled(selected && board.turn() > 1);
+						history_redo_button.setEnabled(false);
+						history_list.setEnabled(selected);
+						game_panel.status_panel.pawn_promotion_list.setEnabled(
+							   !computer_move
+							&& !selected);
+						game_panel.status_panel.draw_claim_button.setEnabled(
+							   !computer_move
+							&& !selected);
+						(selected
+							? history_list
+							: MainPanel.this /* i.e., the board_listener */)
+							.requestFocusInWindow();
+						if (selected)
 						{
-							history_panel.history_data.removeRange(
-								  board.turn()
-								, history_panel.history_data.size() - 1);
+							// Update GUI:
+							board_panel.repaint();
+							game_panel.repaint();
+							history_panel.repaint();
 						}
-						run_game(); // 'run_game()' takes care of repainting.
-					}
-					return;
-				} finally { board_lock.unlock(); }
-				history_pause_button.setSelected(!selected);
-			});
+						else
+						{
+							if (board.turn() < history_panel.history_data.size())
+							{
+								history_panel.history_data.removeRange(
+									  board.turn()
+									, history_panel.history_data.size() - 1);
+							}
+							run_game(); // 'run_game()' takes care of repainting.
+						}
+						return;
+					} finally { board_lock.unlock(); }
+					history_pause_button.setSelected(!selected);
+				});
 			
 			history_undo_button.addActionListener((final ActionEvent e) ->
-			{ if (board_lock.tryLock() /* Only try; ignore history mode iff busy. */) try {
-				history_list.setSelectedIndex(
-					Math.max(board.turn() - 2, 0));
-				history_listener.keyPressed(new KeyEvent(
-					  history_undo_button
-					, KeyEvent.KEY_PRESSED
-					, System.currentTimeMillis()
-					, 0
-					, KeyEvent.VK_SPACE
-					, KeyEvent.CHAR_UNDEFINED));
-			} finally { board_lock.unlock(); }});
+				{ if (board_lock.tryLock() /* Only try; ignore iff busy. */) try {
+					history_list.setSelectedIndex(
+						Math.max(board.turn() - 2, 0));
+					history_listener.keyPressed(new KeyEvent(
+						  history_undo_button
+						, KeyEvent.KEY_PRESSED
+						, System.currentTimeMillis()
+						, 0
+						, KeyEvent.VK_SPACE
+						, KeyEvent.CHAR_UNDEFINED));
+				} finally { board_lock.unlock(); }});
 			
 			history_redo_button.addActionListener((final ActionEvent e) ->
-			{ if (board_lock.tryLock() /* Only try; ignore history mode iff busy. */) try {
-				history_list.setSelectedIndex(
-					Math.min(board.turn(), history_data.size() - 1));
-				history_listener.keyPressed(new KeyEvent(
-					  history_redo_button
-					, KeyEvent.KEY_PRESSED
-					, System.currentTimeMillis()
-					, 0
-					, KeyEvent.VK_SPACE
-					, KeyEvent.CHAR_UNDEFINED));
-			} finally { board_lock.unlock(); }});
+				{ if (board_lock.tryLock() /* Only try; ignore iff busy. */) try {
+					history_list.setSelectedIndex(
+						Math.min(board.turn(), history_data.size() - 1));
+					history_listener.keyPressed(new KeyEvent(
+						  history_redo_button
+						, KeyEvent.KEY_PRESSED
+						, System.currentTimeMillis()
+						, 0
+						, KeyEvent.VK_SPACE
+						, KeyEvent.CHAR_UNDEFINED));
+				} finally { board_lock.unlock(); }});
 			
 			final var history_buttons_panel = new JPanel();
 			final var history_buttons_panel_dimension = new Dimension(
