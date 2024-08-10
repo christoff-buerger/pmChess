@@ -202,19 +202,19 @@
 		<!-- Native bundle: -->
 		<zip
 			if:set="bundle-platform"
-			destfile="${bundle-directory}/pmChess ${version} – ${bundle-platform} ${os.arch}.zip"
 			comment="${bundle-description}"
+			destfile="${bundle-directory}/pmChess ${version} – ${bundle-platform} ${os.arch}.zip"
+			update="false"
+			duplicate="preserve"
 			encoding="UTF-8"
 			useLanguageEncodingFlag="true"
 			createUnicodeExtraFields="always"
+			fallbacktoUTF8="false"
+			zip64Mode="never"
 			whenempty="fail"
-			update="false"
 			compress="true"
 			keepcompression="false"
-			level="9"
-			fallbacktoUTF8="false"
-			zip64Mode="never">
-			<zipfileset dir="${bundle-platform}" includes="pmChess/**,pmChess.app/**"/>
+			level="9">
 			<zipfileset
 				if:true="${isMacBuild}"
 				dir="${bundle-platform}"
@@ -253,6 +253,7 @@
 			/>
 			<zipfileset dir="../" includes="license.txt"/>
 			<zipfileset dir="../" includes="release-notes.txt"/>
+			<zipfileset dir="${bundle-platform}" includes="pmChess/**,pmChess.app/**"/>
 		</zip>
 	</target>
 </project>
