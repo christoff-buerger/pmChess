@@ -21,16 +21,26 @@ public final class pmChess
 		, "Source code available at https://github.com/christoff-buerger/pmChess."};
 	
 	// Static => enforce licenses exist:
-	public static final String pmChess_license =
-		Resources.load_text("license.txt");
-	public static final String open_sans_license =
-		Resources.load_text("fonts/Open-Sans-license.txt");
-	public static final String chess_merida_unicode_license =
-		Resources.load_text("fonts/Chess-Merida-Unicode-license.txt");
-	public static final String dseg_license =
-		Resources.load_text("fonts/DSEG-license.txt");
-	public static final String material_symbols_license =
-		Resources.load_text("fonts/Material-Symbols-license.txt");
+	public static final String[] licenses_subjects =
+		{
+			  "pmChess license"
+			, "Open Sans license"
+			, "Chess Merida Unicode license"
+			, "Material Symbols license"
+			, "DSEG license"
+			, "OpenJDK license"
+			, "Eclipse Temurin license"
+		};
+	public static final String[] licenses =
+		{
+			  Resources.load_text("licenses/pmChess-license.txt")
+			, Resources.load_text("licenses/Open-Sans-license.txt")
+			, Resources.load_text("licenses/Chess-Merida-Unicode-license.txt")
+			, Resources.load_text("licenses/Material-Symbols-license.txt")
+			, Resources.load_text("licenses/DSEG-license.txt")
+			, Resources.load_text("licenses/OpenJDK-license.txt")
+			, Resources.load_text("licenses/Eclipse-Temurin-license.txt")
+		};
 	
 	/*
 		Process command line arguments or, in case there are none, start GUI.
@@ -63,7 +73,7 @@ public final class pmChess
 			System.out.println(about[0]);
 			System.out.println(about[1]);
 			System.out.println();
-			System.out.println(pmChess_license);
+			System.out.println(licenses[0]);
 			System.exit(0);
 		case "--scale":
 			to_many_arguments.accept(2);

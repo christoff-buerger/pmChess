@@ -80,6 +80,9 @@
 			verbose="no"
 			failonerror="true"
 		/>
+		<copy todir="binaries/pmchess/gui/licenses">
+			<fileset dir="../sources/pmchess/gui/licenses"/>
+		</copy>
 		<copy todir="binaries/pmchess/gui/icons">
 			<fileset dir="../sources/pmchess/gui/icons"/>
 		</copy>
@@ -89,7 +92,7 @@
 		<copy todir="binaries/pmchess/gui/fonts">
 			<fileset dir="../sources/pmchess/gui/fonts"/>
 		</copy>
-		<copy file="../license.txt" todir="binaries/pmchess/gui/"/>
+		<copy file="../license.txt" tofile="binaries/pmchess/gui/licenses/pmChess-license.txt"/>
 		<copy file="../release-notes.txt" todir="binaries/pmchess/gui/"/>
 	</target>
 	
