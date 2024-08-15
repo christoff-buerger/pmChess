@@ -194,6 +194,7 @@ public final class AboutFrame extends JFrame
 		licenses_combo_box.setMaximumSize(licenses_combo_box_dimension);
 		licenses_combo_box.setMinimumSize(licenses_combo_box_dimension);
 		licenses_combo_box.setPreferredSize(licenses_combo_box_dimension);
+		licenses_combo_box.setFont(Resources.font_bold.deriveFont(1.1f * Resources.base_scale));
 		licenses_combo_box.setSelectedIndex(0);
 		licenses_combo_box.addActionListener(
 			new ActionListener()

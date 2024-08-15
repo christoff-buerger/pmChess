@@ -23,13 +23,13 @@ public final class pmChess
 	// Static => enforce licenses exist:
 	public static final String[] licenses_subjects =
 		{
-			  "pmChess license"
-			, "Open Sans license"
-			, "Chess Merida Unicode license"
-			, "Material Symbols license"
-			, "DSEG license"
-			, "OpenJDK license"
-			, "Eclipse Temurin license"
+			  "pmChess license (MIT)"
+			, "Open Sans license (Apache-2.0)"
+			, "Chess Merida Unicode license (Unlicense)"
+			, "Material Symbols license (Apache-2.0)"
+			, "DSEG license (OFL-1.1)"
+			, "OpenJDK license (GPL-2.0-with-classpath-exception)"
+			, "Eclipse Temurin license (GPL-2.0-with-classpath-exception)"
 		};
 	public static final String[] licenses =
 		{

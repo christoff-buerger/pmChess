@@ -56,7 +56,7 @@ public final class Resources
 	}
 	
 	// Default font size all GUI-layout is derived from:
-	private static final float base_scale = read_base_scale_configuration();
+	public static final float base_scale = read_base_scale_configuration();
 	
 	public static float read_base_scale_configuration()
 	{
