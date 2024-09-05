@@ -23,13 +23,13 @@ public final class pmChess
 	// Static => enforce licenses exist:
 	public static final String[] licenses_subjects =
 		{
-			  "pmChess license (MIT)"
-			, "Open Sans license (Apache-2.0)"
-			, "Chess Merida Unicode license (Unlicense)"
-			, "Material Symbols license (Apache-2.0)"
-			, "DSEG license (OFL-1.1)"
-			, "OpenJDK license (GPL-2.0-with-classpath-exception)"
-			, "Eclipse Temurin license (GPL-2.0-with-classpath-exception)"
+			  "pmChess (MIT license)"
+			, "Open Sans (Apache-2.0 license)"
+			, "Chess Merida Unicode (Unlicense license)"
+			, "Material Symbols (Apache-2.0 license)"
+			, "DSEG (OFL-1.1 license)"
+			, "OpenJDK (GPL-2.0-with-classpath-exception license)"
+			, "Eclipse Temurin (GPL-2.0-with-classpath-exception license)"
 		};
 	public static final String[] licenses =
 		{
@@ -60,13 +60,18 @@ public final class pmChess
 		{
 		case "--help":
 			to_many_arguments.accept(1);
-			System.out.println("""
+			System.out.println(String.format(
+				"""
 				Usage:
 				  No arguments: Start pmChess.
 				  --help:       Print command line documentation.
 				  --version:    Print pmChess version and license.
-				  --scale n:    Scale graphical user interface by n%.
-				                n must be a positive integer.""");
+				  --scale n:    Scale graphical user interface by n%%.
+				                n must be an integer in interval [%d, %d].
+				                Values outside the interval are saturated.
+				                Non-integer values fail with an error."""
+				, Resources.base_scale_min_percent
+				, Resources.base_scale_max_percent));
 			System.exit(0);
 		case "--version":
 			to_many_arguments.accept(1);
@@ -88,7 +93,7 @@ public final class pmChess
 			}
 			System.out.println(
 				  "Graphical user interface now scaled to "
-				+ Math.round(Resources.read_base_scale_configuration() / 0.14f)
+				+ Resources.base_scale_in_percent(Resources.read_base_scale_configuration())
 				+ "%.");
 			System.exit(0);
 		default:

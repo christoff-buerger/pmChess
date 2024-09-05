@@ -10,6 +10,9 @@ Version 2.0.0 (in development):
     on macOS calling '*.app' distributions for command line processing is
     very awkward/user unfriendly, but the new 'pmChess.sh' script can be used
     instead.
+  - To change the scale is also possible from within the graphical user
+    interface, via the "Scale"-group of the new "Settings"-tab of the main
+    window.
   - Added support for automatic saving and restoring of the current game when
     terminating/starting pmChess. In terms of the official laws of chess,
     pmChess now supports adjourned games.

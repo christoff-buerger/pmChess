@@ -39,9 +39,9 @@ public final class AboutFrame extends JFrame
 		setVisible(true);
 	}
 	
-	protected AboutFrame()
+	protected AboutFrame(final GraphicsConfiguration graphics_configuration)
 	{
-		super("About pmChess");
+		super("About pmChess", graphics_configuration);
 		
 		// Set window and taskbar icon:
 		setIconImage(Resources.pmChess_icon);
@@ -60,10 +60,11 @@ public final class AboutFrame extends JFrame
 			(int)Math.ceil(2 * text_height / 3.0f);
 		final var frame_x_size = 600; // Graphical layout configuration.
 		final var frame_y_size = 580; // Graphical layout configuration.
+		final var frame_insets = compute_insets();
 		final var panel_x_size =
-			frame_x_size - (compute_insets().left + compute_insets().right);
+			frame_x_size - (frame_insets.left + frame_insets.right);
 		final var panel_y_size =
-			frame_y_size - (compute_insets().top + compute_insets().bottom);
+			frame_y_size - (frame_insets.top + frame_insets.bottom);
 		final var header_x_size =
 			panel_x_size;
 		final var header_y_size =

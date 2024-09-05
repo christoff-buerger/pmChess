@@ -754,7 +754,8 @@ public final class MainPanel extends JPanel
 		private final int panel_y_size =
 			tabs_y_size + (int)Math.ceil(0.5f * border_size);
 		
-		private StatusPanel status_panel = new StatusPanel();
+		private final StatusPanel status_panel = new StatusPanel();
+		private final SettingsPanel settings_panel = new SettingsPanel();
 		
 		private GamePanel()
 		{
@@ -772,6 +773,7 @@ public final class MainPanel extends JPanel
 			tabs.setMinimumSize(tabs_dimension);
 			tabs.setPreferredSize(tabs_dimension);
 			tabs.addTab("Game status", status_panel);
+			tabs.addTab("Settings", settings_panel);
 			tabs.setSelectedIndex(0);
 			add(tabs);
 		}
@@ -1202,6 +1204,132 @@ public final class MainPanel extends JPanel
 				draw_move_rules_status.setText(String.valueOf(
 					board.draw_move_rules_status()));
 			} finally { board_lock.unlock(); }}
+		}
+		
+		private final class SettingsPanel extends GamePanelTab
+		{
+			private final int scale_y_size =
+				(int)(2 * text_height + 3.5f * border_size);
+			
+			private SettingsPanel()
+			{
+				// Scale settings:
+				
+				final var scale_panel = new JPanel();
+				final var scale_panel_dimension =
+					new Dimension(tab_x_size, scale_y_size);
+				scale_panel.setMaximumSize(scale_panel_dimension);
+				scale_panel.setMinimumSize(scale_panel_dimension);
+				scale_panel.setPreferredSize(scale_panel_dimension);
+				scale_panel.setBorder(BorderFactory.createTitledBorder("Scale"));
+				scale_panel.setLayout(new BoxLayout(scale_panel, BoxLayout.X_AXIS));
+				scale_panel.setAlignmentY(Component.CENTER_ALIGNMENT);
+				
+				final var scale_label = new Label(
+					"Current: "
+					+ Integer.toString(Resources.base_scale_in_percent())
+					+ "%.  New:");
+				
+				final var scale_button = new JButton("Apply");
+				final var scale_button_dimensions = new Dimension(
+					  (int)Math.ceil(1.6f * Resources.font_regular.getStringBounds(
+						  "Apply it"
+						, new FontRenderContext(new AffineTransform(), true, true))
+					  .getWidth())
+					, text_height + (int)Math.ceil(1.3f * border_size));
+				scale_button.setMaximumSize(scale_button_dimensions);
+				scale_button.setMinimumSize(scale_button_dimensions);
+				scale_button.setPreferredSize(scale_button_dimensions);
+				
+				final var scale_spinner = new JSpinner(new SpinnerNumberModel(
+					  Resources.base_scale_in_percent()
+					, Resources.base_scale_min_percent
+					, Resources.base_scale_max_percent
+					, 1));
+				scale_spinner.setMaximumSize(scale_button_dimensions);
+				scale_spinner.setMinimumSize(scale_button_dimensions);
+				scale_spinner.setPreferredSize(scale_button_dimensions);
+				final var scale_spinner_text_field =
+					((javax.swing.JSpinner.DefaultEditor) scale_spinner.getEditor())
+					.getTextField();
+				scale_spinner_text_field.setFocusLostBehavior(JFormattedTextField.PERSIST);
+				scale_spinner_text_field.addFocusListener(new FocusAdapter()
+					{
+						@Override public void focusLost(final FocusEvent e)
+						{
+							try
+							{
+								scale_spinner.commitEdit();
+								scale_spinner_text_field.setBackground(
+									new JTextField().getBackground());
+								scale_button.setEnabled(true);
+							}
+							catch (final java.text.ParseException exception)
+							{
+								scale_spinner_text_field.setBackground(
+									new Color(255, 102, 102));
+								scale_button.setEnabled(false);
+							}
+						}
+					});
+				scale_spinner_text_field.addKeyListener(new KeyAdapter()
+					{
+						@Override public void keyReleased(final KeyEvent e)
+						{
+							try
+							{
+								scale_spinner.commitEdit();
+								scale_spinner_text_field.setBackground(
+									new JTextField().getBackground());
+								scale_button.setEnabled(true);
+							}
+							catch (final java.text.ParseException exception)
+							{
+								scale_spinner_text_field.setBackground(
+									new Color(255, 102, 102));
+								scale_button.setEnabled(false);
+							}
+						}
+					});
+				
+				scale_button.addActionListener((final ActionEvent e) ->
+					{ if (board_lock.tryLock() /* Only try; ignore iff busy. */) try {
+						if (0 != JOptionPane.showOptionDialog(
+							  MainPanel.this
+							, "Please restart pmChess to apply the new scale."
+							, "Restart required"
+							, JOptionPane.DEFAULT_OPTION
+							, JOptionPane.INFORMATION_MESSAGE
+							, null
+							, new String[]{ "Save scale and quit", "Abort" }
+							, "Abort"))
+						{
+							return;
+						}
+						Resources.write_base_scale_configuration(
+							(Integer)scale_spinner.getValue());
+						for (var p = getParent(); p != null; p = p.getParent())
+						if (p instanceof GUI)
+						{
+							((GUI) p).exit();
+							break;
+						}
+					} finally { board_lock.unlock(); }});
+				
+				scale_panel.add(Box.createHorizontalGlue());
+				scale_panel.add(scale_label);
+				scale_panel.add(Box.createHorizontalGlue());
+				scale_panel.add(scale_spinner);
+				scale_panel.add(Box.createHorizontalGlue());
+				scale_panel.add(scale_button);
+				scale_panel.add(Box.createHorizontalGlue());
+				
+				// Compose everything (scale settings):
+				
+				setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+				add(scale_panel);
+				add(Box.createVerticalGlue());
+			}
 		}
 	}
 	

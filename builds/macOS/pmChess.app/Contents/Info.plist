@@ -9,7 +9,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 2006-2023 Christoff Bürger, This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution.</string>
+	<string>© 2006-2024 Christoff Bürger, This program and the accompanying materials are made available under the terms of the MIT license (X11 license) which accompanies this distribution.</string>
 	<key>CFBundleName</key>
 	<string>pmChess</string>
 	<key>CFBundleDisplayName</key>

@@ -55,8 +55,21 @@ public final class Resources
 		}
 	}
 	
-	// Default font size all GUI-layout is derived from:
-	public static final float base_scale = read_base_scale_configuration();
+	// Font size all GUI-layout is derived from:
+	public static final float base_scale_default = 14.0f;
+	public static final int base_scale_min_percent = 50;
+	public static final int base_scale_max_percent = 500;
+	protected static final float base_scale = read_base_scale_configuration();
+	
+	protected static final int base_scale_in_percent()
+	{
+		return base_scale_in_percent(base_scale);
+	}
+	
+	public static final int base_scale_in_percent(final float base_scale)
+	{
+		return Math.round(100.0f * (base_scale / base_scale_default));
+	}
 	
 	public static float read_base_scale_configuration()
 	{
@@ -64,11 +77,14 @@ public final class Resources
 		{
 			final var scale = Integer.valueOf(
 				Files.readString(Paths.get("base-scale.txt")));
-			return (float)(scale < 50 ? 50 : (scale > 200 ? 200 : scale)) * 0.14f;
+			return ((float) Math.min(
+					  Math.max(scale, base_scale_min_percent)
+					, base_scale_max_percent))
+				* (base_scale_default / 100.0f);
 		}
 		catch (final Exception e)
 		{
-			return 14f;
+			return base_scale_default;
 		}
 	}
 	
@@ -91,7 +107,7 @@ public final class Resources
 	
 	private static Font load_font(final String font_name)
 	{
-		return load_font(font_name, 1);
+		return load_font(font_name, 1.0f);
 	}
 	
 	private static Font load_font(final String font_name, final float scale)
