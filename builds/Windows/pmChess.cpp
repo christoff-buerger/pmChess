@@ -8,10 +8,12 @@
 #include <windows.h>
 // wcout():
 #include <iostream>
-// wcsnlen_s():
+// wcsnlen_s(), wcscmp(), size_t:
 #include <wchar.h>
+// PeekMessageW():
+#include <winuser.h>
 
-#define MAX_CMD_LENGTH 64
+#define MAX_CMD_LENGTH (static_cast<size_t>(64))
 
 int WINAPI wWinMain(
 	_In_ HINSTANCE, // not used
@@ -19,7 +21,7 @@ int WINAPI wWinMain(
 	_In_ PWSTR pCmdLine,
 	_In_ int) // not used
 {
-	int return_code = 0;
+	auto return_code = static_cast<int>(0);
 	
 	HANDLE output_reader = NULL;
 	HANDLE output_writer = NULL;
@@ -32,24 +34,32 @@ int WINAPI wWinMain(
 	SecureZeroMemory(&process_information, sizeof(process_information));
 	SecureZeroMemory(&security_attributes, sizeof(security_attributes));
 	
+	startup_information.cb = sizeof(startup_information);
+	
 	__try
 	{	
 		wchar_t application_name[MAX_PATH];
 		wchar_t command_line[MAX_PATH + MAX_CMD_LENGTH];
 		wchar_t current_directory[MAX_PATH];
-		auto application_name_length = GetModuleFileNameW(0, application_name, MAX_PATH);
-		auto command_line_length = 0ul;
-		auto current_directory_length = 0ul;
+		auto application_name_length = GetModuleFileNameW(NULL, application_name, MAX_PATH);
+		auto command_line_length = static_cast<DWORD>(0);
+		auto current_directory_length = static_cast<DWORD>(0);
 		
-		if (!application_name_length || application_name_length > MAX_PATH - 70)
+		{ // Grap focus (such that pmChess window will have focus and is not in background opened):
+			MSG message = { 0 };
+			PeekMessageW(&message, NULL, static_cast<UINT>(0), static_cast<UINT>(0), PM_NOREMOVE);
+		}
+		
+		if (!application_name_length
+			|| application_name_length > MAX_PATH - static_cast<DWORD>(70))
 		{
 			std::wcout
 				<< std::endl
 				<< L"Failed to start pmChess (to long executable path)."
 				<< std::endl;
-			return 2;
+			return static_cast<int>(2);
 		}
-		for (auto i = 0ul; i < application_name_length; i++)
+		for (auto i = static_cast<DWORD>(0); i < application_name_length; i++)
 		{
 			command_line[i] = application_name[i];
 			current_directory[i] = application_name[i];
@@ -78,17 +88,20 @@ int WINAPI wWinMain(
 				<< std::endl
 				<< L"Failed to start pmChess (to long command line)."
 				<< std::endl;
-			return 2;
+			return static_cast<int>(2);
 		}
-		else if (pCmdLine_length > 0)
+		else if (pCmdLine_length > static_cast<size_t>(0))
 		{
-			command_line_length--; // Delete termination L'\0'.
-			command_line[command_line_length++] = L' ';
-			for (auto i = 0u; i < pCmdLine_length; i++)
+			if (0 != wcscmp(pCmdLine, L"--debug"))
 			{
-				command_line[command_line_length++] = pCmdLine[i];
+				command_line_length--; // Delete termination L'\0'.
+				command_line[command_line_length++] = L' ';
+				for (auto i = static_cast<size_t>(0); i < pCmdLine_length; i++)
+				{
+					command_line[command_line_length++] = pCmdLine[i];
+				}
+				command_line[command_line_length++] = L'\0';
 			}
-			command_line[command_line_length++] = L'\0';
 			
 			if (!AttachConsole(ATTACH_PARENT_PROCESS) && !AllocConsole())
 			{
@@ -97,31 +110,34 @@ int WINAPI wWinMain(
 					<< L"Failed to start pmChess "
 						L"(missing output console for command line call)."
 					<< std::endl;
-				return_code = 2;
+				return_code = static_cast<int>(2);
 			}
 			else if ((security_attributes.nLength = sizeof(SECURITY_ATTRIBUTES)
 					, security_attributes.bInheritHandle = TRUE
 					, security_attributes.lpSecurityDescriptor = NULL
-					, !CreatePipe(&output_reader, &output_writer, &security_attributes, 0))
-				|| !SetHandleInformation(output_reader, HANDLE_FLAG_INHERIT, 0))
+					, !CreatePipe(
+						  &output_reader
+						, &output_writer
+						, &security_attributes
+						, static_cast<DWORD>(0)))
+				|| !SetHandleInformation(output_reader, HANDLE_FLAG_INHERIT, static_cast<DWORD>(0)))
 			{
 				std::wcout
 					<< std::endl
 					<< L"Failed to start pmChess "
 						L"(connection failure with command line call console)."
 					<< std::endl;
-				return_code = 2;
+				return_code = static_cast<int>(2);
 			}
 			else
 			{
-				startup_information.cb = sizeof(startup_information);
 				startup_information.hStdOutput = output_writer;
 				startup_information.hStdError = output_writer;
 				startup_information.dwFlags |= STARTF_USESTDHANDLES;
 			}
 		}
 		
-		if (return_code != 0)
+		if (static_cast<int>(0) != return_code)
 		{
 		}
 		else if (!CreateProcessW(
@@ -129,7 +145,7 @@ int WINAPI wWinMain(
 			, command_line // Must be writeable (e.g., NOT 'const wchar_t*' or literal).
 			, NULL // Process handle of created process is not inheritable.
 			, NULL // Thread handle of created process is not inheritable.
-			, pCmdLine_length > 0 // Inherite handles of current process iff cmd call.
+			, pCmdLine_length > static_cast<size_t>(0) // Inherite handles of current process iff cmd call.
 			, CREATE_NO_WINDOW | INHERIT_PARENT_AFFINITY | CREATE_UNICODE_ENVIRONMENT
 			, NULL // Use environment of current process.
 			, current_directory
@@ -141,29 +157,20 @@ int WINAPI wWinMain(
 				<< L"Failed to start pmChess (process creation error code: %d)."
 				<< GetLastError()
 				<< std::endl;
-			return_code = 2;
+			return_code = static_cast<int>(2);
 		}
 		else
 		{
-			if (pCmdLine_length > 0)
+			if (pCmdLine_length > static_cast<size_t>(0))
 			{
 				CloseHandle(output_writer);
 				
-				/*
-				COMMTIMEOUTS cto;
-				GetCommTimeouts(output_reader, &cto);
-				cto.ReadIntervalTimeout = 10;
-				cto.ReadTotalTimeoutConstant = 0;
-				cto.ReadTotalTimeoutMultiplier = 0;
-				SetCommTimeouts(output_reader, &cto);
-				*/
-				
 				DWORD read, written;
-				CHAR /* Always byte-wise write/read. */ buffer[4096];
+				CHAR /* Always byte-wise write/read. */ buffer[static_cast<size_t>(4096)];
 				HANDLE parent_stdout = GetStdHandle(STD_OUTPUT_HANDLE);
 				
 				while (ReadFile(output_reader, buffer, sizeof(buffer), &read, NULL)
-					&& 0 != read
+					&& static_cast<DWORD>(0) != read
 					&& WriteFile(parent_stdout, buffer, read, &written, NULL))
 				{
 				}
@@ -182,7 +189,7 @@ int WINAPI wWinMain(
 					<< std::endl
 					<< L"Error while terminating pmChess (failed to retrieve exit code)."
 					<< std::endl;
-				return_code = 2;
+				return_code = static_cast<int>(2);
 			}
 		}
 	}
@@ -193,7 +200,7 @@ int WINAPI wWinMain(
 			<< L"Error while executing pmChess (runtime exception error code: %i)."
 			<< GetExceptionCode()
 			<< std::endl;
-		return_code = 2;
+		return_code = static_cast<int>(2);
 	}
 	
 	CloseHandle(process_information.hProcess);

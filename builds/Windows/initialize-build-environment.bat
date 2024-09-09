@@ -59,8 +59,10 @@ if ERRORLEVEL 1 (
 		for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
 			if exist "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
 				call "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
+				set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
 				if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
-					set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
+					call :ERROR
+				) else if not ERRORLEVEL 0 (
 					call :ERROR
 				)
 				goto :VISUAL_STUDIO_INITIALIZED
