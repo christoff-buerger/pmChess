@@ -140,11 +140,10 @@ public final class GUI extends JFrame
 		if (getWidth() >= max_width || getHeight() >= max_height)
 		{
 			final var autoscale = (int) Math.floor(
-				  0.98f
+				  99.9f
 				* Math.min(
 					  ((float) max_width) / ((float) getWidth())
-					, ((float) max_height) / ((float) getHeight()))
-				* ((float) Resources.base_scale_in_percent()));
+					, ((float) max_height) / ((float) getHeight())));
 			UIManager.put(
 				  "OptionPane.messageFont"
 				, Resources.font_regular.deriveFont(Resources.base_scale_default));
