@@ -130,17 +130,20 @@ public final class GUI extends JFrame
 		setLocationRelativeTo(null); // center window
 		
 		// Check window size fits:
-		final var graphics_bounds = GUI.graphics_configuration.getBounds();
+		final var display_mode = GUI.graphics_configuration
+			// Use real screen size, not DPI scaled size of .getBounds():
+			.getDevice().getDisplayMode();
 		final var screen_insets = Toolkit.getDefaultToolkit().getScreenInsets(
 			GUI.graphics_configuration);
 		final var max_width = (int) Math.floor(0.97f * (float)(
-			graphics_bounds.getWidth() - screen_insets.left - screen_insets.right));
+			display_mode.getWidth() - screen_insets.left - screen_insets.right));
 		final var max_height = (int) Math.floor(0.97f * (float)(
-			graphics_bounds.getHeight() - screen_insets.top - screen_insets.bottom));
-		if (getWidth() >= max_width || getHeight() >= max_height)
+			display_mode.getHeight() - screen_insets.top - screen_insets.bottom));
+		if (getWidth() > max_width || getHeight() > max_height)
 		{
 			final var autoscale = (int) Math.floor(
-				  99.9f
+				  0.99f
+				* ((float) Resources.base_scale_in_percent())
 				* Math.min(
 					  ((float) max_width) / ((float) getWidth())
 					, ((float) max_height) / ((float) getHeight())));
