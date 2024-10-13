@@ -18,17 +18,6 @@ import javax.swing.*;
 
 public final class AboutFrame extends JFrame
 {
-	private static Insets compute_insets()
-	{
-		final var insets_frame = new JFrame("About pmChess")
-			{
-				{ // Initialize for display such that insets are valid:
-					pack();
-				}
-			};
-		return insets_frame.getInsets();
-	}
-	
 	private static final Image logo = Resources.load_image("logo/logo-animated.gif");
 	
 	private final JTabbedPane tabs = new JTabbedPane();
@@ -57,10 +46,10 @@ public final class AboutFrame extends JFrame
 		final var text_height =
 			(new FontMetrics(Resources.font_regular) {}).getHeight();
 		final var border_size =
-			(int)Math.ceil(2 * text_height / 3.0f);
-		final var frame_x_size = 600; // Graphical layout configuration.
-		final var frame_y_size = 580; // Graphical layout configuration.
-		final var frame_insets = compute_insets();
+			(int) Math.ceil(2 * text_height / 3.0f);
+		final var frame_x_size = (Resources.base_scale_in_percent() * 600) / 100;
+		final var frame_y_size = (Resources.base_scale_in_percent() * 580) / 100;
+		final var frame_insets = Resources.compute_insets();
 		final var panel_x_size =
 			frame_x_size - (frame_insets.left + frame_insets.right);
 		final var panel_y_size =

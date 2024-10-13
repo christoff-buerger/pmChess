@@ -24,10 +24,10 @@ import pmchess.gui.Resources.*;
 
 public final class MainPanel extends JPanel
 {
-	private final int text_height =
+	protected final int text_height =
 		(new FontMetrics(Resources.font_regular) {}).getHeight();
-	private final int border_size =
-		(int)Math.ceil(2 * text_height / 3.0f);
+	protected final int border_size =
+		(int) Math.ceil((2.0f * ((float) text_height)) / 3.0f);
 	
 	private static final Image bulb = Resources.load_image("icons/bulb.png");
 	
@@ -61,13 +61,16 @@ public final class MainPanel extends JPanel
 	
 	private final BoardListener board_listener = new BoardListener();
 	
+	protected final int panel_x_size =
+		board_panel.panel_size + history_panel.panel_x_size + 2 * border_size;
+	protected final int panel_y_size =
+		board_panel.panel_size + game_panel.panel_y_size + 2 * border_size;
+	
 	protected MainPanel()
 	{
 		// Setup panel size and layout:
 		setOpaque(true);
-		final var panel_dimension = new Dimension(
-			  board_panel.panel_size + history_panel.panel_x_size + 2 * border_size
-			, board_panel.panel_size + game_panel.panel_y_size + 2 * border_size);
+		final var panel_dimension = new Dimension(panel_x_size, panel_y_size);
 		setMaximumSize(panel_dimension);
 		setMinimumSize(panel_dimension);
 		setPreferredSize(panel_dimension);

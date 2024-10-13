@@ -19,9 +19,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public final class GUI extends JFrame
-{
-	private static final GraphicsConfiguration graphics_configuration;
-	
+{	
 	static
 	{
 		// Initialize fonts:
@@ -51,12 +49,6 @@ public final class GUI extends JFrame
 		
 		// Render text of disabled check boxes normal (e.g., do not dim such):
 		UIManager.put("CheckBox.disabledText", UIManager.get("CheckBox.foreground"));
-		
-		// Retrieve default screen configuration:
-		graphics_configuration = GraphicsEnvironment
-			.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice()
-			.getDefaultConfiguration();
 	}
 	
 	private final JMenuItem white_computer;
@@ -68,7 +60,7 @@ public final class GUI extends JFrame
 	 */
 	public GUI()
 	{
-		super("pmChess", GUI.graphics_configuration);
+		super("pmChess", Resources.graphics_configuration);
 		
 		// Setup "About"-window:
 		final var about_action = new AboutAction();
@@ -130,23 +122,41 @@ public final class GUI extends JFrame
 		setLocationRelativeTo(null); // center window
 		
 		// Check window size fits:
-		final var display_mode = GUI.graphics_configuration
+		final var os_scaling = (int) Math.round(
+			  (100.0f * ((float) Toolkit.getDefaultToolkit().getScreenResolution()))
+			/ 96.0f);
+		final var display_mode = Resources.graphics_configuration
 			// Use real screen size, not DPI scaled size of .getBounds():
 			.getDevice().getDisplayMode();
 		final var screen_insets = Toolkit.getDefaultToolkit().getScreenInsets(
-			GUI.graphics_configuration);
-		final var max_width = (int) Math.floor(0.97f * (float)(
+			Resources.graphics_configuration);
+		final var width_max = (int) Math.floor(0.97f * (float)(
 			display_mode.getWidth() - screen_insets.left - screen_insets.right));
-		final var max_height = (int) Math.floor(0.97f * (float)(
+		final var height_max = (int) Math.floor(0.97f * (float)(
 			display_mode.getHeight() - screen_insets.top - screen_insets.bottom));
-		if (getWidth() > max_width || getHeight() > max_height)
+		final var frame_insets = Resources.compute_insets();
+		final var width_current = ((
+				  main_panel.panel_x_size
+				+ frame_insets.left
+				+ frame_insets.right)
+			* os_scaling)
+			/ 100;
+		final var height_current = ((
+				  main_panel.panel_y_size
+				+ main_panel.text_height + main_panel.border_size // menu bar
+				+ frame_insets.top
+				+ frame_insets.bottom)
+			* os_scaling)
+			/ 100;
+		final var width_original = (100 * width_current) / Resources.base_scale_in_percent();
+		final var height_original = (100 * height_current) / Resources.base_scale_in_percent();
+		if (width_current > width_max || height_current > height_max)
 		{
 			final var autoscale = (int) Math.floor(
-				  0.99f
-				* ((float) Resources.base_scale_in_percent())
+				  96.0f
 				* Math.min(
-					  ((float) max_width) / ((float) getWidth())
-					, ((float) max_height) / ((float) getHeight())));
+					  ((float) width_max) / ((float) width_original)
+					, ((float) height_max) / ((float) height_original)));
 			UIManager.put(
 				  "OptionPane.messageFont"
 				, Resources.font_regular.deriveFont(Resources.base_scale_default));
@@ -197,6 +207,7 @@ public final class GUI extends JFrame
 				UIManager.put("OptionPane.buttonFont", Resources.font_regular);
 			}
 		}
+		
 		setVisible(true);
 	}
 	
@@ -288,7 +299,7 @@ public final class GUI extends JFrame
 	private static final class AboutAction extends AbstractAction implements AboutHandler
 	{
 		private static final AboutFrame about_frame = new AboutFrame(
-			GUI.graphics_configuration);
+			Resources.graphics_configuration);
 		
 		private AboutAction()
 		{

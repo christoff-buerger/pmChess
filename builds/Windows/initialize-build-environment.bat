@@ -38,40 +38,34 @@ if not "%SelfWrapped%"=="%~0" (
 )
 
 rem Initialize Java:
-call where javac >nul 2>nul
-if ERRORLEVEL 1 (
-	for /d %%j in ( "%ProgramFiles%\Java\jdk-21" "%ProgramFiles%\Java\jdk-21.*" ) do (
-		if exist "%%j" (
-			set "JAVA_HOME=%%~fj"
-			set "PATH=!JAVA_HOME!\bin;!PATH!"
-			goto :JAVA_INITIALIZED
-		)
+for /d %%j in ( "%ProgramFiles%\Java\jdk-21" "%ProgramFiles%\Java\jdk-21.*" ) do (
+	if exist "%%j" (
+		set "JAVA_HOME=%%~fj"
+		set "PATH=!JAVA_HOME!\bin;!PATH!"
+		goto :JAVA_INITIALIZED
 	)
-	set "EMESSAGE=no Java installation found"
-	call :ERROR
 )
+set "EMESSAGE=no Java installation found"
+call :ERROR
 :JAVA_INITIALIZED
 
 rem Initialize Microsoft build environment:
-call where msbuild >nul 2>nul
-if ERRORLEVEL 1 (
-	for %%y in ( "2022" ) do (
-		for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
-			if exist "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
-				call "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
-				set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
-				if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
-					call :ERROR
-				) else if not ERRORLEVEL 0 (
-					call :ERROR
-				)
-				goto :VISUAL_STUDIO_INITIALIZED
+for %%y in ( "2022" ) do (
+	for %%v in ( "Enterprise" "Professional" "Community" "BuildTools" ) do (
+		if exist "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" (
+			call "%ProgramFiles%\Microsoft Visual Studio\%%y\%%v\VC\Auxiliary\Build\vcvarsall.bat" x64
+			set "EMESSAGE=Microsoft build environment initialization failed (Microsoft Visual Studio %%y)"
+			if ERRORLEVEL 1 ( rem Not working: 'vcvarsall.bat' never returns error code.
+				call :ERROR
+			) else if not ERRORLEVEL 0 (
+				call :ERROR
 			)
+			goto :VISUAL_STUDIO_INITIALIZED
 		)
 	)
-	set "EMESSAGE=no Microsoft Visual Studio installation found"
-	call :ERROR
 )
+set "EMESSAGE=no Microsoft Visual Studio installation found"
+call :ERROR
 :VISUAL_STUDIO_INITIALIZED
 
 rem Start terminal for interactive use within the initialized environment:

@@ -18,6 +18,8 @@ import java.nio.file.*;
 
 import java.awt.*;
 
+import javax.swing.*;
+
 import pmchess.logic.*;
 
 public final class Resources
@@ -25,6 +27,17 @@ public final class Resources
 	private Resources() // No instances.
 	{
 	}
+	
+	static
+	{
+		// Retrieve default screen configuration:
+		graphics_configuration = GraphicsEnvironment
+			.getLocalGraphicsEnvironment()
+			.getDefaultScreenDevice()
+			.getDefaultConfiguration();
+	}
+	
+	protected static final GraphicsConfiguration graphics_configuration;
 	
 	protected static final String text_encoding = StandardCharsets.UTF_8.name();
 	
@@ -105,6 +118,17 @@ public final class Resources
 		}
 	}
 	
+	protected static Insets compute_insets()
+	{
+		final var insets_frame = new JFrame("Insets frame", graphics_configuration)
+			{
+				{ // Initialize for display such that insets are valid:
+					pack();
+				}
+			};
+		return insets_frame.getInsets();
+	}
+	
 	private static Font load_font(final String font_name)
 	{
 		return load_font(font_name, 1.0f);
@@ -138,19 +162,25 @@ public final class Resources
 	protected static Image load_image(final String image_name)
 	{
 		final var image_url = Resources.class.getResource(image_name);
-		if (image_url != null)
-		{
-			return Toolkit.getDefaultToolkit().getImage(image_url);
-		}
-		else
+		if (image_url == null)
 		{
 			throw new RuntimeException("Failed to load image " + image_name + ".");
 		}
+		// ImageIcon ensures synchronous loading of image using its own MediaTracker:
+		final var image_unscaled = new ImageIcon(
+			Toolkit.getDefaultToolkit().getImage(image_url));
+		final var image_scaled = new ImageIcon(image_unscaled
+			.getImage()
+			.getScaledInstance(
+				  (base_scale_in_percent() * image_unscaled.getIconWidth()) / 100
+				, (base_scale_in_percent() * image_unscaled.getIconHeight()) / 100
+				, image_name.endsWith(".gif") ? Image.SCALE_DEFAULT : Image.SCALE_SMOOTH));
+		return image_scaled.getImage();
 	}
 	
 	protected static void configure_rendering(final Graphics graphics)
 	{
-		final var g2d = (Graphics2D)graphics;
+		final var g2d = (Graphics2D) graphics;
 		
 		// Setup general and image rendering:
 		g2d.setRenderingHint(
@@ -194,7 +224,7 @@ public final class Resources
 	// Font including Unicode media control symbols according to ISO/IEC 18035:2003:
 	protected static final Font font_media_control_symbols = load_font("Material-Symbols-Sharp.ttf", 1.6f);
 	
-	protected static final Image pmChess_icon = Resources.load_image("icons/pmChess.png");
+	protected static final Image pmChess_icon = load_image("icons/pmChess.png");
 	
 	private static final FigurePresentation[] figures =
 		{
@@ -243,7 +273,7 @@ public final class Resources
 		
 		protected static FigurePresentation get(final Figure figure)
 		{
-			for (final var f : Resources.figures)
+			for (final var f : figures)
 			{
 				if (f.figure == figure)
 				{
