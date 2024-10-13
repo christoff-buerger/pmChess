@@ -122,9 +122,14 @@ public final class GUI extends JFrame
 		setLocationRelativeTo(null); // center window
 		
 		// Check window size fits:
-		final var os_scaling = (int) Math.round(
-			  (100.0f * ((float) Toolkit.getDefaultToolkit().getScreenResolution()))
-			/ 96.0f);
+		final var os_scaling = switch (System.getProperty("os.name"))
+			{
+			case String s when s.startsWith("Windows") ->
+				(int) Math.round(
+					  (100.0f * ((float) Toolkit.getDefaultToolkit().getScreenResolution()))
+					/ 96.0f);
+			default -> 100;
+			};
 		final var display_mode = Resources.graphics_configuration
 			// Use real screen size, not DPI scaled size of .getBounds():
 			.getDevice().getDisplayMode();

@@ -469,10 +469,7 @@ public final class AboutFrame extends JFrame
 		setSize(frame_x_size, frame_y_size);
 		pack();
 		setResizable(false);
-		final var screen_size = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation(
-			  (int)Math.ceil((screen_size.width - getSize().width) / 2.0f)
-			, (int)Math.ceil((screen_size.height - getSize().height) / 2.0f));
+		setLocationRelativeTo(null); // center window
 		setVisible(false);
 		
 		// Setup user-input processing:
