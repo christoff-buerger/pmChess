@@ -18,6 +18,9 @@ import javax.swing.*;
 
 public final class AboutFrame extends JFrame
 {
+	protected static final int frame_x_size = (Resources.base_scale_in_percent() * 600) / 100;
+	protected static final int frame_y_size = (Resources.base_scale_in_percent() * 580) / 100;
+	
 	private static final Image logo = Resources.load_image("logo/logo-animated.gif");
 	
 	private final JTabbedPane tabs = new JTabbedPane();
@@ -47,8 +50,6 @@ public final class AboutFrame extends JFrame
 			(new FontMetrics(Resources.font_regular) {}).getHeight();
 		final var border_size =
 			(int) Math.ceil(2 * text_height / 3.0f);
-		final var frame_x_size = (Resources.base_scale_in_percent() * 600) / 100;
-		final var frame_y_size = (Resources.base_scale_in_percent() * 580) / 100;
 		final var frame_insets = Resources.compute_insets();
 		final var panel_x_size =
 			frame_x_size - (frame_insets.left + frame_insets.right);

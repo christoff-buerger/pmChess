@@ -140,18 +140,20 @@ public final class GUI extends JFrame
 		final var height_max = (int) Math.floor(0.97f * (float)(
 			display_mode.getHeight() - screen_insets.top - screen_insets.bottom));
 		final var frame_insets = Resources.compute_insets();
-		final var width_current = ((
-				  main_panel.panel_x_size
-				+ frame_insets.left
-				+ frame_insets.right)
-			* os_scaling)
+		final var width_current =
+			  os_scaling
+			* Math.max(
+				  AboutFrame.frame_x_size
+				, main_panel.panel_x_size + frame_insets.left + frame_insets.right)
 			/ 100;
-		final var height_current = ((
-				  main_panel.panel_y_size
-				+ main_panel.text_height + main_panel.border_size // menu bar
-				+ frame_insets.top
-				+ frame_insets.bottom)
-			* os_scaling)
+		final var height_current =
+			  os_scaling
+			* Math.max(
+				  AboutFrame.frame_y_size
+				, main_panel.panel_y_size
+				  + main_panel.text_height + main_panel.border_size // menu bar
+				  + frame_insets.top
+				  + frame_insets.bottom)
 			/ 100;
 		final var width_original = (100 * width_current) / Resources.base_scale_in_percent();
 		final var height_original = (100 * height_current) / Resources.base_scale_in_percent();
