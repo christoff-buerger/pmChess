@@ -28,6 +28,10 @@ public final class Resources
 	{
 	}
 	
+	/*
+		Graphics resources:
+	*/
+	
 	static
 	{
 		// Retrieve default screen configuration:
@@ -38,35 +42,6 @@ public final class Resources
 	}
 	
 	protected static final GraphicsConfiguration graphics_configuration;
-	
-	protected static final String text_encoding = StandardCharsets.UTF_8.name();
-	
-	public static final String adjourned_game_file = "adjourned-game.data";
-	
-	public static String load_text(final String file)
-	{
-		try (final var stream = Resources.class.getResourceAsStream(file))
-		{
-			if (stream == null)
-			{
-				throw new IOException();
-			}
-			final var buffer = new byte[1024];
-			try (final var result = new ByteArrayOutputStream())
-			{
-				int character;
-				while ((character = stream.read(buffer)) != -1)
-				{
-					result.write(buffer, 0, character);
-				}
-				return result.toString(text_encoding);
-			}
-		}
-		catch (IOException exception)
-		{
-			throw new RuntimeException("Failed to load text file " + file + ".");
-		}
-	}
 	
 	// Font size all GUI-layout is derived from:
 	public static final float base_scale_default = 14.0f;
@@ -129,55 +104,6 @@ public final class Resources
 		return insets_frame.getInsets();
 	}
 	
-	private static Font load_font(final String font_name)
-	{
-		return load_font(font_name, 1.0f);
-	}
-	
-	private static Font load_font(final String font_name, final float scale)
-	{
-		try
-		{
-			final var loaded_font = Font.createFont(
-				  Font.TRUETYPE_FONT
-				, Resources.class.getResourceAsStream("fonts/" + font_name));
-			final var environment =
-				GraphicsEnvironment.getLocalGraphicsEnvironment();
-			for (final var existing_font : environment.getAllFonts())
-			{
-				if (existing_font.getFontName().equals(loaded_font.getFontName()))
-				{
-					return existing_font.deriveFont(scale * base_scale);
-				}
-			}
-			environment.registerFont(loaded_font);
-			return loaded_font.deriveFont(scale * base_scale);
-		}
-		catch (IOException | FontFormatException exception)
-		{
-			throw new RuntimeException("Failed to load font " + font_name + ".");
-		}
-	}
-	
-	protected static Image load_image(final String image_name)
-	{
-		final var image_url = Resources.class.getResource(image_name);
-		if (image_url == null)
-		{
-			throw new RuntimeException("Failed to load image " + image_name + ".");
-		}
-		// ImageIcon ensures synchronous loading of image using its own MediaTracker:
-		final var image_unscaled = new ImageIcon(
-			Toolkit.getDefaultToolkit().getImage(image_url));
-		final var image_scaled = new ImageIcon(image_unscaled
-			.getImage()
-			.getScaledInstance(
-				  (base_scale_in_percent() * image_unscaled.getIconWidth()) / 100
-				, (base_scale_in_percent() * image_unscaled.getIconHeight()) / 100
-				, image_name.endsWith(".gif") ? Image.SCALE_DEFAULT : Image.SCALE_SMOOTH));
-		return image_scaled.getImage();
-	}
-	
 	protected static void configure_rendering(final Graphics graphics)
 	{
 		final var g2d = (Graphics2D) graphics;
@@ -214,6 +140,35 @@ public final class Resources
 		}
 	}
 	
+	/*
+		Image resources:
+	*/
+	
+	protected static final Image pmChess_icon = load_image("icons/pmChess.png");
+	
+	protected static Image load_image(final String image_name)
+	{
+		final var image_url = Resources.class.getResource(image_name);
+		if (image_url == null)
+		{
+			throw new RuntimeException("Failed to load image " + image_name + ".");
+		}
+		// ImageIcon ensures synchronous loading of image using its own MediaTracker:
+		final var image_unscaled = new ImageIcon(
+			Toolkit.getDefaultToolkit().getImage(image_url));
+		final var image_scaled = new ImageIcon(image_unscaled
+			.getImage()
+			.getScaledInstance(
+				  (base_scale_in_percent() * image_unscaled.getIconWidth()) / 100
+				, (base_scale_in_percent() * image_unscaled.getIconHeight()) / 100
+				, image_name.endsWith(".gif") ? Image.SCALE_DEFAULT : Image.SCALE_SMOOTH));
+		return image_scaled.getImage();
+	}
+	
+	/*
+		Font resources:
+	*/
+	
 	protected static final Font font_regular = load_font("Open-Sans-Regular.ttf");
 	protected static final Font font_italic = load_font("Open-Sans-Italic.ttf");
 	protected static final Font font_bold = load_font("Open-Sans-Bold.ttf");
@@ -224,7 +179,70 @@ public final class Resources
 	// Font including Unicode media control symbols according to ISO/IEC 18035:2003:
 	protected static final Font font_media_control_symbols = load_font("Material-Symbols-Sharp.ttf", 1.6f);
 	
-	protected static final Image pmChess_icon = load_image("icons/pmChess.png");
+	private static Font load_font(final String font_name)
+	{
+		return load_font(font_name, 1.0f);
+	}
+	
+	private static Font load_font(final String font_name, final float scale)
+	{
+		try
+		{
+			final var loaded_font = Font.createFont(
+				  Font.TRUETYPE_FONT
+				, Resources.class.getResourceAsStream("fonts/" + font_name));
+			final var graphics_environment =
+				GraphicsEnvironment.getLocalGraphicsEnvironment();
+			for (final var existing_font : graphics_environment.getAllFonts())
+			{
+				if (existing_font.getFontName().equals(loaded_font.getFontName()))
+				{
+					return existing_font.deriveFont(scale * base_scale);
+				}
+			}
+			graphics_environment.registerFont(loaded_font);
+			return loaded_font.deriveFont(scale * base_scale);
+		}
+		catch (IOException | FontFormatException exception)
+		{
+			throw new RuntimeException("Failed to load font " + font_name + ".");
+		}
+	}
+	
+	/*
+		Text file resouces:
+	*/
+	
+	protected static final String text_encoding = StandardCharsets.UTF_8.name();
+	
+	public static String load_text(final String file)
+	{
+		try (final var stream = Resources.class.getResourceAsStream(file))
+		{
+			if (stream == null)
+			{
+				throw new IOException();
+			}
+			final var buffer = new byte[1024];
+			try (final var result = new ByteArrayOutputStream())
+			{
+				int character;
+				while ((character = stream.read(buffer)) != -1)
+				{
+					result.write(buffer, 0, character);
+				}
+				return result.toString(text_encoding);
+			}
+		}
+		catch (IOException exception)
+		{
+			throw new RuntimeException("Failed to load text file " + file + ".");
+		}
+	}
+	
+	/*
+		Figure resources:
+	*/
 	
 	private static final FigurePresentation[] figures =
 		{

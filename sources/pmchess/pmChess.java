@@ -104,16 +104,19 @@ public final class pmChess
 		java.awt.EventQueue.invokeLater(
 			new Runnable()
 			{
+	
+				private static final String adjourned_game_file = "adjourned-game.data";
+				
 				@Override public void run()
 				{
 					final GUI gui = new GUI();
-					gui.load_game(Resources.adjourned_game_file);
+					gui.load_game(adjourned_game_file);
 					Runtime.getRuntime().addShutdownHook(
 						new Thread()
 						{
 							@Override public void run()
 							{
-								gui.save_game(Resources.adjourned_game_file);
+								gui.save_game(adjourned_game_file);
 							}
 						});
 				}
