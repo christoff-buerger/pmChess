@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -14,9 +14,12 @@ public final class Search
 	private static final long search_budget = 15000000000l; // 15s
 	private static final int search_depth_min = 4;
 	
-	private Object state_lock = new Object(); // Support asynchronous use => protect state.
-	private long search_duration = search_budget;
-	private int search_depth = search_depth_min;
+	private Object state_lock =
+		new Object(); // Support asynchronous use => protect state.
+	private long search_duration =
+		search_budget;
+	private int search_depth =
+		search_depth_min;
 	
 	public int get_search_depth()
 	{
@@ -48,23 +51,27 @@ public final class Search
 				: this.search_depth;
 		}
 		
-		final var start_time = System.nanoTime();
+		final var start_time =
+			System.nanoTime();
 		
 		var best_move = 0;
-		var alpha = Search.min_score;
-		final var beta = 2 * Search.max_score;
+		var alpha =
+			Search.min_score;
+		final var beta =
+			2 * Search.max_score;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
 		{
 			if (board.execute(move))
 			{
-				final var score = -alpha_beta_nega_max(
-					  board
-					, -beta
-					, -alpha
-					, search_depth
-					, evaluator);
+				final var score =
+					-alpha_beta_nega_max(
+						  board
+						, -beta
+						, -alpha
+						, search_depth
+						, evaluator);
 				if (score > alpha)
 				{
 					alpha = score;
@@ -75,7 +82,8 @@ public final class Search
 			// Pruning doesn't make any sense at the root.
 		}
 		
-		final var end_time = System.nanoTime();
+		final var end_time =
+			System.nanoTime();
 		
 		synchronized (state_lock)
 		{
@@ -116,7 +124,8 @@ public final class Search
 			return evaluator.score(board, board.player());
 		}
 		var any_move_done = false;
-		var result = Search.min_score;
+		var result =
+			Search.min_score;
 		for (int i = board.moves_possible(), move = board.moves_possible(i);
 			move != 0;
 			move = board.moves_possible(++i))
@@ -153,10 +162,14 @@ public final class Search
 	private int select_move_2(final Board board)
 	{
 		var depth = 0;
-		var move_index = board.moves_possible();
-		var move = board.moves_possible(move_index);
-		var last_score = Integer.MIN_VALUE;
-		var best_score = last_score;
+		var move_index =
+			board.moves_possible();
+		var move =
+			board.moves_possible(move_index);
+		var last_score =
+			Integer.MIN_VALUE;
+		var best_score =
+			last_score;
 		var best_move = 0;
 		while (true)
 		{
@@ -180,8 +193,7 @@ public final class Search
 				--depth;
 				move_index = board.moves_selected(
 					/*
-						Requires method to return index of selected move,
-						not selected move.
+						Requires method to return index of selected move, not selected move.
 					*/) + 1;
 				move = board.moves_possible(move_index);
 				continue;
@@ -198,8 +210,7 @@ public final class Search
 				--depth;
 				move_index = board.moves_selected(
 					/*
-						Requires method to return index of selected move,
-						not selected move.
+						Requires method to return index of selected move, not selected move.
 					*/) + 1;
 				move = board.moves_possible(move_index);
 				continue;

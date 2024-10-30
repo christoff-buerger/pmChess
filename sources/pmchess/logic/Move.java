@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -50,11 +50,15 @@ public final class Move
 		, final int Y
 		, final Figure figure_placed)
 	{
-		final var figure_moved = board.figure(x, y);
-		final var figure_destination = board.figure(X, Y);
-		final var player = figure_moved.owner;
+		final var figure_moved =
+			board.figure(x, y);
+		final var figure_destination =
+			board.figure(X, Y);
+		final var player =
+			figure_moved.owner;
 		
-		var encoded_move = x
+		var encoded_move =
+			x
 			| y << 3
 			| X << 6
 			| Y << 9
@@ -65,7 +69,8 @@ public final class Move
 		// Update castling information:
 		if (figure_moved.is_king())
 		{ // Moving king disables castlings:
-			final var player_offset = player ? 0 : 2;
+			final var player_offset =
+				player ? 0 : 2;
 			if (board.castling_allowed(true, player))
 			{
 				encoded_move |= 0x1000000 << player_offset;
@@ -77,7 +82,8 @@ public final class Move
 		}
 		else if (figure_moved.is_rook())
 		{ // Moving rook from start disables castlings:
-			final var player_offset = player ? 0 : 2;
+			final var player_offset =
+				player ? 0 : 2;
 			if (y == (player ? 0 : 7))
 			{
 				if (x == 0 && board.castling_allowed(true, player))
@@ -99,7 +105,8 @@ public final class Move
 		*/
 		if (figure_destination != null && figure_destination.is_rook())
 		{
-			final var player_offset = player ? 2 : 0;
+			final var player_offset =
+				player ? 2 : 0;
 			if (Y == (player ? 7 : 0))
 			{
 				if (X == 0 && board.castling_allowed(true, !player))

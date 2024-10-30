@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -9,8 +9,10 @@ package pmchess.logic;
 
 public final class Evaluator
 {
-	private static final java.util.Random random = new java.util.Random();
-	private static final int[] random_shifts = {0, 0, 0, 0, 0, 5, 5, 5, 10, 10, 20};
+	private static final java.util.Random random =
+		new java.util.Random();
+	private static final int[] random_shifts =
+		{0, 0, 0, 0, 0, 5, 5, 5, 10, 10, 20};
 	
 	private static final int[] value_table =
 		{
@@ -33,94 +35,81 @@ public final class Evaluator
 	
 	private static final int[][] mobility_table =
 		{
-		// null (no figure; never accessed):
-		  {
-			  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-				/* white figures */
-		// Pawn (no bonus or penalty):
-		, {
-			  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Rook bonus (6-8: 3 points, 9-11: 8 points, 12-14: 14 points):
-		, {
-			  0,   0,   0,   0,   0,   0,   3,   3,   3,   8,   8
-			, 8,  14,  14,  14,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Knight bonus (2 points for each field the knight can be moved to):
-		, {
-			  0,   2,   4,   6,   8,  10,  12,  14,  16,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Bishop penalty (0-3: -10 points, 4-6: -6 points, 7-9: -2 points):
-		, {
-			  -10, -10, -10, -10,  -6,  -6,  -6,  -2,  -2,  -2,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Queen penalty (0-7: -15 points, 8-13: -6 points):
-		, {
-			  -15, -15, -15, -15, -15, -15, -15, -15,  -6,  -6,  -6
-			, -6,  -6,  -6,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// King (no mobility bonus or penalty):
-		, {
-			  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-				/* black figures */
-		// Pawn:
-		, {
-			  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Rook:
-		, {
-			  0,   0,   0,   0,   0,   0,   3,   3,   3,   8,   8
-			, 8,  14,  14,  14,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Knight:
-		, {
-			  0,   2,   4,   6,   8,  10,  12,  14,  16,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Bishop:
-		, {
-			  -10, -10, -10, -10,  -6,  -6,  -6,  -2,  -2,  -2,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// Queen:
-		, {
-			  -15, -15, -15, -15, -15, -15, -15, -15,  -6,  -6,  -6
-			, -6,  -6,  -6,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
-		// King:
-		, {
-			  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0
-			, 0,   0,   0,   0,   0,   0,   0,   0
-		  }
+			  { // null (no figure; never accessed):
+				    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+					/* white figures */
+			, { // Pawn (no bonus or penalty):
+				    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Rook bonus (6-8: 3 points, 9-11: 8 points, 12-14: 14 points):
+				    0,   0,   0,   0,   0,   0,   3,   3,   3,   8,   8
+				,   8,  14,  14,  14,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Knight bonus (2 points for each field the knight can be moved to):
+				    0,   2,   4,   6,   8,  10,  12,  14,  16,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Bishop penalty (0-3: -10 points, 4-6: -6 points, 7-9: -2 points):
+				  -10, -10, -10, -10,  -6,  -6,  -6,  -2,  -2,  -2,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Queen penalty (0-7: -15 points, 8-13: -6 points):
+				  -15, -15, -15, -15, -15, -15, -15, -15,  -6,  -6,  -6
+				,  -6,  -6,  -6,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // King (no mobility bonus or penalty):
+				    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+					/* black figures */
+			, { // Pawn:
+				    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Rook:
+				    0,   0,   0,   0,   0,   0,   3,   3,   3,   8,   8
+				,   8,  14,  14,  14,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Knight:
+				    0,   2,   4,   6,   8,  10,  12,  14,  16,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Bishop:
+				  -10, -10, -10, -10,  -6,  -6,  -6,  -2,  -2,  -2,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // Queen:
+				  -15, -15, -15, -15, -15, -15, -15, -15,  -6,  -6,  -6
+				,  -6,  -6,  -6,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
+			, { // King:
+				    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0
+				,   0,   0,   0,   0,   0,   0,   0,   0
+			  }
 		};
 	
 	public int score(final Board board, final boolean player)
 	{
 		final int[][] pawns =
 			{
-			/* player   */   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-			/* opponent */ , {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+				  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} // player
+				, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0} // opponent
 			};
 		
 		// Material evaluation (also counts pawns for later pawn formation evaluation):
@@ -183,15 +172,18 @@ public final class Evaluator
 		}
 		else
 		{
-			final var right = board.castling_allowed(false, player);
+			final var right =
+				board.castling_allowed(false, player);
 			development = board.castling_allowed(true, player)
 				? (right ? 0 : -5)
 				: (right ? -5 : -12);
 		}
 		
 		// Unmoved pawn penalties:
-		final var base_rank = player ? 1 : 6;
-		var f = board.figure(3, base_rank);
+		final var base_rank =
+			player ? 1 : 6;
+		var f =
+			board.figure(3, base_rank);
 		if (f != null && f.is_pawn() && f.owner == player)
 		{
 			development -= 4;
@@ -214,16 +206,21 @@ public final class Evaluator
 		
 		// Mobility evaluation:
 		var mobility = 0;
-		var index = board.moves_possible();
-		var move = board.moves_possible(index);
-		var f_current = Move.figure_moved(move);
+		var index =
+			board.moves_possible();
+		var move =
+			board.moves_possible(index);
+		var f_current =
+			Move.figure_moved(move);
 		var n_current = 0;
 		for (int x_current = Move.x(move), y_current = Move.y(move);
 			move != 0;
 			move = board.moves_possible(++index), n_current++)
 		{
-			final var x = Move.x(move);
-			final var y = Move.y(move);
+			final var x =
+				Move.x(move);
+			final var y =
+				Move.y(move);
 			if (x_current == x & y_current == y)
 			{
 				continue;

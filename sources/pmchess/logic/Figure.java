@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -117,14 +117,16 @@ public sealed abstract class Figure permits
 		
 		private static int possible_enpassant(final Board board)
 		{
-			final var move = board.previous_move(board.turn() - 1);
+			final var move =
+				board.previous_move(board.turn() - 1);
 			if (move == 0)
 			{
 				return -1;
 			}
 			if (Move.figure_moved(move).is_pawn())
 			{
-				final var distance = Move.y(move) - Move.Y(move);
+				final var distance =
+					Move.y(move) - Move.Y(move);
 				if (distance == 2 | distance == -2)
 				{
 					return Move.x(move);
@@ -157,11 +159,14 @@ public sealed abstract class Figure permits
 			, final int y)
 		{
 			Figure f;
-			final var xm1 = x - 1;
-			final var xp1 = x + 1;
+			final var xm1 =
+				x - 1;
+			final var xp1 =
+				x + 1;
 			if (owner)
 			{
-				final var en_passant = y == 4 ? possible_enpassant(board) : -1;
+				final var en_passant =
+					y == 4 ? possible_enpassant(board) : -1;
 				var Y = y + 1;
 				if (xm1 >= 0)
 				{
@@ -190,8 +195,10 @@ public sealed abstract class Figure permits
 			}
 			else
 			{
-				final var en_passant = y == 3 ? possible_enpassant(board) : -1;
-				var Y = y - 1;
+				final var en_passant =
+					y == 3 ? possible_enpassant(board) : -1;
+				var Y =
+					y - 1;
 				if (xm1 >= 0)
 				{
 					f = board.figure(xm1, Y);
@@ -303,16 +310,26 @@ public sealed abstract class Figure permits
 			, final int y)
 		{
 			Figure f;
-			final var xm1 = x - 1;
-			final var xp1 = x + 1;
-			final var ym1 = y - 1;
-			final var ym2 = y - 2;
-			final var yp1 = y + 1;
-			final var yp2 = y + 2;
-			final var ym1_valid = ym1 >= 0;
-			final var ym2_valid = ym2 >= 0;
-			final var yp1_valid = yp1 <= 7;
-			final var yp2_valid = yp2 <= 7;
+			final var xm1 =
+				x - 1;
+			final var xp1 =
+				x + 1;
+			final var ym1 =
+				y - 1;
+			final var ym2 =
+				y - 2;
+			final var yp1 =
+				y + 1;
+			final var yp2 =
+				y + 2;
+			final var ym1_valid =
+				ym1 >= 0;
+			final var ym2_valid =
+				ym2 >= 0;
+			final var yp1_valid =
+				yp1 <= 7;
+			final var yp2_valid =
+				yp2 <= 7;
 			if (xm1 >= 0)
 			{
 				if (ym2_valid)
@@ -331,7 +348,8 @@ public sealed abstract class Figure permits
 						board.moves_add(x, y, xm1, yp2);
 					}
 				}
-				final var xm2 = x - 2;
+				final var xm2 =
+					x - 2;
 				if (xm2 >= 0)
 				{
 					if (ym1_valid)
@@ -370,7 +388,8 @@ public sealed abstract class Figure permits
 						board.moves_add(x, y, xp1, yp2);
 					}
 				}
-				final var xp2 = x + 2;
+				final var xp2 =
+					x + 2;
 				if (xp2 <= 7)
 				{
 					if (ym1_valid)
@@ -406,10 +425,14 @@ public sealed abstract class Figure permits
 			, final int y)
 		{
 			Figure f;
-			final var xm1 = x - 1;
-			final var xp1 = x + 1;
-			final var ym1 = y - 1;
-			final var yp1 = y + 1;
+			final var xm1 =
+				x - 1;
+			final var xp1 =
+				x + 1;
+			final var ym1 =
+				y - 1;
+			final var yp1 =
+				y + 1;
 			for (int X = xm1, Y = ym1; X >= 0 & Y >= 0; X--, Y--)
 			{
 				f = board.figure(X, Y);
@@ -497,12 +520,18 @@ public sealed abstract class Figure permits
 			, final int y)
 		{
 			Figure f;
-			final var xm1 = x - 1;
-			final var xp1 = x + 1;
-			final var ym1 = y - 1;
-			final var yp1 = y + 1;
-			final var ym1_valid = ym1 >= 0;
-			final var yp1_valid = yp1 <= 7;
+			final var xm1 =
+				x - 1;
+			final var xp1 =
+				x + 1;
+			final var ym1 =
+				y - 1;
+			final var yp1 =
+				y + 1;
+			final var ym1_valid =
+				ym1 >= 0;
+			final var yp1_valid =
+				yp1 <= 7;
 			if (xm1 >= 0)
 			{
 				f = board.figure(xm1, y);
@@ -567,7 +596,8 @@ public sealed abstract class Figure permits
 					board.moves_add(x, y, x, yp1);
 				}
 			}
-			final var opponent = !owner;
+			final var opponent =
+				!owner;
 			if ((board.castling_allowed(true, owner)
 				& board.figure(1, y) == null
 				& board.figure(2, y) == null

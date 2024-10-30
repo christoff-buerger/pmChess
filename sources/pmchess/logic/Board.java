@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -11,14 +11,17 @@ import java.util.Arrays;
 
 public final class Board
 {
-	public static enum GameStatus {
+	public static enum GameStatus
+	{
 		  Normal
 		, Check
 		, Checkmate
 		, Stalemate
 		, Draw
 	}
-	public static enum DrawStatus {
+	
+	public static enum DrawStatus
+	{
 		  NoDrawPotential
 		, AutomaticRepetition
 		, AutomaticMoveRule
@@ -28,86 +31,86 @@ public final class Board
 	
 	private final Figure[][] board =
 		{
-		  {
-			  Figure.rook(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.rook(false)
-		  }
-		, {
-			  Figure.knight(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.knight(false)
-		  }
-		, {
-			  Figure.bishop(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.bishop(false)
-		  }
-		, {
-			  Figure.queen(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.queen(false)
-		  }
-		, {
-			  Figure.king(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.king(false)
-		  }
-		, {
-			  Figure.bishop(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.bishop(false)
-		  }
-		, {
-			  Figure.knight(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.knight(false)
-		  }
-		, {
-			  Figure.rook(true)
-			, Figure.pawn(true)
-			, null
-			, null
-			, null
-			, null
-			, Figure.pawn(false)
-			, Figure.rook(false)
-		  }
+			  {
+				  Figure.rook(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.rook(false)
+			  }
+			, {
+				  Figure.knight(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.knight(false)
+			  }
+			, {
+				  Figure.bishop(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.bishop(false)
+			  }
+			, {
+				  Figure.queen(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.queen(false)
+			  }
+			, {
+				  Figure.king(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.king(false)
+			  }
+			, {
+				  Figure.bishop(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.bishop(false)
+			  }
+			, {
+				  Figure.knight(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.knight(false)
+			  }
+			, {
+				  Figure.rook(true)
+				, Figure.pawn(true)
+				, null
+				, null
+				, null
+				, null
+				, Figure.pawn(false)
+				, Figure.rook(false)
+			  }
 		};
 	
 	private int king_x_w = 4;
@@ -127,43 +130,44 @@ public final class Board
 		boolean is_cached = false;
 		int move_rules_counter = -1;
 		int repetition_counter = -1;
-		int[] board = {0, 0, 0, 0, 0, 0, 0, 0};
+		int[] board =
+			{0, 0, 0, 0, 0, 0, 0, 0};
 	}
-	/*
-		History of cached position analyses, starting from the beginning of the game to the
-		current position. The first cache is not used to ease indexing by turn numbers
-		(which start by 1 for the first turn, not 0).
-	*/
-	private final PositionCache[] position_caches = new PositionCache[
-		  7 *  8 /* max pawn moves */
-		+ 8 * 75 /* max other moves */];
 	
 	/*
-		History of moves, starting from the beginning of the game to the current position.
-		The moves of each position are described by a move frame consisting of all moves
-		possible in that position, the actual move selected for execution and pointers to
-		the previous and successor frame. The layout of individual move frames is (lowest
-		to highest index within array):
+		History of cached position analyses, starting from the beginning of the game to the current
+		position. The first cache is not used to ease indexing by turn numbers (which start by 1
+		for the first turn, not 0).
+	*/
+	private final PositionCache[] position_caches =
+		new PositionCache[7 *  8 /* max pawn moves */ + 8 * 75 /* max other moves */];
+	
+	/*
+		History of moves, starting from the beginning of the game to the current position. The
+		moves of each position are described by a move frame consisting of all moves possible in
+		that position, the actual move selected for execution and pointers to the previous and
+		successor frame. The layout of individual move frames is (lowest to highest index within
+		array):
 		
-		+-----------------------+---------------------------------------------------------+
-		| Successor frame	| Index pointing directly after the last possible move of |
-		| (single array element)| the frame, which is the beginning of the successor      |
-		|			| frame in case a selected move is given.                 |
-		+-----------------------+---------------------------------------------------------+
-		| Predecessor frame	| -1, in case there is no predecessor frame (i.e., the    |
-		| (single array element)| frame is the first), otherwise index pointing to the    |
-		|			| beginning of the previous frame.                        |
-		+-----------------------+---------------------------------------------------------+
-		| Move selected		| 0, if no move is selected (i.e., the frame is the last).|
-		| (single array element)| Otherwise one of the frame's possible moves, potentially|
-		|			| with its 'draw claim' bit set, or                       |
-		|                       | 'Move.encode_moveless_draw_claim()' denoting a draw     |
-                |                       | claim for the current position without moving any piece.|
-		+-----------------------+---------------------------------------------------------+
-		| Possible moves	| Arbitrary many. The end is denoted by the successor     |
-		| (many array elements)	| frame index. Just the moves as such are stored; their   |
-		|                       | 'draw claim' bit is never set.                          |
-		+-----------------------+---------------------------------------------------------+
+		+--------------------------+---------------------------------------------------------------+
+		| Successor frame          | Index pointing directly after the last possible move of the   |
+		| (single array element)   | frame, which is the beginning of the successor frame in case  |
+		|                          | a selected move is given.                                     |
+		+--------------------------+---------------------------------------------------------------+
+		| Predecessor frame        | -1, in case there is no predecessor frame (i.e., the frame is |
+		| (single array element)   | the first), otherwise index pointing to the beginning of the  |
+		|                          | previous frame.                                               |
+		+--------------------------+---------------------------------------------------------------+
+		| Move selected            | 0, if no move is selected (i.e., the frame is the last).      |
+		| (single array element)   | Otherwise one of the frame's possible moves, potentially with |
+		|                          | its 'draw claim' bit set, or                                  |
+		|                          | 'Move.encode_moveless_draw_claim()' denoting a draw claim for |
+        |                          | the current position without moving any piece.                |
+		+--------------------------+---------------------------------------------------------------+
+		| Possible moves           | Arbitrary many. The end is denoted by the successor frame     |
+		| (many array elements)    | index. Just the moves as such are stored; their 'draw claim'  |
+		|                          | bit is never set.                                             |
+		+--------------------------+---------------------------------------------------------------+
 		
 		The beginning of the current frame is indexed by the 'moves_frame' field.
 	*/
@@ -232,7 +236,8 @@ public final class Board
 	
 	public Board fork()
 	{
-		final var forked_board = new Board();
+		final var forked_board =
+			new Board();
 		
 		for (var x = 0; x <= 7; x++)
 		{
@@ -273,7 +278,8 @@ public final class Board
 		{
 			for (var y = 0; y <= 7; y++)
 			{
-				final var f = board[x][y];
+				final var f =
+					board[x][y];
 				if (f != null && f.owner == player)
 				{
 					f.compute_moves(this, x, y);
@@ -292,7 +298,8 @@ public final class Board
 		, final int Y
 		, final Figure figure_placed)
 	{
-		final var successor_frame = moves[moves_frame];
+		final var successor_frame =
+			moves[moves_frame];
 		moves[successor_frame] = Move.encode_move(this, x, y, X, Y, figure_placed);
 		moves[moves_frame] = successor_frame + 1;
 	}
@@ -303,9 +310,9 @@ public final class Board
 	}
 	
 	/*
-		Return the move selected for execution or 0 if no move is selected.
-		The selected move of the current move frame is automatically set whenever one of
-		its possible moves is SUCCESSFULLY executed via the 'execute' function.
+		Return the move selected for execution or 0 if no move is selected. The selected move of
+		the current move frame is automatically set whenever one of its possible moves is
+		SUCCESSFULLY executed via the 'execute' function.
 	*/
 	protected int moves_selected()
 	{
@@ -321,11 +328,11 @@ public final class Board
 	}
 	
 	/*
-		Return a possible move of the current move frame. Returns 0 in case the given index
-		is out-of-bounds (i.e., not pointing to a possible move of the current move frame).
+		Return a possible move of the current move frame. Returns 0 in case the given index is
+		out-of-bounds (i.e., not pointing to a possible move of the current move frame).
 		
-		IMPORTANT: Moves threatening a player's own king are not filtered and instead
-		detected when actually executed (cf. 'execute' function).
+		IMPORTANT: Moves threatening a player's own king are not filtered and instead detected when
+		actually executed (cf. 'execute' function).
 	*/
 	protected int moves_possible(final int index)
 	{
@@ -352,13 +359,16 @@ public final class Board
 		, final Figure figure_placed
 		, final boolean draw_claim)
 	{
-		final var game_status = status();
+		final var game_status =
+			status();
 		if (game_status == GameStatus.Normal || game_status == GameStatus.Check)
 		{
-			final var moves_end = moves[moves_frame];
+			final var moves_end =
+				moves[moves_frame];
 			for (var i = moves_frame + 3; i < moves_end; i++)
 			{
-				final var move = moves[i];
+				final var move =
+					moves[i];
 				if (Move.x(move) == x && Move.y(move) == y
 					&& Move.X(move) == X && Move.Y(move) == Y
 					&& Move.figure_placed(move) == figure_placed)
@@ -373,35 +383,40 @@ public final class Board
 	}
 	
 	/*
-		Claim a draw without moving any piece if, and only if, such claim is valid.
-		Execution function for GUI.
+		Claim a draw without moving any piece if, and only if, such claim is valid. Execution
+		function for GUI.
 	*/
 	public boolean execute_moveless_draw_claim()
 	{
-		final var game_status = status();
+		final var game_status =
+			status();
 		return (game_status == GameStatus.Normal || game_status == GameStatus.Check)
 			&& (draw_move_rules_status() >= 50 || draw_repetition_status() >= 3)
 			&& execute(Move.encode_moveless_draw_claim());
 	}
 	
 	/*
-		Execute the given encoded move if, and only if, it does not threaten the own king.
-		The current game status is NOT checked to avoid the high costs of its computation;
-		hence, moves are executed even if the game is already drawn and draw claims are
-		not checked for validity.
-		For internal use by game logic only (e.g., 'Search'), never the GUI.
+		Execute the given encoded move if, and only if, it does not threaten the own king. The
+		current game status is NOT checked to avoid the high costs of its computation; hence, moves
+		are executed even if the game is already drawn and draw claims are not checked for
+		validity. For internal use by game logic only (e.g., 'Search'), never the GUI.
 	*/
 	protected boolean execute(final int move)
 	{
-		// Update cached current game situation (figure constellation, king positions,
-		//	castlings, active player and turn number):
+		// Update cached current game situation (figure constellation, king positions, castlings,
+		//   active player and turn number):
 		if (!Move.is_moveless_draw_claim(move))
 		{
-			final var x = Move.x(move);
-			final var y = Move.y(move);
-			final var X = Move.X(move);
-			final var Y = Move.Y(move);
-			final var figure_placed = Move.figure_placed(move);
+			final var x =
+				Move.x(move);
+			final var y =
+				Move.y(move);
+			final var X =
+				Move.X(move);
+			final var Y =
+				Move.Y(move);
+			final var figure_placed =
+				Move.figure_placed(move);
 			board[x][y] = null;
 			board[X][Y] = figure_placed;
 			if (figure_placed.is_king())
@@ -454,8 +469,10 @@ public final class Board
 		player = !player;
 		turn++;
 		// Update game history (push new current moves frame and compute possible moves):
-		final var is_cached_move = moves[moves_frame + 2] == move;
-		final var successor_frame = moves[moves_frame];
+		final var is_cached_move =
+			moves[moves_frame + 2] == move;
+		final var successor_frame =
+			moves[moves_frame];
 		if (is_cached_move)
 		{
 			moves_frame = successor_frame;
@@ -486,17 +503,24 @@ public final class Board
 		}
 		// Restore game history (pop current moves frame):
 		moves_frame = moves[moves_frame + 1];
-		final var move = moves[moves_frame + 2];
-		// Restore cached current game situation (figure constellation, king positions,
-		//	castlings, active player and turn number):
+		final var move =
+			moves[moves_frame + 2];
+		// Restore cached current game situation (figure constellation, king positions, castlings,
+		//   active player and turn number):
 		if (!Move.is_moveless_draw_claim(move))
 		{
-			final var x = Move.x(move);
-			final var y = Move.y(move);
-			final var X = Move.X(move);
-			final var Y = Move.Y(move);
-			final var figure_moved = Move.figure_moved(move);
-			final var figure_destination = Move.figure_destination(move);
+			final var x =
+				Move.x(move);
+			final var y =
+				Move.y(move);
+			final var X =
+				Move.X(move);
+			final var Y =
+				Move.Y(move);
+			final var figure_moved =
+				Move.figure_moved(move);
+			final var figure_destination =
+				Move.figure_destination(move);
 			board[x][y] = figure_moved;
 			board[X][Y] = figure_destination;
 			if (figure_moved.is_king())
@@ -555,7 +579,8 @@ public final class Board
 		{
 			return 0;
 		}
-		var previous_frame = moves_frame;
+		var previous_frame =
+			moves_frame;
 		for (var i = this.turn - turn;
 			i-- > 0;
 			previous_frame = moves[previous_frame + 1])
@@ -610,7 +635,8 @@ public final class Board
 	
 	private void compute_position_caches()
 	{
-		final var original_turn = turn;
+		final var original_turn =
+			turn;
 		
 		// Backtrack to first cache hit:
 		while (!position_caches[turn].is_cached)
@@ -621,8 +647,10 @@ public final class Board
 		// Compute caches forward (reconstructing original position):
 		while (turn != original_turn)
 		{
-			final var previous_turn = turn;
-			final var move = moves[moves_frame + 2];
+			final var previous_turn =
+				turn;
+			final var move =
+				moves[moves_frame + 2];
 			execute(move);
 			
 			// Compute move rules:
@@ -638,7 +666,8 @@ public final class Board
 				position_caches[turn].board[x] = 0;
 				for (var y = 0; y < 8; y++)
 				{
-					final var f = board[x][y];
+					final var f =
+						board[x][y];
 					position_caches[turn].board[x] |= (f == null
 						? 0
 						: f.key << (y * 4));
@@ -646,7 +675,8 @@ public final class Board
 			}
 			
 			// Compute repetition:
-			final var moves_count = moves_possible_count();
+			final var moves_count =
+				moves_possible_count();
 			var repetition_increase = 0;
 			for (int t = 1, m = 0;
 				t < turn;
@@ -700,14 +730,16 @@ public final class Board
 	}
 	
 	/*
-		Type and reason for draw, IF the position is a draw; it might still be a checkmate.
-		Only 'status()' does all checks to conclude if the situation indeed is a draw.
-		Hence, the result of this method is only reliable if 'status() == GameStatus.Draw'.
+		Type and reason for draw, IF the position is a draw; it might still be a checkmate. Only
+		'status()' does all checks to conclude if the situation indeed is a draw. Hence, the result
+		of this method is only reliable if 'status() == GameStatus.Draw'.
 	*/
 	public DrawStatus draw_status()
 	{
-		final var moves = draw_move_rules_status();
-		final var repetitions = draw_repetition_status();
+		final var moves =
+			draw_move_rules_status();
+		final var repetitions =
+			draw_repetition_status();
 		if (Move.draw_claim(previous_move(turn - 1)))
 		{
 			if (moves >= 50)
@@ -732,7 +764,8 @@ public final class Board
 	
 	public GameStatus status()
 	{
-		final var moves_end = moves[moves_frame];
+		final var moves_end =
+			moves[moves_frame];
 		for (var i = moves_frame + 3; i < moves_end; i++)
 		{
 			if (execute(moves[i]))
@@ -760,13 +793,20 @@ public final class Board
 		Figure f;
 		
 		// Check for pawns:
-		final var ym1 = Y - 1;
-		final var yp1 = Y + 1;
-		final var xm1 = X - 1;
-		final var xm1_valid = xm1 >= 0;
-		final var xp1 = X + 1;
-		final var xp1_valid = xp1 <= 7;
-		final var y_pawn = player ? ym1 : yp1;
+		final var ym1 =
+			Y - 1;
+		final var yp1 =
+			Y + 1;
+		final var xm1 =
+			X - 1;
+		final var xm1_valid =
+			xm1 >= 0;
+		final var xp1 =
+			X + 1;
+		final var xp1_valid =
+			xp1 <= 7;
+		final var y_pawn =
+			player ? ym1 : yp1;
 		if (y_pawn > 0 & y_pawn < 7)
 		{
 			if (xm1_valid)
@@ -928,8 +968,10 @@ public final class Board
 		}
 		
 		// Check for knights:
-		final var ym2 = Y - 2;
-		final var ym2_valid = ym2 >= 0;
+		final var ym2 =
+			Y - 2;
+		final var ym2_valid =
+			ym2 >= 0;
 		if (xm1_valid & ym2_valid)
 		{
 			f = board[xm1][ym2];
@@ -938,9 +980,12 @@ public final class Board
 				return true;
 			}
 		}
-		final var ym1_valid = ym1 >= 0;
-		final var xm2 = X - 2;
-		final var xm2_valid = xm2 >= 0;
+		final var ym1_valid =
+			ym1 >= 0;
+		final var xm2 =
+			X - 2;
+		final var xm2_valid =
+			xm2 >= 0;
 		if (xm2_valid & ym1_valid)
 		{
 			f = board[xm2][ym1];
@@ -957,8 +1002,10 @@ public final class Board
 				return true;
 			}
 		}
-		final var xp2 = X + 2;
-		final var xp2_valid = xp2 <= 7;
+		final var xp2 =
+			X + 2;
+		final var xp2_valid =
+			xp2 <= 7;
 		if (xp2_valid & ym1_valid)
 		{
 			f = board[xp2][ym1];
@@ -967,8 +1014,10 @@ public final class Board
 				return true;
 			}
 		}
-		final var yp2 = Y + 2;
-		final var yp2_valid = yp2 <= 7;
+		final var yp2 =
+			Y + 2;
+		final var yp2_valid =
+			yp2 <= 7;
 		if (xm1_valid & yp2_valid)
 		{
 			f = board[xm1][yp2];
@@ -977,7 +1026,8 @@ public final class Board
 				return true;
 			}
 		}
-		final var yp1_valid = yp1 <= 7;
+		final var yp1_valid =
+			yp1 <= 7;
 		if (xm2_valid & yp1_valid)
 		{
 			f = board[xm2][yp1];

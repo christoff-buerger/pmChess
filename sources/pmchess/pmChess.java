@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -15,10 +15,13 @@ import pmchess.gui.*;
 
 public final class pmChess
 {
-	public static final String version = "2.0.0";
-	public static final String[] about = {
-		  "pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com)."
-		, "Source code available at https://github.com/christoff-buerger/pmChess."};
+	public static final String version =
+		"2.0.0";
+	public static final String[] about =
+		{
+			  "pmChess " + version + " by Christoff Bürger (christoff.buerger@gmail.com)."
+			, "Source code available at https://github.com/christoff-buerger/pmChess."
+		};
 	
 	// Static => enforce licenses exist:
 	public static final String[] licenses_subjects =
@@ -47,13 +50,15 @@ public final class pmChess
 	*/
 	public static void main(final String[] args)
 	{
-		final IntConsumer to_many_arguments = (limit) -> {
-			if (args.length > limit)
+		final IntConsumer to_many_arguments =
+			(final int limit) ->
 			{
-				System.out.println(" !!! ERROR: Too many command line arguments !!!");
-				System.exit(1);
-			}		
-		};
+				if (args.length > limit)
+				{
+					System.out.println(" !!! ERROR: Too many command line arguments !!!");
+					System.exit(1);
+				}		
+			};
 		
 		if (args.length >= 1)
 		switch (args[0])
@@ -104,12 +109,13 @@ public final class pmChess
 		java.awt.EventQueue.invokeLater(
 			new Runnable()
 			{
-	
-				private static final String adjourned_game_file = "adjourned-game.data";
+				private static final String adjourned_game_file =
+					"adjourned-game.data";
 				
 				@Override public void run()
 				{
-					final GUI gui = new GUI();
+					final GUI gui =
+						new GUI();
 					gui.load_game(adjourned_game_file);
 					Runtime.getRuntime().addShutdownHook(
 						new Thread()

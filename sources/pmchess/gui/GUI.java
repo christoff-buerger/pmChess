@@ -1,6 +1,6 @@
 /*
-	This program and the accompanying materials are made available under the
-	terms of the MIT license (X11 license) which accompanies this distribution.
+	This program and the accompanying materials are made available under the terms of the MIT
+	license (X11 license) which accompanies this distribution.
 	
 	Author: Christoff Bürger
 */
@@ -23,11 +23,14 @@ public final class GUI extends JFrame
 	static
 	{
 		// Initialize fonts:
-		final var keys = UIManager.getDefaults().keys();
+		final var keys =
+			UIManager.getDefaults().keys();
 		while (keys.hasMoreElements())
 		{
-			final var key = keys.nextElement();
-			final var value = UIManager.get(key);
+			final var key =
+				keys.nextElement();
+			final var value =
+				UIManager.get(key);
 			if (value != null && value instanceof javax.swing.plaf.FontUIResource)
 			{
 				UIManager.put(key, Resources.font_regular);
@@ -63,7 +66,8 @@ public final class GUI extends JFrame
 		super("pmChess", Resources.graphics_configuration);
 		
 		// Setup "About"-window:
-		final var about_action = new AboutAction();
+		final var about_action =
+			new AboutAction();
 		try
 		{
 			Desktop.getDesktop().setAboutHandler(about_action);
@@ -83,16 +87,20 @@ public final class GUI extends JFrame
 		}
 		
 		// Setup menu bar:
-		final var menu_bar = new JMenuBar();
-		final var game_menu = new JMenu("Game"); // Game menu:
+		final var menu_bar =
+			new JMenuBar();
+		final var game_menu =
+			new JMenu("Game"); // Game menu:
 		game_menu.setMnemonic(KeyEvent.VK_G);
 		game_menu.add(new NewGameAction());
-		final var computer_player = new ButtonGroup();
+		final var computer_player =
+			new ButtonGroup();
 		white_computer = new NonclosingRadioButtonMenuItem("White computer");
 		white_computer.setSelected(false);
 		black_computer = new NonclosingRadioButtonMenuItem("Black computer");
 		black_computer.setSelected(false);
-		final var no_computer = new NonclosingRadioButtonMenuItem("No computer");
+		final var no_computer =
+			new NonclosingRadioButtonMenuItem("No computer");
 		no_computer.setSelected(true);
 		computer_player.add(white_computer);
 		computer_player.add(black_computer);
@@ -103,7 +111,8 @@ public final class GUI extends JFrame
 		game_menu.addSeparator();
 		game_menu.add(new ExitAction());
 		menu_bar.add(game_menu);
-		final var help_menu = new JMenu("Help"); // Help menu:
+		final var help_menu =
+			new JMenu("Help"); // Help menu:
 		help_menu.setMnemonic(KeyEvent.VK_H);
 		help_menu.add(about_action);
 		help_menu.add(new ContactAction());
@@ -122,7 +131,8 @@ public final class GUI extends JFrame
 		setLocationRelativeTo(null); // center window
 		
 		// Check window size fits:
-		final var os_scaling = switch (System.getProperty("os.name"))
+		final var os_scaling =
+			switch (System.getProperty("os.name"))
 			{
 			case String s when s.startsWith("Windows") ->
 				(int) Math.round(
@@ -130,16 +140,19 @@ public final class GUI extends JFrame
 					/ 96.0f);
 			default -> 100;
 			};
-		final var display_mode = Resources.graphics_configuration
+		final var display_mode =
 			// Use real screen size, not DPI scaled size of .getBounds():
-			.getDevice().getDisplayMode();
-		final var screen_insets = Toolkit.getDefaultToolkit().getScreenInsets(
-			Resources.graphics_configuration);
-		final var width_max = (int) Math.floor(0.97f * (float)(
-			display_mode.getWidth() - screen_insets.left - screen_insets.right));
-		final var height_max = (int) Math.floor(0.97f * (float)(
-			display_mode.getHeight() - screen_insets.top - screen_insets.bottom));
-		final var frame_insets = Resources.compute_insets();
+			Resources.graphics_configuration.getDevice().getDisplayMode();
+		final var screen_insets =
+			Toolkit.getDefaultToolkit().getScreenInsets(Resources.graphics_configuration);
+		final var width_max =
+			(int) Math.floor(0.97f * (float)(
+				display_mode.getWidth() - screen_insets.left - screen_insets.right));
+		final var height_max =
+			(int) Math.floor(0.97f * (float)(
+				display_mode.getHeight() - screen_insets.top - screen_insets.bottom));
+		final var frame_insets =
+			Resources.compute_insets();
 		final var width_current =
 			  os_scaling
 			* Math.max(
@@ -155,13 +168,14 @@ public final class GUI extends JFrame
 				  + frame_insets.top
 				  + frame_insets.bottom)
 			/ 100;
-		final var width_original = (100 * width_current) / Resources.base_scale_in_percent();
-		final var height_original = (100 * height_current) / Resources.base_scale_in_percent();
+		final var width_original =
+			(100 * width_current) / Resources.base_scale_in_percent();
+		final var height_original =
+			(100 * height_current) / Resources.base_scale_in_percent();
 		if (width_current > width_max || height_current > height_max)
 		{
-			final var autoscale = (int) Math.floor(
-				  96.0f
-				* Math.min(
+			final var autoscale =
+				(int) Math.floor(96.0f * Math.min(
 					  ((float) width_max) / ((float) width_original)
 					, ((float) height_max) / ((float) height_original)));
 			UIManager.put(
@@ -170,35 +184,36 @@ public final class GUI extends JFrame
 			UIManager.put(
 				  "OptionPane.buttonFont"
 				, Resources.font_regular.deriveFont(Resources.base_scale_default));
-			final var selection = JOptionPane.showOptionDialog(
-				  this
-				, String.format(
-					"""
-					<html>
-					The configured scale of pmChess exceeds the resolution of<br>
-					the primary screen. The pmChess window likely will not fit.
-					<br>
-					<br>
-					The current scale configuration is %d%%.<br>
-					The recommended maximum is %d%%.
-					<br>
-					<br>
-					If you continue, pmChess is started with the configured scale.<br>
-					You can also reset to the default scale of 100%%.<br>
-					Or autoscale to the recommeded maximum.
-					<br>
-					<br>
-					Reset and autoscale will quit pmChess after updating the scale.<br>
-					The new scale will be applied next time you start pmChess.
-					</html>"""
-					, Resources.base_scale_in_percent()
-					, autoscale)
-				, "Warning: Scale exceeds primary screen resolution"
-				, JOptionPane.DEFAULT_OPTION
-				, JOptionPane.WARNING_MESSAGE
-				, null
-				, new String[]{ "Reset scale", "Autoscale", "Continue" }
-				, "Reset scale");
+			final var selection =
+				JOptionPane.showOptionDialog(
+					  this
+					, String.format(
+						"""
+						<html>
+						The configured scale of pmChess exceeds the resolution of<br>
+						the primary screen. The pmChess window likely will not fit.
+						<br>
+						<br>
+						The current scale configuration is %d%%.<br>
+						The recommended maximum is %d%%.
+						<br>
+						<br>
+						If you continue, pmChess is started with the configured scale.<br>
+						You can also reset to the default scale of 100%%.<br>
+						Or autoscale to the recommeded maximum.
+						<br>
+						<br>
+						Reset and autoscale will quit pmChess after updating the scale.<br>
+						The new scale will be applied next time you start pmChess.
+						</html>"""
+						, Resources.base_scale_in_percent()
+						, autoscale)
+					, "Warning: Scale exceeds primary screen resolution"
+					, JOptionPane.DEFAULT_OPTION
+					, JOptionPane.WARNING_MESSAGE
+					, null
+					, new String[]{ "Reset scale", "Autoscale", "Continue" }
+					, "Reset scale");
 			switch (selection)
 			{
 			case 0: // Reset scale:
@@ -231,8 +246,7 @@ public final class GUI extends JFrame
 	
 	public boolean save_game(final String game_file)
 	{
-		try (final var os = new ObjectOutputStream(
-			new FileOutputStream(game_file, false)))
+		try (final var os = new ObjectOutputStream(new FileOutputStream(game_file, false)))
 		{
 			main_panel.serialize_game(os);
 			return true;
@@ -252,10 +266,10 @@ public final class GUI extends JFrame
 	
 	public void load_game(final String game_file)
 	{
-		try {
+		try
+		{
 			if (Files.exists(Paths.get(game_file)))
-			try (final var is = new ObjectInputStream(
-				new FileInputStream(game_file)))
+			try (final var is = new ObjectInputStream(new FileInputStream(game_file)))
 			{
 				main_panel.deserialize_game(is);
 			}
@@ -272,7 +286,9 @@ public final class GUI extends JFrame
 		Resources.configure_rendering(graphics);
 	}
 	
-	/* *********************************** menu  actions *********************************** */
+	/*
+		Menu  actions:
+	*/
 	
 	private final class NewGameAction extends AbstractAction
 	{
@@ -305,8 +321,8 @@ public final class GUI extends JFrame
 	
 	private static final class AboutAction extends AbstractAction implements AboutHandler
 	{
-		private static final AboutFrame about_frame = new AboutFrame(
-			Resources.graphics_configuration);
+		private static final AboutFrame about_frame =
+			new AboutFrame(Resources.graphics_configuration);
 		
 		private AboutAction()
 		{
@@ -342,7 +358,8 @@ public final class GUI extends JFrame
 		private static MenuElement[] path;
 		
 		{ // Instance initialization:
-			getModel().addChangeListener(new ChangeListener()
+			getModel().addChangeListener(
+				new ChangeListener()
 				{
 					@Override public void stateChanged(final ChangeEvent e)
 					{
