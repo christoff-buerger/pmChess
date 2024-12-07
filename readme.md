@@ -18,7 +18,7 @@ _pmChess_ implements the official chess rules of the _International Chess Federa
 
 # Graphical user interface
 
-![pmChess screenshot](releases/version-2.0.0/screenshot.png)
+![pmChess screenshot](releases/version-2.0.0/screenshot-normal-mode-macOS.png)
 
 Figures are moved on the _Chessboard_ using the keyboard or mouse. When using the keyboard, a blue rectangle marks the cursor position. A red rectangle marks the currently selected figure to move. The arrow keys are used to move the cursor. Space is used to select a figure or move the currently selected figure to the cursor's position. When using the mouse, first left-click the figure to move; then left-click the tile to move to. Of course, the respective move must be allowed (otherwise it is just ignored). The last move is highlighted by drawing the involved chessboard tiles green, or red in case of a capture.
 
