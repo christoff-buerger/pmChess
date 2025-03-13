@@ -27,9 +27,10 @@ public final class pmChess
 	public static final String[] licenses_subjects =
 		{
 			  "pmChess (MIT license)"
-			, "Open Sans (Apache-2.0 license)"
+			, "Open Sans (OFL-1.1 license)"
 			, "Chess Merida Unicode (Unlicense license)"
 			, "Material Symbols (Apache-2.0 license)"
+			, "Linux Libertine (OFL-1.1 license)"
 			, "DSEG (OFL-1.1 license)"
 			, "OpenJDK (GPL-2.0-with-classpath-exception license)"
 			, "Eclipse Temurin (GPL-2.0-with-classpath-exception license)"
@@ -40,6 +41,7 @@ public final class pmChess
 			, Resources.load_text("licenses/Open-Sans-license.txt")
 			, Resources.load_text("licenses/Chess-Merida-Unicode-license.txt")
 			, Resources.load_text("licenses/Material-Symbols-license.txt")
+			, Resources.load_text("licenses/Linux-Libertine-license.txt")
 			, Resources.load_text("licenses/DSEG-license.txt")
 			, Resources.load_text("licenses/OpenJDK-license.txt")
 			, Resources.load_text("licenses/Eclipse-Temurin-license.txt")
